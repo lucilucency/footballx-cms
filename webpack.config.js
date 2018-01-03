@@ -80,7 +80,7 @@ const config = {
     }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-      FX_API: JSON.stringify(process.env.FX_API || 'http://localhost:51168'),
+      FX_API: JSON.stringify(process.env.FX_API || 'http://web-api.ttab.me'),
       FX_VERSION: JSON.stringify(process.env.FX_VERSION || 'v1'),
     }),
   ],
