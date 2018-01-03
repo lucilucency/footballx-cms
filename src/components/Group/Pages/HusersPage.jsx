@@ -1,0 +1,70 @@
+import React from 'react';
+import { connect } from 'react-redux';
+import { getGroupHUsers } from 'actions';
+import Table from 'components/Table';
+import Container from 'components/Container';
+import { transformations } from 'utility';
+import CreateGroupHUserForm from 'components/Group/Forms/CreateGroupHUser';
+
+import strings from 'lang';
+
+const HUsersColumns = [{
+  displayName: strings.th_account,
+  field: 'username',
+  displayFn: transformations.th_huser_link,
+}, {
+  displayName: strings.th_name,
+  field: 'fullname',
+}, {
+  displayName: strings.th_phone,
+  field: 'phone',
+}, {
+  displayName: strings.th_email,
+  field: 'email',
+}];
+
+const Husers = ({
+  data,
+  error = false,
+  loading = false,
+}) => (
+  <Container title={strings.title_group_husers} error={error} loading={loading}>
+    <Table paginated columns={HUsersColumns} data={data} error={false} loading={loading} />
+  </Container>
+);
+
+const getData = (props) => {
+  props.getGroupHUsers(props.groupId);
+};
+
+class RequestLayer extends React.Component {
+  componentDidMount() {
+    getData(this.props);
+  }
+
+  componentWillUpdate(nextProps) {
+    if (this.props.groupId !== nextProps.groupId || this.props.location.key !== nextProps.location.key) {
+      getData(nextProps);
+    }
+  }
+
+  render() {
+    const { routeParams } = this.props;
+    const subInfo = routeParams.subInfo;
+
+    return (<div>
+      {subInfo && subInfo === 'add' && <CreateGroupHUserForm groupId={this.props.groupId} />}
+      <Husers {...this.props.groupHUsers} />
+    </div>);
+  }
+}
+
+const mapStateToProps = state => ({
+  groupHUsers: state.app.groupHUsers,
+});
+
+const mapDispatchToProps = dispatch => ({
+  getGroupHUsers: groupId => dispatch(getGroupHUsers(groupId)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(RequestLayer);

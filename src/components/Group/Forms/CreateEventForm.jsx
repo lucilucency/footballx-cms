@@ -1,0 +1,922 @@
+// language=SCSS prefix=dummy{suffix=}
+/* global FX_API, FX_VERSION */
+import React from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import queryString from 'querystring';
+import update from 'immutability-helper';
+import PropTypes from 'prop-types';
+/* actions & helpers */
+import { toDateTimeString } from 'utility/time';
+import transformMatches from 'actions/transforms/matches/transformMatches';
+import { createEvent as defaultCreateEvent, toggleShowForm } from 'actions';
+/* data */
+import strings from 'lang';
+import * as data from 'components/Event/Event.config';
+import Clubs from 'fxconstants/build/clubsObj.json';
+import util from 'util';
+/* components */
+import {
+  AutoComplete,
+  TextField,
+  RaisedButton,
+  MenuItem,
+  FlatButton,
+  Dialog,
+  List,
+  ListItem,
+} from 'material-ui';
+import IconFail from 'material-ui/svg-icons/content/clear';
+import IconSuccess from 'material-ui/svg-icons/navigation/check';
+import DateTimePicker from 'material-ui-datetimepicker';
+import DatePickerDialog from 'material-ui/DatePicker/DatePickerDialog';
+import TimePickerDialog from 'material-ui/TimePicker/TimePickerDialog';
+import Error from 'components/Error/index';
+import Spinner from 'components/Spinner/index';
+import { SketchPicker } from 'react-color';
+import { ValidatorForm } from 'react-form-validator-core';
+import { TextValidator, SelectValidator, AutoCompleteValidator } from 'react-material-ui-form-validator';
+import FormField from 'components/Form/FormField';
+/* css */
+import styled from 'styled-components';
+import { css } from 'styled-components';
+import constants from '../../constants';
+
+const getMatches = (props, context) => {
+  const request = require('superagent');
+  const now = Date.now();
+  const params = {
+    start_time: parseInt(now / 1000),
+    end_time: parseInt(now / 1000) + 2592000,
+  };
+  const accessToken = localStorage.getItem('access_token');
+
+  return request
+    .get(`${FX_API}/${FX_VERSION}/matches?${queryString.stringify(params)}`)
+    .set('Content-Type', 'application/x-www-form-urlencoded')
+    .set('Authorization', `Bearer ${accessToken}`)
+    .query({}) // query string
+    .then((res, err) => {
+      if (!err) {
+        const data = transformMatches(res.body.data);
+        const matches = data.matches.filter(o => o.home && o.away).map((o) => {
+          const matchTime = toDateTimeString(o.date * 1000);
+          return {
+            text: `${Clubs[o.home.club_id] && Clubs[o.home.club_id].name} vs ${Clubs[o.away.club_id] && Clubs[o.away.club_id].name} - ${matchTime}`,
+            value: `${o.id}`,
+            date: o.date,
+            home: o.home,
+            away: o.away,
+          };
+        });
+        context.setState({ matches });
+      } else {
+        console.error(err);
+      }
+    });
+};
+
+const getHotspots = (props, context) => {
+  const request = require('superagent');
+  const accessToken = localStorage.getItem('access_token');
+  return request
+    .get(`${FX_API}/${FX_VERSION}/hotspots`)
+    .set('Content-Type', 'application/x-www-form-urlencoded')
+    .set('Authorization', `Bearer ${accessToken}`)
+    .query({}) // query string
+    .then((res, err) => {
+      if (!err) {
+        const data = transformMatches(res.body.data);
+        const hotspots = data.map(o => ({
+          text: `${o.name} - ${o.address}`,
+          value: o.id,
+          textShort: o.name,
+        }));
+        context.setState({ hotspots });
+      } else {
+        console.error(err);
+      }
+    });
+};
+
+const getGroups = (props, context) => {
+  const request = require('superagent');
+  const accessToken = localStorage.getItem('access_token');
+  return request
+    .get(`${FX_API}/${FX_VERSION}/groups`)
+    .set('Content-Type', 'application/x-www-form-urlencoded')
+    .set('Authorization', `Bearer ${accessToken}`)
+    .query({}) // query string
+    .then((res, err) => {
+      if (!err) {
+        const data = transformMatches(res.body.data);
+        const groups = data.map(o => ({
+          text: `${o.name}`,
+          value: o.id,
+          textShort: `${o.short_name}`,
+        }));
+        context.setState({ groups });
+      } else {
+        console.error(err);
+      }
+    });
+};
+
+const initialState = props => ({
+  // hotspots: [],
+  // matches: [],
+  // groups: [],
+  event: {
+    hotspots: props.hotspotId ? [props.hotspotId] : [],
+    group: props.groupId ? { value: props.groupId } : {},
+    match: props.matchId ? { value: props.matchId } : {},
+    price: {},
+    discount: {},
+    seats: {},
+    start_time_register: {},
+    end_time_register: {},
+    start_time_checkin: {},
+    end_time_checkin: {},
+    notes: {},
+  },
+  payload: {},
+  submitResults: {
+    data: [],
+    show: false,
+  },
+});
+
+class CreateEventForm extends React.Component {
+    static propTypes = {
+      hotspotId: PropTypes.number,
+      // hotspotIds: PropTypes.arrayOf(PropTypes.number()),
+      groupId: PropTypes.number,
+      matchId: PropTypes.number,
+      toggle: PropTypes.bool,
+      dispatch: PropTypes.func,
+    };
+
+    constructor(props) {
+      super(props);
+
+      this.state = {
+        ...initialState(props),
+        matches: [],
+        hotspots: [],
+        groups: [],
+      };
+
+      this.submitCreateEvent = this.submitCreateEvent.bind(this);
+      this.closeDialog = this.closeDialog.bind(this);
+    }
+
+    componentDidMount() {
+      if (!this.props.matchId) getMatches(this.props, this);
+      if (!this.props.hotspotId) getHotspots(this.props, this);
+      if (!this.props.groupId) getGroups(this.props, this);
+    }
+
+    componentWillUpdate(nextProps) {
+      if (this.props.showForm !== nextProps.showForm) {
+        this.clearState();
+      }
+    }
+
+    submitCreateEvent() {
+      const that = this;
+      const event = that.state.event;
+
+      this.setState({
+        submitResults: update(that.state.submitResults, {
+          show: { $set: true },
+        }),
+      }, () => {
+        const createEventFn = that.props.dispatch ? that.props.dispatch : that.props.defaultCreateEvent;
+        const doCreateEvent = (eventData, payload) => new Promise((resolve) => {
+          resolve(createEventFn(eventData, payload));
+        });
+
+        event.hotspots && Promise.all(event.hotspots.map((o) => {
+          that.setState({
+            submitResults: update(that.state.submitResults, {
+              data: {
+                $push: [{
+                  hotspot_name: !that.props.hotspotId ? that.state.hotspots.find(h => h.value === o).textShort : event.match.text,
+                  submitting: true,
+                }],
+              },
+            }),
+          });
+          const eventData = {
+            match_id: event.match.value,
+            hotspot_id: o,
+            group_id: event.group.value,
+            price: event.price.value,
+            discount: event.discount.value,
+            seats: event.seats.value,
+            start_time_register: event.start_time_register.value,
+            end_time_register: event.end_time_register.value,
+            start_time_checkin: event.start_time_checkin.value,
+            end_time_checkin: event.end_time_checkin.value,
+            notes: event.notes.value || '',
+            home_color: event.home_color && event.home_color.value,
+            away_color: event.away_color && event.away_color.value,
+            free_folk_color: event.free_folk_color && event.free_folk_color.value,
+          };
+
+          return doCreateEvent(eventData, that.state.payload);
+        })).then((results) => {
+          const resultsReport = event.hotspots.map((hotspotId, index) => {
+            const hotspotName = !that.props.hotspotId ? that.state.hotspots.find(o => o.value === hotspotId).textShort : event.match.text;
+            if (results[index].type.indexOf('OK') === 0) {
+              return {
+                hotspot_name: hotspotName,
+                submitting: false,
+              };
+            }
+            return {
+              hotspot_name: hotspotName,
+              submitting: false,
+              error: results[index].error,
+            };
+          });
+          that.setState({
+            submitResults: update(that.state.submitResults, {
+              data: { $set: resultsReport },
+            }),
+          });
+        });
+      });
+    }
+
+    clearState() {
+      this.setState(initialState(this.props));
+    }
+
+    hotspotItems() {
+      const ids = this.state.event.hotspots;
+      return this.state.hotspots && this.state.hotspots.map(o => (<MenuItem
+        key={o.value}
+        insetChildren
+        checked={ids && ids.indexOf(o.value) > -1}
+        value={o.value}
+        primaryText={o.text}
+      />));
+    }
+
+    onDragHomeColor(color) {
+      this.setState({
+        event: update(this.state.event, {
+          home_color: { value: { $set: color.hex } },
+        }),
+      });
+    }
+
+    onDragAwayColor(color) {
+      this.setState({
+        event: update(this.state.event, {
+          away_color: { value: { $set: color.hex } },
+        }),
+      });
+    }
+
+    onDragFreeFolkColor(color) {
+      this.setState({
+        event: update(this.state.event, {
+          free_folk_color: { value: { $set: color.hex } },
+        }),
+      });
+    }
+
+    closeDialog() {
+      const that = this;
+
+      that.setState({
+        submitResults: update(that.state.submitResults, {
+          show: { $set: false },
+        }),
+      });
+    }
+
+    handleInputMatch(searchText) {
+      // const that = this;
+      // that.setState({
+      //     event: update(that.state.event, {
+      //         match: {text: {$set: searchText}}
+      //     })
+      // })
+    }
+
+    handleClearMatch() {
+      this.setState({
+        event: update(this.state.event, {
+          match: { $set: {} },
+        }),
+      });
+    }
+
+    handleSelectMatch(o) {
+      const that = this;
+      const moment = require('moment');
+      // const _start = o.date - 86400;
+      const _start = parseInt(Date.now() / 1000);
+      const _end = o.date + 7200;
+      that.setState({
+        event: update(that.state.event, {
+          match: { $set: o },
+          home_color: {
+            $set: {
+              value: Clubs[o.home.club_id] && Clubs[o.home.club_id].home_color,
+            },
+          },
+          away_color: {
+            $set: {
+              value: Clubs[o.away.club_id] && Clubs[o.away.club_id].away_color,
+            },
+          },
+          free_folk_color: {
+            $set: {
+              value: '#ffffff',
+            },
+          },
+          start_time_register: {
+            $set: {
+              text: moment(_start * 1000),
+              value: _start,
+            },
+          },
+          end_time_register: {
+            $set: {
+              text: moment(_end * 1000),
+              value: _end,
+            },
+          },
+          start_time_checkin: {
+            $set: {
+              text: moment(_start * 1000),
+              value: _start,
+            },
+          },
+          end_time_checkin: {
+            $set: {
+              text: moment(_end * 1000),
+              value: _end,
+            },
+          },
+        }),
+        payload: update(this.state.payload, {
+          home: { $set: o.home.club_id },
+          away: { $set: o.away.club_id },
+          match_date: { $set: o.date },
+          match_id: { $set: o.value },
+        }),
+      });
+    }
+
+    handleSelectHotspot(data) {
+      const that = this;
+
+      that.setState({
+        event: update(that.state.event, {
+          hotspots: { $set: data.selectedElements },
+        }),
+      });
+    }
+
+    render() {
+      const {
+        toggle = true,
+        maxSearchResults = 100,
+        loading = false,
+        showForm,
+      } = this.props;
+
+      const FormContainer = styled.div`
+            transition: max-height 1s;
+            padding: 15px;
+            box-sizing: border-box;
+            overflow: hidden;
+            ${props => (props.show ? css`
+                max-height: 2000px;
+            ` : css`
+                max-height: 0;
+            `)}
+        `;
+      const ClubImageContainer = styled.div`
+            position: relative;
+            display: flex;
+            justify-content: space-around;
+            flex-direction: row;
+        `;
+      const ClubColorPicker = styled.div`
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        `;
+      const ColorPreviewBox = styled.div`
+            width: 36px;
+            height: 14px;
+            border-radius: 2px;
+            ${props => props.color && css`
+                background: ${props.color}
+            `}
+        `;
+      const Swatch = styled.div`
+            margin-top: 20px;
+            padding: 0.3em;
+            background: #fff;
+            border-radius: 1px;
+            box-shadow: 0 0 0 1px rgba(0,0,0,.1);
+            display: inline-block;
+            cursor: pointer;
+        `;
+      const PopOver = styled.div`
+            position: absolute;
+            z-index: 2;
+        `;
+      const Cover = styled.div`
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        `;
+
+      return (
+        <ValidatorForm
+          ref="form"
+          onSubmit={this.submitCreateEvent}
+          onError={errors => console.log(errors)}
+        >
+          {loading && <Spinner />}
+          {this.state.error && <Error text={this.state.error} />}
+          <FormContainer show={!toggle || showForm}>
+            <div>
+              {/* {!this.props.hotspotId && this.state.hotspots && <FormField */}
+              {/* name="hotspots" */}
+              {/* label={strings.filter_notification_user} */}
+              {/* dataSource={this.state.hotspots.map(o => ({text: o.text, value: o.value}))} */}
+              {/* fullWidth={true} */}
+              {/* onChange={this.handleSelectHotspot.bind(this)} */}
+              {/* listStyle={{maxHeight: 300, overflow: 'auto'}} */}
+              {/* />} */}
+              {!this.props.hotspotId && this.state.hotspots && <SelectValidator
+                name="hotspots"
+                fullWidth
+                multiple
+                hintText={strings.tooltip_select_hotspots}
+                value={this.state.event.hotspots}
+                onChange={(event, index, values) => {
+                  this.setState({
+                    event: update(this.state.event, {
+                      hotspots: { $set: values },
+                    }),
+                  });
+                }}
+                selectionRenderer={(values) => {
+                  const that = this;
+                  switch (values.length) {
+                    case 0:
+                      return '';
+                    case 1:
+                      return that.state.hotspots.find(o => o.value === values[0]).text;
+                    default:
+                      const arrayNames = values.map(value => `[${that.state.hotspots.find(o => o.value === value).textShort}]`);
+                      return arrayNames.join(',  ');
+                  }
+                }}
+                children={this.hotspotItems()}
+                validators={['required']}
+                errorMessages={[strings.validate_is_required]}
+              />}
+
+              {!this.props.groupId && this.state.groups && <AutoCompleteValidator
+                name="group"
+                hintText={strings.filter_group}
+                floatingLabelText={strings.filter_group}
+                searchText={this.state.event.group && this.state.event.group.text}
+                value={this.state.event.group.value}
+                dataSource={this.state.groups}
+                onNewRequest={(o) => {
+                  this.setState({
+                    event: update(this.state.event, {
+                      group: { $set: o },
+                    }),
+                  });
+                }}
+                onUpdateInput={(searchText) => {
+                  this.setState({
+                    event: update(this.state.event, {
+                      group: { $set: { value: searchText } },
+                    }),
+                  });
+                }}
+                filter={AutoComplete.caseInsensitiveFilter}
+                openOnFocus
+                maxSearchResults={maxSearchResults}
+                fullWidth
+                listStyle={{ maxHeight: 300, overflow: 'auto' }}
+                validators={[]}
+                errorMessages={[]}
+              />}
+
+              {!this.props.matchId && this.state.matches && <div>
+                <AutoCompleteValidator
+                  name="match"
+                  ref={(input) => {
+                    this.inputMatch = input;
+                  }}
+                  hintText={strings.filter_match}
+                  floatingLabelText={strings.filter_match}
+                  searchText={this.state.event.match && this.state.event.match.text}
+                  value={this.state.event.match.value}
+                  dataSource={this.state.matches}
+                  onNewRequest={this.handleSelectMatch.bind(this)}
+                  onUpdateInput={this.handleInputMatch.bind(this)}
+                  filter={AutoComplete.fuzzyFilter}
+                  openOnFocus
+                  maxSearchResults={maxSearchResults}
+                  fullWidth
+                  listStyle={{ maxHeight: 300, overflow: 'auto' }}
+                  validators={['required']}
+                  errorMessages={[strings.validate_is_required]}
+                />
+
+              </div>}
+
+              {this.state.event.match.home && <div>
+                {!this.props.matchId && <RaisedButton
+                  label={<small>{strings.form_create_event_clear_match}</small>}
+                  onClick={this.handleClearMatch.bind(this)}
+                  style={{ display: 'flex', margin: 'auto' }}
+                />}
+                <ClubImageContainer>
+                  <ClubColorPicker>
+                    <img
+                      src={Clubs[this.state.event.match.home.club_id] && Clubs[this.state.event.match.home.club_id].icon}
+                      role="presentation"
+                      width={100}
+                      height={100}
+                    />
+                    <div>
+                      <Swatch onClick={() => {
+                        const that = this;
+                        that.setState({
+                          event: update(that.state.event, {
+                            home_color: {
+                              displayColorPicker: { $set: !that.state.event.home_color.displayColorPicker || false },
+                            },
+                          }),
+                        });
+                      }}
+                      >
+                        <ColorPreviewBox color={this.state.event.home_color.value} />
+                      </Swatch>
+
+                      {this.state.event.home_color.displayColorPicker ? <PopOver>
+                        <Cover onClick={() => {
+                          const that = this;
+                          that.setState({
+                            event: update(that.state.event, {
+                              home_color: {
+                                displayColorPicker: { $set: false },
+                              },
+                            }),
+                          });
+                        }}
+                        />
+                        <SketchPicker
+                          color={this.state.event.home_color.value}
+                          onChange={this.onDragHomeColor.bind(this)}
+                        />
+                      </PopOver> : null}
+                    </div>
+                  </ClubColorPicker>
+
+                  <ClubColorPicker>
+
+                    <h3 style={{
+                      textAlign: 'center',
+                      height: 100,
+                      margin: 0,
+                      lineHeight: '100px',
+                    }}
+                    >{strings.event_versus}</h3>
+                    <div>
+                      <Swatch onClick={() => {
+                        const that = this;
+                        that.setState({
+                          event: update(that.state.event, {
+                            free_folk_color: {
+                              displayColorPicker: { $set: !that.state.event.free_folk_color.displayColorPicker || false },
+                            },
+                          }),
+                        });
+                      }}
+                      >
+                        <ColorPreviewBox color={this.state.event.free_folk_color.value} />
+                      </Swatch>
+
+                      {this.state.event.free_folk_color.displayColorPicker ? <PopOver>
+                        <Cover onClick={() => {
+                          const that = this;
+                          that.setState({
+                            event: update(that.state.event, {
+                              free_folk_color: {
+                                displayColorPicker: { $set: false },
+                              },
+                            }),
+                          });
+                        }}
+                        />
+                        <SketchPicker
+                          color={this.state.event.free_folk_color.value}
+                          onChangeComplete={this.onDragFreeFolkColor.bind(this)}
+                        />
+                      </PopOver> : null}
+                    </div>
+                  </ClubColorPicker>
+
+                  <ClubColorPicker>
+                    <img
+                      src={Clubs[this.state.event.match.away.club_id] && Clubs[this.state.event.match.away.club_id].icon}
+                      role="presentation"
+                      width={100}
+                      height={100}
+                    />
+                    <div>
+                      <Swatch onClick={() => {
+                        const that = this;
+                        that.setState({
+                          event: update(that.state.event, {
+                            away_color: {
+                              displayColorPicker: { $set: !that.state.event.away_color.displayColorPicker || false },
+                            },
+                          }),
+                        });
+                      }}
+                      >
+                        <ColorPreviewBox color={this.state.event.away_color.value} />
+                      </Swatch>
+
+                      {this.state.event.away_color.displayColorPicker ? <PopOver>
+                        <Cover onClick={() => {
+                          const that = this;
+                          that.setState({
+                            event: update(that.state.event, {
+                              away_color: {
+                                displayColorPicker: { $set: false },
+                              },
+                            }),
+                          });
+                        }}
+                        />
+                        <SketchPicker
+                          color={this.state.event.away_color.value}
+                          onChangeComplete={this.onDragAwayColor.bind(this)}
+                        />
+                      </PopOver> : null}
+                    </div>
+                  </ClubColorPicker>
+                </ClubImageContainer>
+
+              </div>}
+
+
+              {/* input seats */}
+              <AutoCompleteValidator
+                name="seats"
+                type="number"
+                hintText={strings.filter_seats}
+                floatingLabelText={strings.filter_seats}
+                searchText={this.state.event.seats.text}
+                value={this.state.event.seats.value}
+                dataSource={data.seatsArr}
+                onUpdateInput={(text) => {
+                  this.setState({
+                    event: update(this.state.event, {
+                      seats: { $set: { value: Number(text), text } },
+                    }),
+                  });
+                }}
+                onNewRequest={(o) => {
+                  this.setState({
+                    event: update(this.state.event, {
+                      seats: { $set: o },
+                    }),
+                  });
+                }}
+                // filter={(searchText, key) => (key.indexOf(searchText) !== -1)}
+                filter={AutoComplete.fuzzyFilter}
+                openOnFocus
+                errorText={this.state.event.seats.error}
+                validators={['required', 'minNumber:0']}
+                errorMessages={[strings.validate_is_required, util.format(strings.validate_minimum, 0)]}
+              />
+
+              {/* select price */}
+              <AutoCompleteValidator
+                name="price"
+                hintText={strings.filter_price}
+                floatingLabelText={strings.filter_price}
+                searchText={this.state.event.price.text}
+                value={this.state.event.price.value}
+                dataSource={data.priceArr}
+                onUpdateInput={(text) => {
+                  this.setState({
+                    event: update(this.state.event, {
+                      price: { $set: { value: text, text } },
+                    }),
+                  });
+                }}
+                onNewRequest={(o) => {
+                  this.setState({
+                    event: update(this.state.event, {
+                      price: { $set: o },
+                    }),
+                  });
+                }}
+                filter={(searchText, key) => (key.indexOf(searchText) !== -1)}
+                openOnFocus
+                errorText={this.state.event.price.error}
+                validators={['required']}
+                errorMessages={['this field is required']}
+              />
+
+              {/* select discount */}
+              <AutoCompleteValidator
+                name="discount"
+                hintText={strings.filter_discount}
+                floatingLabelText={strings.filter_discount}
+                searchText={this.state.event.discount.text}
+                value={this.state.event.discount.value}
+                dataSource={data.discountArr}
+                onUpdateInput={(text) => {
+                  this.setState({
+                    event: update(this.state.event, {
+                      discount: { $set: { value: text, text } },
+                    }),
+                  });
+                }}
+                onNewRequest={(o) => {
+                  this.setState({
+                    event: update(this.state.event, {
+                      discount: { $set: o },
+                    }),
+                  });
+                }}
+                filter={(searchText, key) => (key.indexOf(searchText) !== -1)}
+                openOnFocus
+                errorText={this.state.event.discount.error}
+                validators={[]}
+                errorMessages={[]}
+              />
+
+              {/* select start_time_register */}
+              <DateTimePicker
+                format="HH:mm, MM/DD/YYYY"
+                hintText={strings.filter_date_start_register}
+                floatingLabelText={strings.filter_date_start_register}
+                onChange={(dateTime) => {
+                  this.setState({
+                    event: update(this.state.event, {
+                      start_time_register: {
+                        $set: {
+                          text: dateTime || '',
+                          value: dateTime ? dateTime.getTime() / 1000 : null,
+                        },
+                      },
+                    }),
+                  });
+                }}
+                DatePicker={DatePickerDialog}
+                TimePicker={TimePickerDialog}
+                value={this.state.event.start_time_register.text}
+              />
+              {/* select end_time_register */}
+              <DateTimePicker
+                format="HH:mm, MM/DD/YYYY"
+                hintText={strings.filter_date_end_register}
+                floatingLabelText={strings.filter_date_end_register}
+                onChange={dateTime => this.setState({
+                  event: update(this.state.event, {
+                    end_time_register: {
+                      $set: {
+                        text: dateTime || '',
+                        value: dateTime ? dateTime.getTime() / 1000 : null,
+                      },
+                    },
+                  }),
+                })}
+                DatePicker={DatePickerDialog}
+                TimePicker={TimePickerDialog}
+                value={this.state.event.end_time_register.text}
+              />
+              {/* select start_time_check_in */}
+              <DateTimePicker
+                format="HH:mm, MM/DD/YYYY"
+                hintText={strings.filter_date_start_check_in}
+                floatingLabelText={strings.filter_date_start_check_in}
+                onChange={dateTime => this.setState({
+                  event: update(this.state.event, {
+                    start_time_checkin: {
+                      $set: {
+                        text: dateTime || '',
+                        value: dateTime ? dateTime.getTime() / 1000 : null,
+                      },
+                    },
+                  }),
+                })}
+                DatePicker={DatePickerDialog}
+                TimePicker={TimePickerDialog}
+                value={this.state.event.start_time_checkin.text}
+              />
+              {/* select end_time_check_in */}
+              <DateTimePicker
+                format="HH:mm, MM/DD/YYYY"
+                hintText={strings.filter_date_end_check_in}
+                floatingLabelText={strings.filter_date_end_check_in}
+                onChange={dateTime => this.setState({
+                  event: update(this.state.event, {
+                    end_time_checkin: {
+                      $set: {
+                        text: dateTime || '',
+                        value: dateTime ? dateTime.getTime() / 1000 : null,
+                      },
+                    },
+                  }),
+                })}
+                DatePicker={DatePickerDialog}
+                TimePicker={TimePickerDialog}
+                value={this.state.event.end_time_checkin.text}
+              />
+              {/* input notes */}
+              <TextField
+                type="text"
+                hintText={strings.tooltip_note}
+                floatingLabelText={strings.tooltip_note}
+                multiLine
+                rows={1}
+                rowsMax={4}
+                onChange={(event, notes) => this.setState({
+                  event: update(this.state.event, {
+                    notes: { $set: { text: notes, value: notes } },
+                  }),
+                })}
+                fullWidth
+                errorText={this.state.event.notes.error}
+              />
+            </div>
+            <RaisedButton
+              type="submit"
+              label={strings.form_create_event}
+            />
+          </FormContainer>
+
+          <Dialog
+            title={strings.form_create_events_dialog_desc}
+            actions={<FlatButton
+              label="Ok"
+              primary
+              keyboardFocused
+              onClick={() => {
+                this.closeDialog();
+                // this.props.history.push('/events');
+                this.props.toggleShowForm(false);
+              }}
+            />}
+            modal={false}
+            open={this.state.submitResults.show}
+            onRequestClose={this.closeDialog}
+          >
+            <List>
+              {this.state.submitResults.data.map(r => (<ListItem
+                primaryText={r.hotspot_name}
+                leftIcon={r.error ?
+                  <IconFail color={constants.colorRed} title={strings.form_create_event_fail} />
+                  : <IconSuccess
+                    color={constants.colorSuccess}
+                    title={strings.form_create_event_success}
+                  />}
+                secondaryText={r.error && r.error}
+                secondaryTextLines={1}
+              />))}
+            </List>
+          </Dialog>
+        </ValidatorForm>
+      );
+    }
+}
+
+const mapStateToProps = state => ({
+  currentQueryString: window.location.search,
+  showForm: state.app.formCreateEvent.show,
+});
+
+const mapDispatchToProps = dispatch => ({
+  defaultCreateEvent: params => dispatch(defaultCreateEvent(params)),
+  toggleShowForm: state => dispatch(toggleShowForm('createEvent', state)),
+});
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CreateEventForm));
