@@ -44,15 +44,15 @@ const Pagination = ({
   <div className={place === 'top' ? styles.containerTop : styles.container}>
     <div className={place === 'top' ? styles.paginationTop : styles.pagination}>
       {currentPage > 0 &&
-        <FlatButton className={styles.page} onClick={() => setCurrentPage(0)}>
-          {strings.pagination_first}
-        </FlatButton>
+      <FlatButton className={styles.page} onClick={() => setCurrentPage(0)}>
+        {strings.pagination_first}
+      </FlatButton>
       }
       <div className={styles.pages}>
         {currentPage > 0 &&
-          <FlatButton className={styles.arrow} onClick={currentPage > 0 ? prevPage : () => {}}>
-            <Prev className={styles.arrow} />
-          </FlatButton>
+        <FlatButton className={styles.arrow} onClick={currentPage > 0 ? prevPage : () => {}}>
+          <Prev className={styles.arrow} />
+        </FlatButton>
         }
         {currentPage > 2 && numPages > 2 &&
           <FlatButton disabled className={styles.currentPage}>
@@ -66,23 +66,23 @@ const Pagination = ({
           </FlatButton>
         }
         {currentPage < numPages - 1 &&
-          <FlatButton className={styles.arrow} onClick={currentPage < (numPages - 1) ? nextPage : () => {}}>
-            <Next className={styles.arrow} />
-          </FlatButton>
+        <FlatButton className={styles.arrow} onClick={currentPage < (numPages - 1) ? nextPage : () => {}}>
+          <Next className={styles.arrow} />
+        </FlatButton>
         }
       </div>
       {currentPage < numPages - 1 &&
-        <FlatButton className={styles.page} onClick={() => setCurrentPage(numPages - 1)}>
-          {strings.pagination_last}
-        </FlatButton>
+      <FlatButton className={styles.page} onClick={() => setCurrentPage(numPages - 1)}>
+        {strings.pagination_last}
+      </FlatButton>
       }
     </div>
     {place === 'bot' &&
-      <div className={styles.info}>
-        {((pageLength * currentPage) + 1).toLocaleString('en-US')}
-        {' - '}
-        {Math.min((pageLength * currentPage) + pageLength, length).toLocaleString('en-US')} {strings.pagination_of} {length.toLocaleString('en-US')}
-      </div>
+    <div className={styles.info}>
+      {((pageLength * currentPage) + 1).toLocaleString('en-US')}
+      {' - '}
+      {Math.min((pageLength * currentPage) + pageLength, length).toLocaleString('en-US')} {strings.pagination_of} {length.toLocaleString('en-US')}
+    </div>
     }
   </div>
 );

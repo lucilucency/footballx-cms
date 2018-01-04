@@ -18,7 +18,7 @@ const tooltipContainer = thing => (
         {thing.cost}
       </span>}
       {thing.lore &&
-      <span className={styles.lore}>{thing.lore}</span>}
+        <span className={styles.lore}>{thing.lore}</span>}
       {thing.desc &&
       <span className={styles.lore}>{thing.desc}</span>}
     </div>
@@ -74,18 +74,18 @@ export default (inflictor, value, type, ptooltip) => {
       <div className={styles.inflictorWithValue} data-tip={tooltip && true} data-for={ttId}>
         {!type && <img src={image} alt="" />}
         {type === 'buff' &&
-          <div
-            className={styles.buff}
-            style={{
-              backgroundImage: `url(${image})`,
-            }}
-          />
+        <div
+          className={styles.buff}
+          style={{
+            backgroundImage: `url(${image})`,
+          }}
+        />
         }
         {!type && <div className={styles.overlay}>{value}</div>}
         {type === 'buff' &&
-          <div className={styles.buffOverlay}>
-            {value > 0 && value}
-          </div>
+        <div className={styles.buffOverlay}>
+          {value > 0 && value}
+        </div>
         }
         {tooltip &&
         <div className={styles.tooltip}>

@@ -1,21 +1,20 @@
 # footballx-ui
 
-OpenDota UI: A web interface for viewing FootballX data. This utilizes the [FootballX API](https://code.ttab.me:51167).
+FootballX UI: A web interface for viewing FootballX data. This utilizes the [FootballX API](https://web-api.ttab.me).
 
-Quickstart
+Requirement:
 ----
-* Install Node.js (6.0.0 or greater) (on Ubuntu, `curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash - && sudo apt-get install -y nodejs`)
+* Node.js (6.0.0 or greater)
 * `npm install`
 * `npm start`
-* Visit port 8080 on your development machine.
-* Make some changes
-* `npm run lint` to check your code for linting errors
-* Submit a pull request. Wait for review and merge.
-* Congratulations! You're a contributor.
+* Visit port 1210 on your development machine.
+* `npm run lint` to check code for linting errors
+
 
 Tech Stack
 ----
 * View: React
 * State Management: Redux
-* CSS: css-modules/postcss
+* CSS: styled-components
+* eslint
 

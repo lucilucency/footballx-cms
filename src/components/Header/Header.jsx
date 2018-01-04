@@ -92,7 +92,7 @@ const LogoGroup = (props) => {
   return (
     <ToolbarGroup className={styles.verticalAlign} key={'logoGroup'}>
       {!small &&
-        <BurgerMenu menuItems={burgerItems(auth.user, auth.hotspot)} />}
+      <BurgerMenu menuItems={burgerItems(auth.user, auth.hotspot)} />}
       <AppLogo style={{ marginRight: 18 }} />
     </ToolbarGroup>
   );

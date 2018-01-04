@@ -24,29 +24,29 @@ const TableXUserImage = ({
     </div>
     }
     {image &&
-    <div className={styles.imageContainer}>
-      <img
-        src={image}
-        className={styles.image}
-        alt=""
-      />
-      {leaverStatus !== undefined && leaverStatus > 1 &&
-      <span
-        className={styles.abandoned}
-        data-hint={strings[`leaver_status_${leaverStatus}`]}
-        data-hint-position="top"
-      >
+      <div className={styles.imageContainer}>
         <img
-          src="/assets/images/dota2/disconnect_icon.png"
+          src={image}
+          className={styles.image}
           alt=""
         />
-      </span>}
-      {hotspotSlot !== undefined &&
-      <div
-        className={styles.hotspotSlot}
-        style={{ backgroundColor: playerColors[hotspotSlot] }}
-      />}
-    </div>
+        {leaverStatus !== undefined && leaverStatus > 1 &&
+          <span
+            className={styles.abandoned}
+            data-hint={strings[`leaver_status_${leaverStatus}`]}
+            data-hint-position="top"
+          >
+            <img
+              src="/assets/images/dota2/disconnect_icon.png"
+              alt=""
+            />
+          </span>}
+        {hotspotSlot !== undefined &&
+          <div
+            className={styles.hotspotSlot}
+            style={{ backgroundColor: playerColors[hotspotSlot] }}
+          />}
+      </div>
     }
 
     <div className={styles.textContainer} style={{ marginLeft: !image && 59 }}>
@@ -59,13 +59,13 @@ const TableXUserImage = ({
           />
         }
         {confirmed &&
-        <div
-          className={styles.confirmed}
-          data-hint={`${strings.app_confirmed_as} ${title}`}
-          data-hint-position="top"
-        >
-          <CheckCircle className={styles.golden} />
-        </div>
+          <div
+            className={styles.confirmed}
+            data-hint={`${strings.app_confirmed_as} ${title}`}
+            data-hint-position="top"
+          >
+            <CheckCircle className={styles.golden} />
+          </div>
         }
         {accountId ?
           <TableLink to={`/players/${accountId}`}>
@@ -74,9 +74,9 @@ const TableXUserImage = ({
           : title}
       </span>
       {subtitle &&
-      <span className={styles.subText}>
-        {subtitle}
-      </span>
+        <span className={styles.subText}>
+          {subtitle}
+        </span>
       }
     </div>
   </div>

@@ -17,27 +17,27 @@ const TableClubVsClubImage = ({
       {party}
     </div>}
     {image &&
-    <div className={styles.imageContainer}>
-      <img
-        src={image}
-        className={styles.image}
-        title={subtitle}
-        alt=""
-      />
+      <div className={styles.imageContainer}>
+        <img
+          src={image}
+          className={styles.image}
+          title={subtitle}
+          alt=""
+        />
 
-      {hotspotSlot !== undefined &&
-      <div
-        className={styles.hotspotSlot}
-        style={{ backgroundColor: playerColors[hotspotSlot] }}
-      />
-      }
-    </div>}
+        {hotspotSlot !== undefined &&
+          <div
+            className={styles.hotspotSlot}
+            style={{ backgroundColor: playerColors[hotspotSlot] }}
+          />
+        }
+      </div>}
     {displayText && <div className={styles.textContainerCompact} style={{ marginLeft: !image && 59 }}>
       <span>{title}</span>
       {subtitle &&
-        <span className={styles.subText}>
-          {subtitle}
-        </span>
+      <span className={styles.subText}>
+        {subtitle}
+      </span>
       }
     </div>}
   </div>

@@ -15,16 +15,16 @@ const Cheese = ({ donations = {}, error, loading }) => {
       {error && <Error />}
       {loading && <Spinner />}
       {!error && !loading &&
-      <div className={styles.progress} data-hint={`${cheese} / ${goal}`}>
-        <CircularProgress mode="determinate" value={Math.min(percent, 100)} size={90} className={styles.front} />
-        <CircularProgress mode="determinate" value={100} size={90} className={styles.back} />
-        <div className={styles.cheese}>
-          <IconCheese />
-          <p className={styles.percent}>
-            {`${percent.toFixed(0)}%`}
-          </p>
+        <div className={styles.progress} data-hint={`${cheese} / ${goal}`}>
+          <CircularProgress mode="determinate" value={Math.min(percent, 100)} size={90} className={styles.front} />
+          <CircularProgress mode="determinate" value={100} size={90} className={styles.back} />
+          <div className={styles.cheese}>
+            <IconCheese />
+            <p className={styles.percent}>
+              {`${percent.toFixed(0)}%`}
+            </p>
+          </div>
         </div>
-      </div>
       }
     </div>
   );

@@ -23,46 +23,46 @@ const TableClubImage = ({
       {party}
     </div>}
     {image &&
-    <div className={styles.imageContainer}>
-      <img
-        src={image}
-        alt=""
-        className={styles.image}
-      />
+      <div className={styles.imageContainer}>
+        <img
+          src={image}
+          alt=""
+          className={styles.image}
+        />
 
-      {hotspotSlot !== undefined &&
-      <div
-        className={styles.hotspotSlot}
-        style={{ backgroundColor: playerColors[hotspotSlot] }}
-      />
-      }
-    </div>}
+        {hotspotSlot !== undefined &&
+        <div
+          className={styles.hotspotSlot}
+          style={{ backgroundColor: playerColors[hotspotSlot] }}
+        />
+        }
+      </div>}
     {!hideText &&
-    <div className={styles.textContainer} style={{ marginLeft: !image && 59 }}>
-      <span>
-        {checkedIn && <div
-          className={styles.checkedIn}
-          data-hint={strings.tooltip_checkedIn_user}
-          data-hint-position="top"
-        />}
-        {confirmed && <div
-          className={styles.confirmed}
-          data-hint={`${strings.app_confirmed_as} ${title}`}
-          data-hint-position="top"
-        >
-          <CheckCircle className={styles.golden} />
-        </div>}
-        {accountId ? <TableLink to={`/players/${accountId}`}>
-          {title}
-        </TableLink>
-          : title}
-      </span>
-      {subtitle &&
-      <span className={styles.subText}>
-        {subtitle}
-      </span>
-      }
-    </div>
+      <div className={styles.textContainer} style={{ marginLeft: !image && 59 }}>
+        <span>
+          {checkedIn && <div
+            className={styles.checkedIn}
+            data-hint={strings.tooltip_checkedIn_user}
+            data-hint-position="top"
+          />}
+          {confirmed && <div
+            className={styles.confirmed}
+            data-hint={`${strings.app_confirmed_as} ${title}`}
+            data-hint-position="top"
+          >
+            <CheckCircle className={styles.golden} />
+          </div>}
+          {accountId ? <TableLink to={`/players/${accountId}`}>
+            {title}
+          </TableLink>
+            : title}
+        </span>
+        {subtitle &&
+        <span className={styles.subText}>
+          {subtitle}
+        </span>
+        }
+      </div>
     }
   </div>
 );
