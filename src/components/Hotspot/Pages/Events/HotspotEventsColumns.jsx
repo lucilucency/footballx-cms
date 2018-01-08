@@ -2,11 +2,11 @@ import React from 'react';
 import { transformations } from 'utility';
 import { fromNow, toDateString, toTimeString } from 'utility/time';
 import strings from 'lang';
-import subTextStyle from 'components/Visualizations/Table/subText.css';
+import { subTextStyle } from 'utility/style';
 import constants from 'components/constants';
 import { colors } from 'material-ui/styles';
 
-export const hotspotEventsColumns = (browser = {}) => [browser.greaterThan.medium && {
+const hotspotEventsColumns = (browser = {}) => [browser.greaterThan.medium && {
   displayName: strings.th_match_id,
   tooltip: strings.tooltip_match_id,
   field: 'match_id',
@@ -59,10 +59,12 @@ export const hotspotEventsColumns = (browser = {}) => [browser.greaterThan.mediu
         color = constants.colorMuted; break;
       case 3:
         color = constants.colorMutedLight; break;
+      default:
+        color = constants.colorMutedLight;
     }
     return (<div>
       <span style={{ color }}>{strings[`event_status_${field}`]}</span>
-      <span className={subTextStyle.subText} style={{ display: 'block', marginTop: 1 }}>
+      <span className={subTextStyle} style={{ display: 'block', marginTop: 1 }}>
         {fromNow(row.match_date)}
       </span>
     </div>);
@@ -80,7 +82,9 @@ export const hotspotEventsColumns = (browser = {}) => [browser.greaterThan.mediu
   tooltip: strings.tooltip_xuser,
   field: 'checkin_total',
   sortFn: true,
-  displayFn: (row, col, fields) => (<div>
+  displayFn: row => (<div>
     {row.checkin_total} / {row.checkin_total + row.register_total}
   </div>),
 }];
+
+export default hotspotEventsColumns;

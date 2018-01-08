@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import Chip from 'material-ui/Chip';
@@ -26,7 +27,7 @@ const ChipList = ({
 );
 
 ChipList.propTypes = {
-  chipList: PropTypes.array,
+  chipList: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
   deleteChip: PropTypes.func,
   name: PropTypes.string,
   history: PropTypes.shape({}),

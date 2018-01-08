@@ -1,11 +1,11 @@
 import React from 'react';
 import strings from 'lang';
 import AppLogo from '../App/AppLogo';
-import PageLinks from './PageLinks';
-import Cheese from './Cheese';
-import SocialLinks from './SocialLinks';
+// import PageLinks from './PageLinks';
+// import Cheese from './Cheese';
+// import SocialLinks from './SocialLinks';
 import styles from './Footer.css';
-import { IconFootballX } from '../Icons';
+// import { IconFootballX } from '../Icons';
 
 export default () => (
   <footer className={styles.footer}>

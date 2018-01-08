@@ -1,13 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  connect,
-} from 'react-redux';
-import {
-  CardTitle,
-} from 'material-ui/Card';
-import Error from 'components/Error';
-import Spinner from 'components/Spinner';
+import { CardTitle } from 'material-ui/Card';
 import strings from 'lang';
 import styled, { css } from 'styled-components';
 import constants from '../../constants';
@@ -81,17 +74,15 @@ export const GroupHeaderStats = ({
   </Container>
 );
 
-const { number, bool, shape, string } = PropTypes;
+const { number, bool } = PropTypes;
 
 GroupHeaderStats.propTypes = {
-  loading: bool,
-  error: bool,
+  // loading: bool,
+  // error: bool,
   compact: bool,
   events: number,
   registeredXUsers: number,
   checkedInXUsers: number,
 };
 
-const mapStateToProps = state => ({});
-
-export default connect(mapStateToProps)(GroupHeaderStats);
+export default GroupHeaderStats;

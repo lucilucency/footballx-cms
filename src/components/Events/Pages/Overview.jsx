@@ -8,18 +8,16 @@ import {
 import { getEvents } from 'actions';
 import { transformations } from 'utility';
 import { toDateString, toTimeString, fromNow } from 'utility/time';
-import queryString from 'query-string';
-import _ from 'lodash';
 /* components */
 import Table, { TableLink } from 'components/Table';
 import Container from 'components/Container/index';
-import EventsSummary from './EventsSummary';
 /* data */
 import strings from 'lang';
 /* css */
-import subTextStyle from 'components/Visualizations/Table/subText.css';
 import constants from 'components/constants';
 import { colors } from 'material-ui/styles';
+import { subTextStyle } from 'utility/style';
+import { EventsSummary } from './EventsSummary';
 
 const tableEventsColumns = browser => [browser.greaterThan.medium && {
   displayName: strings.th_event_id,
@@ -40,8 +38,8 @@ const tableEventsColumns = browser => [browser.greaterThan.medium && {
   sortFn: true,
   displayFn: (row, col, field) => (<div>
     <TableLink to={`/hotspot/${field}`}>{row.hotspot_name}</TableLink>
-    {browser.greaterThan.medium &&
-    <span className={subTextStyle.subText} style={{ display: 'block', marginTop: 1 }} title={row.hotspot_address}>
+    {browser.greaterThan.small &&
+    <span style={{ ...subTextStyle, maxWidth: browser.greaterThan.medium ? 300 : 150 }} title={row.hotspot_address}>
       {row.hotspot_address}
     </span>}
   </div>),
@@ -80,6 +78,8 @@ const tableEventsColumns = browser => [browser.greaterThan.medium && {
       case 3:
         color = constants.colorMutedLight;
         break;
+      default:
+        color = constants.colorMutedLight;
     }
     return (<div>
       <span style={{ color }}>{strings[`event_status_${field}`]}</span>
@@ -92,7 +92,7 @@ const tableEventsColumns = browser => [browser.greaterThan.medium && {
   displayName: strings.th_xusers,
   field: 'checkin_total',
   sortFn: true,
-  displayFn: (row, col, field) => (<div>
+  displayFn: row => (<div>
     <span className="subText ellipsis" style={{ display: 'block', marginTop: 1 }}>
       {row.checkin_total} / {row.checkin_total + row.register_total}
     </span>
@@ -100,12 +100,9 @@ const tableEventsColumns = browser => [browser.greaterThan.medium && {
 }];
 
 
-const TableEvents = ({
-  events,
-  browser,
-}) => (
+const TableEvents = propsVar => (
   <Container title={strings.heading_events_all}>
-    <Table paginated columns={tableEventsColumns(browser)} data={events} pageLength={30} />
+    <Table paginated columns={tableEventsColumns(propsVar.browser)} data={propsVar.events} pageLength={30} />
   </Container>
 );
 
@@ -113,15 +110,9 @@ const getData = (props) => {
   props.dispatchEvents(props.location.search);
 };
 
-class RequestLayer extends React.Component {
+class Overview extends React.Component {
   componentDidMount() {
     getData(this.props);
-  }
-
-  componentWillUpdate(nextProps) {
-    if (this.props.playerId !== nextProps.playerId || this.props.location.key !== nextProps.location.key) {
-      getData(nextProps);
-    }
   }
 
   render() {
@@ -134,14 +125,12 @@ class RequestLayer extends React.Component {
   }
 }
 
-RequestLayer.propTypes = {
+Overview.propTypes = {
   location: PropTypes.shape({
     key: PropTypes.string,
   }),
-};
-
-const defaultOptions = {
-  limit: null,
+  events: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+  browser: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
 
 const mapStateToProps = state => ({
@@ -149,7 +138,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  dispatchEvents: (options = defaultOptions) => dispatch(getEvents(options)),
+  dispatchEvents: options => dispatch(getEvents(options)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(RequestLayer);
+export default connect(mapStateToProps, mapDispatchToProps)(Overview);

@@ -1,18 +1,19 @@
-/* global API_HOST */
 import React from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import PropTypes from 'prop-types';
 /* actions & helpers */
 import { getGroups } from 'actions';
+/* css */
+import styled from 'styled-components';
 /* data & components */
 import strings from 'lang';
 import Table, { TableLink } from 'components/Table';
-import { RaisedButton } from 'material-ui';
 import Group from 'components/Group';
 import TabBar from 'components/TabBar';
+
+
 import CreateGroupForm from './Forms/CreateGroup';
-/* css */
-import styled from 'styled-components';
 
 const SubText = styled.span`
     font-size: 12px !important;
@@ -54,6 +55,16 @@ const getData = (props) => {
 };
 
 class RequestLayer extends React.Component {
+  static propTypes = {
+    user: PropTypes.shape({}),
+    history: PropTypes.shape({}),
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        info: PropTypes.string,
+      }),
+    }),
+  };
+
   componentDidMount() {
     getData(this.props);
   }
@@ -91,7 +102,7 @@ class RequestLayer extends React.Component {
     }, user.user_type === 1 && {
       name: strings.tab_groups_add,
       key: 'add',
-      content: props => (<div>
+      content: () => (<div>
         <CreateGroupForm />
       </div>),
       route: '/groups/add',

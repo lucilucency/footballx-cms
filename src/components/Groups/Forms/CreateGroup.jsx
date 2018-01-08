@@ -1,4 +1,3 @@
-/* global FX_API, FX_VERSION */
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -6,17 +5,13 @@ import update from 'react-addons-update';
 /* actions & helpers */
 import { toggleShowForm } from 'actions/formActions';
 import { createGroup } from 'actions';
-import { toDateTimeString } from 'utility/time';
 /* data */
 import strings from 'lang';
 /* components */
-import { AutoComplete, TextField, FlatButton, RaisedButton } from 'material-ui';
+import { TextField, RaisedButton } from 'material-ui';
 import Error from 'components/Error/index';
-import Spinner from 'components/Spinner/index';
-import MapWithSearchBox from '../../Visualizations/GoogleMap/MapWithSearchBox';
 /* css */
 import styles from './index.css';
-import {} from 'components/palette.css';
 
 export const FORM_NAME_CREATE_EVENT = 'createGroup';
 
@@ -34,7 +29,7 @@ class CreateGroupForm extends React.Component {
     //
   }
 
-  submitCreateGroup(e) {
+  submitCreateGroup() {
     const that = this;
     const newGroup = {
       name: that.state.group.name.value,
@@ -54,13 +49,8 @@ class CreateGroupForm extends React.Component {
   }
 
   render() {
-    const {
-      loading,
-    } = this.props;
-
     return (
       <div>
-        {loading && <Spinner />}
         {this.state.error && <Error text={this.state.error} />}
 
         <div className={styles.formGroup}>
@@ -83,9 +73,9 @@ class CreateGroupForm extends React.Component {
             type="text"
             hintText={strings.tooltip_group_short_name}
             floatingLabelText={strings.tooltip_group_short_name}
-            onChange={(event, short_name) => this.setState({
+            onChange={(event, shortName) => this.setState({
               group: update(this.state.group, {
-                short_name: { $set: { value: short_name } },
+                short_name: { $set: { value: shortName } },
               }),
             })}
             fullWidth

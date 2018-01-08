@@ -12,12 +12,12 @@ const pages = [{
   name: strings.tab_log,
   key: 'log',
   parsed: true,
-  content: event => (<div>
+  content: () => (<div>
     <Heading title={strings.heading_log} />
   </div>),
 }];
 
-export default (eventId, props, loading) => pages.map(page => ({
+export default eventId => pages.map(page => ({
   ...page,
   route: `/events/${eventId}/${page.key.toLowerCase()}`,
   disabled: false,

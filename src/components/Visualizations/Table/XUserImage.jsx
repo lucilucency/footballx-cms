@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import strings from 'lang';
 import { TableLink } from 'components/Table';
-import playerColors from 'dotaconstants/build/player_colors.json';
 import CheckCircle from 'material-ui/svg-icons/action/check-circle';
 import styles from './XUserImage.css';
 
@@ -44,7 +43,6 @@ const TableXUserImage = ({
         {hotspotSlot !== undefined &&
           <div
             className={styles.hotspotSlot}
-            style={{ backgroundColor: playerColors[hotspotSlot] }}
           />}
       </div>
     }

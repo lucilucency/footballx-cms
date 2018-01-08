@@ -14,12 +14,10 @@ export const AsyncContainer = ({ loading, error, children }) => {
   return children;
 };
 
-const { bool, node, string, object, oneOfType } = PropTypes;
-
 AsyncContainer.propTypes = {
-  loading: bool,
-  error: bool,
-  children: node,
+  loading: PropTypes.bool,
+  error: PropTypes.bool,
+  children: PropTypes.node,
 };
 
 const Container = ({ title, subtitle, style, className, children, error, loading, hide, titleTo }) => (!hide ? (
@@ -32,13 +30,15 @@ const Container = ({ title, subtitle, style, className, children, error, loading
 ) : null);
 
 Container.propTypes = {
-  title: string,
-  subtitle: string,
-  style: object,
-  className: string,
-  loading: bool,
-  error: oneOfType([bool, string]),
-  children: node,
+  title: PropTypes.string,
+  subtitle: PropTypes.string,
+  style: PropTypes.shape({}),
+  className: PropTypes.string,
+  loading: PropTypes.bool,
+  error: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
+  children: PropTypes.node,
+  hide: PropTypes.bool,
+  titleTo: PropTypes.string,
 };
 
 export default Container;

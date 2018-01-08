@@ -1,9 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import Spinner from 'components/Spinner/index';
 import { Link } from 'react-router-dom';
 import Container from 'components/Container/index';
+// import PropTypes from 'prop-types';
 /* data & helpers */
 import strings from 'lang';
 import { sum, abbreviateNumber } from 'utility';
@@ -55,9 +53,8 @@ const SummaryContainer = styled(Container)`
   }
 `;
 
-export const EventsSummary = ({
-  events = [],
-}) => {
+export const EventsSummary = (propsVar) => {
+  const { events } = propsVar;
   const data = {
     checkin_total: [],
     register_total: [],
@@ -85,7 +82,7 @@ export const EventsSummary = ({
   });
 
 
-  dataKeys.map((key) => {
+  dataKeys.forEach((key) => {
     const total = data[key].reduce(sum, 0);
     const avg = total / events.length;
     const max = Math.max(...data[key]);
@@ -157,7 +154,8 @@ export const EventsSummary = ({
   </SummaryContainer>);
 };
 
+EventsSummary.propTypes = {
+  // events: PropTypes.oneOfType([PropTypes.shape({}), PropTypes.shape([])]),
+};
 
-const mapStateToProps = state => ({});
-
-export default connect(mapStateToProps)(EventsSummary);
+export default EventsSummary;

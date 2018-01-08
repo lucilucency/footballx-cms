@@ -8,20 +8,27 @@ import {
 import Table from 'components/Table/index';
 import Container from 'components/Container/index';
 import strings from 'lang';
-import { groupEventsColumns } from './GroupEventsColumns';
+import groupEventsColumns from './GroupEventsColumns';
 
-const Events = ({
-  data,
-  error = false,
-  loading = false,
-  browser,
-}) => (
-  <Container title={strings.title_events_all} error={false} loading={loading}>
-    <Table paginated columns={groupEventsColumns(browser)} data={data} error={false} loading={loading} />
-  </Container>
-);
+const Events = (propsVar) => {
+  const {
+    data,
+    // error = false,
+    loading = false,
+    browser,
+  } = propsVar;
+  return (
+    <Container title={strings.title_events_all} error={false} loading={loading}>
+      <Table paginated columns={groupEventsColumns(browser)} data={data} error={false} loading={loading} />
+    </Container>
+  );
+};
 
 class RequestLayer extends React.Component {
+  componentDidMount() {
+
+  }
+
   render() {
     return <Events {...this.props} />;
   }
@@ -34,8 +41,8 @@ const mapStateToProps = state => ({
   browser: state.browser,
 });
 
-const mapDispatchToProps = dispatch => ({
+// const mapDispatchToProps = dispatch => ({
   // getGroupEvents: (groupId, params) => dispatch(getGroupEvents(groupId, params)),
-});
+// });
 
-export default connect(mapStateToProps, mapDispatchToProps)(RequestLayer);
+export default connect(mapStateToProps, null)(RequestLayer);

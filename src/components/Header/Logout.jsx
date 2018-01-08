@@ -1,6 +1,6 @@
+/* eslint-disable class-methods-use-this */
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import { FlatButton } from 'material-ui';
 import LogOutIcon from 'material-ui/svg-icons/action/power-settings-new';
 
 import strings from 'lang';
@@ -29,11 +29,10 @@ class Logout extends React.Component {
   constructor() {
     super();
     this.state = {};
-    this.handleClickLogout = this.handleClickLogout.bind(this);
+    // this.handleClickLogout = this.handleClickLogout.bind(this);
   }
 
   handleClickLogout(event) {
-    const that = this;
     event.preventDefault();
     localStorage.removeItem('access_token');
     localStorage.removeItem('account_user');

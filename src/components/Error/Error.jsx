@@ -4,9 +4,13 @@ import Clear from 'material-ui/svg-icons/content/clear';
 import constants from 'components/constants';
 import { IconButton } from 'material-ui';
 import strings from 'lang';
-
+import PropTypes from 'prop-types';
 
 class Error extends React.Component {
+  static propTypes = {
+    text: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+    closeButton: PropTypes.bool,
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -14,7 +18,7 @@ class Error extends React.Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps() {
     this.setState({
       show: false,
     });

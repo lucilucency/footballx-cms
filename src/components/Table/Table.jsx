@@ -102,12 +102,11 @@ class Table extends React.Component {
     const { loading, error, selectable = false, summable, maxRows, pageLength = 20, paginated } = this.props;
     let {
       columns,
+      data = [],
     } = this.props;
     columns = columns.filter(o => !isEmpty(o));
-
     const { sortState, sortField, sortFn, currentPage } = this.state;
-    const dataLength = this.props.data.length;
-    let data = this.props.data;
+    const dataLength = data.length;
     if (maxRows && maxRows <= dataLength) {
       data = data.slice(0, maxRows);
     }

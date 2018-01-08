@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import strings from 'lang';
 import Buttons from './Buttons';
-import Why from './Why';
+// import Why from './Why';
 import Sponsors from './Sponsors';
 import { HeadContainerDiv, HeadlineDiv, DescriptionDiv, BottomTextDiv } from './Styled';
 

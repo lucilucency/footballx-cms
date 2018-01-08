@@ -1,13 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import FlatButton from 'material-ui/FlatButton';
 import ActionUpdate from 'material-ui/svg-icons/action/update';
 import ShowFormToggle from 'components/Form/ShowFormToggle';
-
 /* data */
 import { toggleShowForm } from 'actions';
 import strings from 'lang';
-import { FORM_NAME_FILTER } from '../Forms/FilterForm';
 /* css */
 import styled from 'styled-components';
 
@@ -43,6 +42,10 @@ const HeaderButtons = styled.div`
 
 
 class HotspotHeaderButtons extends React.Component {
+  static propTypes = {
+    showFormFilter: PropTypes.bool,
+    toggleShowFormFilter: PropTypes.func,
+  };
   componentWillMount() {
     this.setState({
       disableRefresh: false,
@@ -81,7 +84,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  toggleShowFormFilter: () => dispatch(toggleShowForm(FORM_NAME_FILTER)),
+  toggleShowFormFilter: () => dispatch(toggleShowForm('filter')),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(HotspotHeaderButtons);

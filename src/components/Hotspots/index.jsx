@@ -1,18 +1,18 @@
-/* global API_HOST */
 import React from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import PropTypes from 'prop-types';
 /* actions & helpers */
 import { getHotspots } from 'actions';
 /* data & components */
 import strings from 'lang';
 import Table, { TableLink } from 'components/Table';
-import { RaisedButton } from 'material-ui';
 import Hotspot from 'components/Hotspot';
 import TabBar from 'components/TabBar';
-import CreateHotspotForm from './Forms/CreateHotspot';
 /* css */
-import subTextStyle from 'components/Visualizations/Table/subText.css';
+import { subTextStyle } from 'utility/style';
+
+import CreateHotspotForm from './Forms/CreateHotspot';
 
 const hotspotsTableTh = [{
   displayName: strings.th_hotspot,
@@ -76,7 +76,7 @@ class RequestLayer extends React.Component {
     }, user.user_type === 1 && {
       name: strings.tab_hotspots_add,
       key: 'add',
-      content: props => (<div>
+      content: () => (<div>
         <CreateHotspotForm />
       </div>),
       route: '/hotspots/add',
@@ -96,6 +96,18 @@ class RequestLayer extends React.Component {
     </div>);
   }
 }
+
+RequestLayer.propTypes = {
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      info: PropTypes.string,
+    }),
+  }),
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }),
+  user: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+};
 
 const mapStateToProps = state => ({
   hotspots: state.app.hotspots.data.sort((a, b) => b.id - a.id),

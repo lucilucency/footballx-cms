@@ -1,11 +1,12 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import AutoComplete from 'material-ui/AutoComplete';
 import strings from 'lang';
 import queryString from 'querystring';
 import update from 'react-addons-update';
-import ChipList from './ChipList';
 import constants from 'components/constants';
+import ChipList from './ChipList';
 
 const { colorRed, colorBlue } = constants;
 
@@ -39,12 +40,12 @@ const deleteChipDefault = (name, index, history) => {
   }
 };
 
-const _blankFn = () => {};
+const blankFn = () => {};
 
 class FormField extends React.Component {
     static propTypes = {
       name: PropTypes.string,
-      dataSource: PropTypes.array,
+      dataSource: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
       strict: PropTypes.bool,
       limit: PropTypes.number,
       formSelectionState: PropTypes.shape({}),
@@ -59,7 +60,7 @@ class FormField extends React.Component {
     };
 
     static defaultProps = {
-      onChange: _blankFn,
+      onChange: blankFn,
     };
 
     constructor(props) {

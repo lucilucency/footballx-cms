@@ -6,20 +6,19 @@ import PropTypes from 'prop-types';
 /* actions & helpers */
 import { toggleShowForm } from 'actions/formActions';
 import { createHotspotHUser } from 'actions';
-import { toDateTimeString } from 'utility/time';
 import util from 'util';
 /* data */
 import strings from 'lang';
 /* components */
-import { AutoComplete, TextField, FlatButton, RaisedButton } from 'material-ui';
+import { TextField, RaisedButton } from 'material-ui';
 import Error from 'components/Error/index';
-import Spinner from 'components/Spinner/index';
 import { ValidatorForm } from 'react-form-validator-core';
-import { TextValidator, SelectValidator, AutoCompleteValidator } from 'react-material-ui-form-validator';
+import { TextValidator } from 'react-material-ui-form-validator';
 
 class CreateHotspotForm extends React.Component {
     static propTypes = {
-      hotspotId: PropTypes.number,
+      hotspotId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      postHotspotHUser: PropTypes.func,
     };
 
     constructor() {
@@ -36,22 +35,21 @@ class CreateHotspotForm extends React.Component {
       //
     }
 
-    submitCreateHUser(e) {
-      const that = this;
+    submitCreateHUser() {
       const newHUser = {
-        username: that.state.huser.username.value,
-        password: that.state.huser.password.value,
-        fullname: that.state.huser.fullname.value,
-        phone: that.state.huser.phone && that.state.huser.phone.value,
-        email: that.state.huser.email && that.state.huser.email.value,
-        hotspot_ids: JSON.stringify([that.props.hotspotId]),
+        username: this.state.huser.username.value,
+        password: this.state.huser.password.value,
+        fullname: this.state.huser.fullname.value,
+        phone: this.state.huser.phone && this.state.huser.phone.value,
+        email: this.state.huser.email && this.state.huser.email.value,
+        hotspot_ids: JSON.stringify([this.props.hotspotId]),
       };
 
       const payload = {
         username: newHUser.username,
       };
 
-      that.props.postHotspotHUser(newHUser, payload).then((dispatch) => {
+      this.props.postHotspotHUser(newHUser, payload).then((dispatch) => {
         if (dispatch.type.indexOf('OK') === 0) {
           console.log('success');
         } else {
@@ -61,13 +59,12 @@ class CreateHotspotForm extends React.Component {
     }
 
     handleBlur(event) {
-      this.refs[event.target.name].validate(event.target.value);
+      this[event.target.name].validate(event.target.value);
     }
 
     render() {
       return (
         <ValidatorForm
-          ref="form"
           onSubmit={this.submitCreateHUser}
           onError={errors => console.log(errors)}
         >
@@ -80,7 +77,6 @@ class CreateHotspotForm extends React.Component {
             />
             <TextValidator
               name="huser_username"
-              ref="huser_username"
               type="text"
               hintText={strings.tooltip_username}
               floatingLabelText={strings.tooltip_username}
@@ -97,7 +93,6 @@ class CreateHotspotForm extends React.Component {
             />
 
             <TextValidator
-              ref="huser_password"
               name="huser_password"
               type="password"
               hintText={strings.tooltip_password}
@@ -115,7 +110,6 @@ class CreateHotspotForm extends React.Component {
             />
 
             <TextValidator
-              ref="huser_fullname"
               name="huser_fullname"
               type="text"
               hintText={strings.tooltip_full_name}
@@ -150,7 +144,6 @@ class CreateHotspotForm extends React.Component {
 
             <TextValidator
               name="email"
-              ref="email"
               hintText={strings.tooltip_email}
               floatingLabelText={strings.tooltip_email}
               onBlur={this.handleBlur}
@@ -172,13 +165,13 @@ class CreateHotspotForm extends React.Component {
     }
 }
 
-const mapStateToProps = state => ({
-  currentQueryString: window.location.search,
-});
+// const mapStateToProps = state => ({
+//   currentQueryString: window.location.search,
+// });
 
 const mapDispatchToProps = dispatch => ({
   toggleShowForm: () => dispatch(toggleShowForm('createHotspotHUser')),
   postHotspotHUser: (params, payload) => dispatch(createHotspotHUser(params, payload)),
 });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CreateHotspotForm));
+export default withRouter(connect({}, mapDispatchToProps)(CreateHotspotForm));

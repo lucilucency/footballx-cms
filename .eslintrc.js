@@ -20,10 +20,11 @@ module.exports = {
         "no-mixed-operators": ["error", {
             "allowSamePrecedence": true
         }],
-        "space-after-keywords": ["error", "never"],
-        // "indent": ["error", 4],
+        // "space-after-keywords": ["error", "never"],
+        "indent": [2, 2, {"SwitchCase": 1}],
         "radix": 0,
-        "indent": 0,
+        // "indent": 0,
+        "no-unused-expressions": ["error", { "allowShortCircuit": true }],
         "no-shadow": 1,
         "import/named": ["error"],
         "jsx-a11y/anchor-is-valid": ["warn", {

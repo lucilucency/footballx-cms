@@ -7,7 +7,8 @@ import UserIcon from 'material-ui/svg-icons/action/verified-user';
 import Spinner from 'components/Spinner';
 import constants from 'components/constants';
 
-const LoggedIn = ({ user }) => {
+const LoggedIn = (propsVar) => {
+  const { user } = propsVar;
   if (!user.id) {
     return <Spinner color="#fff" size={0.5} />;
   }

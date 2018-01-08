@@ -1,26 +1,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 /* components */
 import Container from 'components/Container';
 import { IconFacebook } from 'components/Icons';
-import Table, { TableLink } from 'components/Table';
+import Table from 'components/Table';
 import { List, ListItem } from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import IconPlace from 'material-ui/svg-icons/maps/place';
 import IconPhone from 'material-ui/svg-icons/communication/phone';
-import { indigo500 } from 'material-ui/styles/colors';
 import IconWifi from 'material-ui/svg-icons/notification/wifi';
 /* actions & helpers */
-import { getEventXUsers } from 'actions';
-import { transformations, getOrdinal } from 'utility';
+import { getOrdinal, transformations } from 'utility';
 import { toDateTimeString } from 'utility/time';
 import strings from 'lang';
 /* css */
-import { css } from 'styled-components';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import constants from 'components/constants';
-
-const MAX_XUSERS_ROWS = 100;
 
 const eventXUsersColumns = (user, event) => [{
   displayName: strings.th_no,
@@ -58,6 +54,8 @@ const eventXUsersColumns = (user, event) => [{
             `}
             
         `;
+    Status.propTypes = { status: PropTypes.string };
+
     return (<div>
       <Status status={row.event_status}>{row.event_status}</Status>
       <span style={{ display: 'block', color: constants.colorMutedLight }}>{toDateTimeString(new Date(row.event_updated_at))}</span>
@@ -90,17 +88,15 @@ const HotspotContainer = styled.div`
 `;
 
 class AllEvents extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+  static propTypes = {
+    event: PropTypes.shape({}),
+    eventXUsers: PropTypes.shape([]),
+    user: PropTypes.shape({}),
+  };
 
   componentDidMount() {
     // const eventId = this.props.props.match.params.eventId;
     // this.props.getEventXUsers(eventId);
-  }
-
-  componentWillUpdate(nextProps) {
-
   }
 
   render() {
@@ -178,9 +174,9 @@ class AllEvents extends React.Component {
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-  // getEventXUsers: (eventId) => dispatch(getEventXUsers(eventId)),
-});
+// const mapDispatchToProps = dispatch => ({
+// getEventXUsers: (eventId) => dispatch(getEventXUsers(eventId)),
+// });
 
 const mapStateToProps = state => ({
   user: state.app.metadata.data.user,
@@ -188,5 +184,5 @@ const mapStateToProps = state => ({
   eventXUsers: state.app.eventXUsers,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(AllEvents);
+export default connect(mapStateToProps, null)(AllEvents);
 

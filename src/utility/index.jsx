@@ -169,14 +169,14 @@ export const transformations = {
           <TableClubVsClubImage
             image={Clubs[row.home] && Clubs[row.home].icon}
             title={<span>{Clubs[row.home] && Clubs[row.home].name}</span>}
-            subtitle={Clubs[row.home] && Clubs[row.home].name}
+            // subtitle={Clubs[row.home] && Clubs[row.home].name}
             clubName={Clubs[row.home] && Clubs[row.home].name}
           />
           <span style={{ marginTop: 5 }}>vs</span>
           <TableClubVsClubImage
             image={Clubs[row.away] && Clubs[row.away].icon}
             title={<span>{Clubs[row.away] && Clubs[row.away].name}</span>}
-            subtitle={Clubs[row.away] && Clubs[row.away].name}
+            // subtitle={Clubs[row.away] && Clubs[row.away].name}
             clubName={Clubs[row.away] && Clubs[row.away].name}
           />
         </span>

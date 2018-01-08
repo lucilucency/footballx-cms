@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { toggleShowForm } from 'actions';
+import PropTypes from 'prop-types';
 /* components */
 import { Link } from 'react-router-dom';
 import FlatButton from 'material-ui/FlatButton';
@@ -91,6 +92,15 @@ class HotspotHeaderButtons extends React.Component {
     </ButtonContainer>);
   }
 }
+
+HotspotHeaderButtons.propTypes = {
+  user: PropTypes.shape({}),
+  showFormCreateEvent: PropTypes.bool,
+  showFormEditHotspot: PropTypes.bool,
+  toggleShowFormCreateEvent: PropTypes.func,
+  toggleShowFormEditHotspot: PropTypes.func,
+  hotspotId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+};
 
 const mapStateToProps = state => ({
   showFormCreateEvent: state.app.formCreateEvent.show,

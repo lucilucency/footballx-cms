@@ -4,22 +4,22 @@ import Filter from 'material-ui/svg-icons/content/filter-list';
 import strings from 'lang';
 import FlatButton from 'material-ui/FlatButton';
 import PropTypes from 'prop-types';
-import styled, { css } from 'styled-components';
+// import styled from 'styled-components';
 import constants from 'components/constants';
 
-const StyledDiv = styled.div`
-  display: flex;
-  align-items: center;
-  text-transform: uppercase;
-
-  & svg {
-    width: 24px;
-    height: 24px;
-    margin: 0 5px;
-    transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
-    user-select: none;
-  }
-`;
+// const StyledDiv = styled.div`
+//   display: flex;
+//   align-items: center;
+//   text-transform: uppercase;
+//
+//   & svg {
+//     width: 24px;
+//     height: 24px;
+//     margin: 0 5px;
+//     transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
+//     user-select: none;
+//   }
+// `;
 
 const ShowFormToggle = ({
   show,
@@ -37,9 +37,12 @@ const ShowFormToggle = ({
 );
 
 ShowFormToggle.propTypes = {
-  toggleShowForm: PropTypes.func,
-  showForm: PropTypes.bool,
+  show: PropTypes.bool,
   icon: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+  toggleIcon: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+  toggleShowForm: PropTypes.func,
+  text: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  textToggle: PropTypes.string,
 };
 
 export default ShowFormToggle;

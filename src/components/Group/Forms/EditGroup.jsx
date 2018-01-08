@@ -1,17 +1,15 @@
-/* global FX_API, FX_VERSION */
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import update from 'react-addons-update';
+import PropTypes from 'prop-types';
 /* actions & helpers */
 import { editGroup } from 'actions';
 import { toggleShowForm } from 'actions/formActions';
-import _ from 'lodash';
 /* data & components */
 import strings from 'lang';
 import { TextField, RaisedButton } from 'material-ui';
 import Error from 'components/Error/index';
-import MapWithSearchBox from 'components/Visualizations/GoogleMap/MapWithSearchBox';
 /* css */
 import styled, { css } from 'styled-components';
 
@@ -37,6 +35,11 @@ const setShowFormState = (props) => {
 };
 
 class EditGroupForm extends React.Component {
+  static propTypes = {
+    group: PropTypes.shape({ id: PropTypes.number }),
+    showForm: PropTypes.bool,
+    error: PropTypes.bool,
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -47,12 +50,6 @@ class EditGroupForm extends React.Component {
 
   componentDidMount() {
     // setShowFormState(this.props);
-  }
-
-  componentWillUpdate(nextProps) {
-    if (nextProps.group.id !== this.props.group.id) {
-      setShowFormState(nextProps);
-    }
   }
 
   componentWillReceiveProps(newProps) {
@@ -66,7 +63,13 @@ class EditGroupForm extends React.Component {
     });
   }
 
-  submitEditGroup(e) {
+  componentWillUpdate(nextProps) {
+    if (nextProps.group.id !== this.props.group.id) {
+      setShowFormState(nextProps);
+    }
+  }
+
+  submitEditGroup() {
     const that = this;
     const editedGroup = {
       name: that.state.group.name.value,
@@ -114,9 +117,9 @@ class EditGroupForm extends React.Component {
               type="text"
               hintText={strings.tooltip_group_short_name}
               floatingLabelText={strings.tooltip_group_short_name}
-              onChange={(event, short_name) => this.setState({
+              onChange={(event, shortName) => this.setState({
                 group: update(this.state.group, {
-                  short_name: { $set: { value: short_name } },
+                  short_name: { $set: { value: shortName } },
                 }),
               })}
               fullWidth

@@ -1,10 +1,9 @@
-/* global API_HOST */
 import React from 'react';
 import Helmet from 'react-helmet';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import strings from 'lang';
-import Table, { TableLink } from 'components/Table';
-import subTextStyle from 'components/Visualizations/Table/subText.css';
+import Table from 'components/Table';
 
 import clubs from 'fxconstants/build/clubsArr.json';
 import { transformations, getOrdinal } from 'utility';
@@ -28,6 +27,13 @@ const getData = (props) => {
 };
 
 class RequestLayer extends React.Component {
+  static propTypes = {
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        clubId: PropTypes.number,
+      }),
+    }),
+  };
   componentDidMount() {
     getData(this.props);
   }
@@ -59,6 +65,10 @@ class RequestLayer extends React.Component {
     );
   }
 }
+
+RequestLayer.propTypes = {
+
+};
 
 const mapStateToProps = state => ({
   clubData: state.app.clubs.data,

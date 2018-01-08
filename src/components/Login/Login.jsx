@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import strings from 'lang';
 import LoginForm from './LoginForm';
 import styles from './Login.css';
@@ -22,6 +23,13 @@ const Login = (props) => {
       </div>
     </div>
   );
+};
+
+Login.propTypes = {
+  user: PropTypes.object, // eslint-disable-line react/forbid-prop-types,
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }),
 };
 
 const mapStateToProps = state => ({

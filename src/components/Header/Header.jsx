@@ -1,30 +1,27 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-/* components */
-import ActionSearch from 'material-ui/svg-icons/action/search';
-import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
-import IconButton from 'material-ui/IconButton';
-import ActionSettings from 'material-ui/svg-icons/action/settings';
-
-import { LocalizationMenu } from 'components/Localization';
-import AccountWidget from './AccountWidget';
-import Announce from 'components/Announce';
-import DropDown from 'components/Header/Dropdown';
-import Logout from './Logout';
-import SearchForm from '../Search/SearchForm';
-import AppLogo from '../App/AppLogo';
-import BurgerMenu from '../BurgerMenu';
-import Add from 'material-ui/svg-icons/av/playlist-add';
-import FlatButton from 'material-ui/FlatButton';
-
 /* data */
 import { toggleShowForm } from 'actions';
 import strings from 'lang';
-import { FORM_NAME_CREATE_EVENTS } from '../Events/Forms/index';
 /* css */
-import styles from './Header.css';
-
+import styled from 'styled-components';
+import constants from 'components/constants';
+/* components */
+// import ActionSearch from 'material-ui/svg-icons/action/search';
+import { ToolbarGroup } from 'material-ui/Toolbar';
+import IconButton from 'material-ui/IconButton';
+import Add from 'material-ui/svg-icons/av/playlist-add';
+import ActionSettings from 'material-ui/svg-icons/action/settings';
+import FlatButton from 'material-ui/FlatButton';
+import { LocalizationMenu } from 'components/Localization';
+// import Announce from 'components/Announce';
+import AccountWidget from './AccountWidget';
+import DropDown from './Dropdown';
+import Logout from './Logout';
+// import SearchForm from '../Search/SearchForm';
+import AppLogo from '../App/AppLogo';
+import BurgerMenu from '../BurgerMenu';
 
 const navbarPages = [
   <Link key={strings.header_clubs} to="/clubs">{strings.header_clubs}</Link>,
@@ -35,15 +32,10 @@ const navbarPagesGUser = group => [
   group && group.id && <Link key={strings.header_events} to={`/group/${group.id}`}>{strings.header_groups}</Link>,
 ];
 
-const navbarPagesHUser = (hotspot) => {
-  console.log('aaaaaa');
-  console.log(hotspot);
-
-  return [
-    <Link key={strings.header_matches} to="/matches">{strings.header_matches}</Link>,
-    hotspot && hotspot.id && <Link key={strings.header_events} to={`/hotspot/${hotspot.id}`}>{strings.header_my_hotspot}</Link>,
-  ];
-};
+const navbarPagesHUser = hotspot => ([
+  <Link key={strings.header_matches} to="/matches">{strings.header_matches}</Link>,
+  hotspot && hotspot.id && <Link key={strings.header_events} to={`/hotspot/${hotspot.id}`}>{strings.header_my_hotspot}</Link>,
+]);
 
 const navbarPagesCUser = [
   <Link key={strings.header_matches} to="/matches">{strings.header_matches}</Link>,
@@ -56,7 +48,7 @@ const burgerItems = (user, hotspot, group) => {
   const burgerHUser = (user && user.user_type === 2) ? navbarPagesHUser(hotspot) : [];
   const burgerGUser = (user && user.user_type === 3) ? navbarPagesGUser(group) : [];
   const burgerCUser = (user && user.user_type === 1) ? navbarPagesCUser : [];
-  const _return = [
+  return [
     {
       component: <AccountWidget key={0} />,
       close: true,
@@ -78,78 +70,111 @@ const burgerItems = (user, hotspot, group) => {
       close: true,
     })),
   ];
-
-  return _return;
 };
 
 const buttonProps = {
   children: <ActionSettings />,
 };
 
-const LogoGroup = (props) => {
-  const { small, auth } = props;
+const VerticalAlignToolbar = styled(ToolbarGroup)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const VerticalAlignDropdown = styled(DropDown)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const VerticalAlignDiv = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const TabContainer = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const LogoGroup = (propsVar) => {
+  const { small, auth } = propsVar;
 
   return (
-    <ToolbarGroup className={styles.verticalAlign} key={'logoGroup'}>
+    <VerticalAlignToolbar>
       {!small &&
       <BurgerMenu menuItems={burgerItems(auth.user, auth.hotspot)} />}
       <AppLogo style={{ marginRight: 18 }} />
-    </ToolbarGroup>
+    </VerticalAlignToolbar>
   );
 };
 
-const LinkGroup = (props) => {
-  const { user, hotspot } = props.user;
+const LinkGroup = (propsVar) => {
+  const { user, hotspot } = propsVar.user;
   return (
-    <ToolbarGroup className={styles.verticalAlign}>
-      {navbarPages.map((page, index) => (
-        <div key={page.key} className={styles.tabContainer}>
-          {React.cloneElement(page, { className: styles.tab })}
-        </div>
+    <VerticalAlignToolbar>
+      {navbarPages.map(page => (
+        <TabContainer key={page.key}>
+          <div style={{ margin: '0 10px', textAlign: 'center', fontWeight: `${constants.fontWeightNormal} !important` }}>
+            {page}
+          </div>
+        </TabContainer>
       ))}
       {(user && user.user_type === 2) && navbarPagesHUser(hotspot).map(page => (
-        <div key={page.key} className={styles.tabContainer}>
-          {React.cloneElement(page, { className: styles.tab })}
-        </div>
+        <TabContainer key={page.key}>
+          <div style={{ margin: '0 10px', textAlign: 'center', fontWeight: `${constants.fontWeightNormal} !important` }}>
+            {page}
+          </div>
+        </TabContainer>
       ))}
       {(user && user.user_type === 3) && navbarPagesGUser(hotspot).map(page => (
-        <div key={page.key} className={styles.tabContainer}>
-          {React.cloneElement(page, { className: styles.tab })}
-        </div>
+        <TabContainer key={page.key}>
+          <div style={{ margin: '0 10px', textAlign: 'center', fontWeight: `${constants.fontWeightNormal} !important` }}>
+            {page}
+          </div>
+        </TabContainer>
       ))}
       {(user && user.user_type === 1) ? navbarPagesCUser.map(page => (
-        <div key={page.key} className={styles.tabContainer}>
-          {React.cloneElement(page, { className: styles.tab })}
-        </div>
+        <TabContainer key={page.key}>
+          <div style={{ margin: '0 10px', textAlign: 'center', fontWeight: `${constants.fontWeightNormal} !important` }}>
+            {page}
+          </div>
+        </TabContainer>
       )) : null}
-    </ToolbarGroup>
+    </VerticalAlignToolbar>
   );
 };
 
-const SearchGroup = () => (
-  <ToolbarGroup style={{ marginLeft: 20 }} className={styles.verticalAlign}>
-    <ActionSearch style={{ marginRight: 6, opacity: '.6' }} />
-    <SearchForm />
-  </ToolbarGroup>
-);
+// const SearchGroup = () => (
+//   <VerticalAlignToolbar>
+//     <ActionSearch style={{ marginRight: 6, opacity: '.6' }} />
+//     <SearchForm />
+//   </VerticalAlignToolbar>
+// );
 
 const AccountGroup = () => (
-  <ToolbarGroup className={styles.verticalAlign}>
+  <VerticalAlignToolbar>
     <AccountWidget />
-  </ToolbarGroup>
+  </VerticalAlignToolbar>
 );
 
-const SettingsGroup = ({ user }) => (
-  <DropDown
-    Button={IconButton}
-    buttonProps={buttonProps}
-    className={styles.verticalAlign}
-  >
-    <LocalizationMenu />
-    <AccountGroup />
-    {user ? <Logout /> : null}
-  </DropDown>
-);
+const SettingsGroup = (propsVar) => {
+  const { user } = propsVar;
+  return (
+    <VerticalAlignDropdown
+      Button={IconButton}
+      buttonProps={buttonProps}
+    >
+      <LocalizationMenu />
+      <AccountGroup />
+      {user ? <Logout /> : null}
+    </VerticalAlignDropdown>
+  );
+};
 
 const FastActionGroup = () => (
   <FlatButton
@@ -163,29 +188,32 @@ const FastActionGroup = () => (
   />
 );
 
-const Header = ({ location, small, auth, showFormCreateEvents, toggleShowFormCreateEvents }) => (
-  <div>
-    <Toolbar style={{ padding: '8px' }} className={styles.header}>
-      <div className={styles.verticalAlign}>
-        <LogoGroup small={small} auth={auth} />
-        {small && <LinkGroup user={auth} />}
-        {/* <SearchGroup/> */}
-      </div>
-      <div className={styles.accountGroup}>
-        {auth.user && (auth.user.user_type === 1 || (auth.user.user_type === 2 && auth.user.type === 'group')) && <FastActionGroup />}
-        {<SettingsGroup user={auth.user} />}
-      </div>
-    </Toolbar>
+const Header = (propsVar) => {
+  const { small, auth } = propsVar;
+  return (
+    <div>
+      <VerticalAlignToolbar>
+        <VerticalAlignDiv>
+          <LogoGroup small={small} auth={auth} />
+          {small && <LinkGroup user={auth} />}
+          {/* <SearchGroup/> */}
+        </VerticalAlignDiv>
+        <VerticalAlignDiv>
+          {auth.user && (auth.user.user_type === 1 || (auth.user.user_type === 2 && auth.user.type === 'group')) && <FastActionGroup />}
+          {<SettingsGroup user={auth.user} />}
+        </VerticalAlignDiv>
+      </VerticalAlignToolbar>
 
-    {/* <Announce location={location}/> */}
+      {/* <Announce location={location}/> */}
 
-    {/* <div className={styles.adBanner}> */}
-    {/* {location.pathname !== '/' && */}
-    {/* <IconFootballX/> */}
-    {/* } */}
-    {/* </div> */}
-  </div>
-);
+      {/* <div className={styles.adBanner}> */}
+      {/* {location.pathname !== '/' && */}
+      {/* <IconFootballX/> */}
+      {/* } */}
+      {/* </div> */}
+    </div>
+  );
+};
 
 const mapStateToProps = state => ({
   small: state.browser.greaterThan.small,
@@ -194,7 +222,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  toggleShowFormCreateEvents: () => dispatch(toggleShowForm(FORM_NAME_CREATE_EVENTS)),
+  toggleShowFormCreateEvents: () => dispatch(toggleShowForm('createEvent')),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

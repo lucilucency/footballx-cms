@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 /* actions - helpers */
 import { toggleShowForm } from 'actions';
 import { toDateTimeString } from 'utility/time';
@@ -13,10 +14,9 @@ import IconEdit from 'material-ui/svg-icons/editor/mode-edit';
 import IconSendNotification from 'material-ui/svg-icons/alert/add-alert';
 /* data */
 import Clubs from 'fxconstants/build/clubsObj.json';
-import { FORM_NAME_EDIT_EVENT, FORM_NAME_GENERATE_QR, FORM_NAME_SEND_NOTIFICATION } from '../Forms';
 /* css */
-import styled, { css } from 'styled-components';
-import constants from '../../constants';
+import styled from 'styled-components';
+import constants from 'components/constants';
 import { colors } from 'material-ui/styles';
 
 const MatchWrapper = styled.div`
@@ -146,17 +146,17 @@ const Styled = styled.header`
   }
 }`;
 
-const Score = styled.div`
-    font-size: 48px;
-    text-align: center;
-
-    @media only screen and (max-width: 400px) {
-        font-size: 40px;
-    }
-    ${props => props.color && css`
-        color: ${props.color}
-    `}
-`;
+// const Score = styled.div`
+//     font-size: 48px;
+//     text-align: center;
+//
+//     @media only screen and (max-width: 400px) {
+//         font-size: 40px;
+//     }
+//     ${props => props.color && css`
+//         color: ${props.color}
+//     `}
+// `;
 
 const ButtonWrapper = styled.div`
     display: table;
@@ -182,9 +182,17 @@ const ButtonWrapper = styled.div`
 `;
 
 class EventHeader extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+  static propTypes = {
+    loading: PropTypes.bool,
+    event: PropTypes.shape({}),
+    user: PropTypes.shape({}),
+    showFormEditEvent: PropTypes.bool,
+    toggleShowFormEditEvent: PropTypes.func,
+    showFormGenerateQR: PropTypes.bool,
+    toggleShowFormGenerateQR: PropTypes.func,
+    showFormSendNotification: PropTypes.bool,
+    toggleShowFormSendNotification: PropTypes.func,
+  };
 
   componentDidMount() {
 
@@ -278,7 +286,7 @@ class EventHeader extends React.Component {
           </MatchWrapper>
           <ButtonWrapper>
             <ShowFormToggle
-              name={FORM_NAME_GENERATE_QR}
+              name={'generateQR'}
               show={showFormGenerateQR}
               onClick={toggleShowFormGenerateQR}
               icon={<IconFingerprint />}
@@ -287,7 +295,7 @@ class EventHeader extends React.Component {
             />
             {user && (userData.user_type === 1 || isOwner) &&
             <ShowFormToggle
-              name={FORM_NAME_EDIT_EVENT}
+              name={'editEvent'}
               show={showFormEditEvent}
               onClick={toggleShowFormEditEvent}
               icon={<IconEdit />}
@@ -295,7 +303,7 @@ class EventHeader extends React.Component {
               textToggle={strings.form_edit_event_cancel}
             />}
             {user && userData.user_type === 1 && <ShowFormToggle
-              name={FORM_NAME_SEND_NOTIFICATION}
+              name={'sendNotification'}
               show={showFormSendNotification}
               onClick={toggleShowFormSendNotification}
               icon={<IconSendNotification />}
@@ -312,16 +320,15 @@ class EventHeader extends React.Component {
 
 const mapStateToProps = state => ({
   user: state.app.metadata.data,
-
   showFormEditEvent: state.app.formEditEvent.show,
   showFormGenerateQR: state.app.formGenerateQR.show,
   showFormSendNotification: state.app.formSendNotification.show,
 });
 
 const mapDispatchToProps = dispatch => ({
-  toggleShowFormEditEvent: () => dispatch(toggleShowForm(FORM_NAME_EDIT_EVENT)),
-  toggleShowFormGenerateQR: () => dispatch(toggleShowForm(FORM_NAME_GENERATE_QR)),
-  toggleShowFormSendNotification: () => dispatch(toggleShowForm(FORM_NAME_SEND_NOTIFICATION)),
+  toggleShowFormEditEvent: () => dispatch(toggleShowForm('editEvent')),
+  toggleShowFormGenerateQR: () => dispatch(toggleShowForm('generateQR')),
+  toggleShowFormSendNotification: () => dispatch(toggleShowForm('sendNotification')),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(EventHeader);

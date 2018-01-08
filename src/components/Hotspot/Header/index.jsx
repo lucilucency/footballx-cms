@@ -1,18 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
-
 /* components */
 import Avatar from 'material-ui/Avatar';
 import Badge from 'material-ui/Badge';
 import Spinner from 'components/Spinner';
-import HotspotHeaderStats from './HotspotHeaderStats';
-import HotspotHeaderButtons from './HotspotHeaderButtons';
 import IconValidated from 'material-ui/svg-icons/action/check-circle';
 /* data */
 import strings from 'lang';
 import constants from 'components/constants';
 /* css */
 import styled from 'styled-components';
+
+import { HotspotHeaderStats } from './HotspotHeaderStats';
+import HotspotHeaderButtons from './HotspotHeaderButtons';
 
 const LARGE_IMAGE_SIZE = 124;
 const Container = styled.div`
@@ -98,7 +98,8 @@ const getRegistrationBadge = registered => registered && (
 );
 
 
-const HotspotHeader = ({ hotspotId, hotspot, small, extraSmall, events, isOwner, user }) => {
+const HotspotHeader = (propsVar) => {
+  const { hotspotId, hotspot, small, extraSmall, events, isOwner, user } = propsVar;
   const hotspotData = hotspot.data || {};
   if (hotspot.loading) {
     return <Spinner />;

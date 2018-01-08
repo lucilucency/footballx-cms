@@ -1,10 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import strings from 'lang';
-import EventsHeaderStats from './EventsHeaderStats';
-import EventsHeaderButtons from './EventsHeaderButtons';
 import styled from 'styled-components';
 import constants from 'components/constants';
+
+import { EventsHeaderStats } from './EventsHeaderStats';
 
 const EventHeaderWrapper = styled.div`
 .container {
@@ -70,19 +69,26 @@ const EventHeaderWrapper = styled.div`
 }
 `;
 
-const EventsHeader = ({ isOwner, small, extraSmall, events }) => (<EventHeaderWrapper>
-  <div className={'container'}>
-    <div className={'row topContainer'}>
-      <div className={'eventInfo'}>
-        <EventsHeaderStats
-          loading={false}
-          error={false}
-          events={events}
-        />
+const EventsHeader = (propsVar) => {
+  const {
+    // isOwner,
+    // small,
+    // extraSmall,
+    events } = propsVar;
+  return (<EventHeaderWrapper>
+    <div className={'container'}>
+      <div className={'row topContainer'}>
+        <div className={'eventInfo'}>
+          <EventsHeaderStats
+            loading={false}
+            error={false}
+            events={events}
+          />
+        </div>
       </div>
     </div>
-  </div>
-</EventHeaderWrapper>);
+  </EventHeaderWrapper>);
+};
 
 const mapStateToProps = state => ({
   small: state.browser.greaterThan.small,

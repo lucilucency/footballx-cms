@@ -1,10 +1,7 @@
-/* global API_HOST */
 import React from 'react';
 
 class MatchLog extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+  componentDidMount() {}
 
   render() {
     return (

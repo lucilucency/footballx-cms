@@ -49,6 +49,8 @@ class LocalizationMenuItems extends Component {
     return (
       <div className={styles.container}>
         <div
+          role="button"
+          tabIndex={0}
           className={classNames(styles.clickable, open && styles.open)}
           onClick={this.handleOnClick}
         >

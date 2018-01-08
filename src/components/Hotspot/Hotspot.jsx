@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { withRouter } from 'react-router-dom';
-import Long from 'long';
+import PropTypes from 'prop-types';
 import {
   getHotspot,
   getHotspotEvents,
@@ -26,9 +26,23 @@ const getEvents = (props) => {
 };
 
 class RequestLayer extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+  static propTypes = {
+    hotspotId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    hotspot: PropTypes.oneOfType([
+      PropTypes.shape({}),
+      PropTypes.arrayOf(PropTypes.shape({})),
+    ]),
+    user: PropTypes.shape({}),
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        hotspotId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      }),
+    }),
+    location: PropTypes.shape({
+      key: PropTypes.string,
+    }),
+    history: PropTypes.shape({}),
+  };
 
   componentDidMount() {
     const that = this;
@@ -59,7 +73,7 @@ class RequestLayer extends React.Component {
     }
 
     if (Number.isInteger(Number(route))) {
-      const hotspotId = match.params.hotspotId || hotspot.id;
+      const hotspotId = Number(match.params.hotspotId || hotspot.id);
       let isOwner = false;
       if (userData.user_type === 2 && Number(user.hotspot.id) === Number(hotspotId)) {
         isOwner = true;

@@ -1,22 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import {
-  connect,
-} from 'react-redux';
+import { connect } from 'react-redux';
 import {
   CardTitle,
 } from 'material-ui/Card';
-import Spinner from 'components/Spinner';
-import { Link } from 'react-router-dom';
-import Container from 'components/Container';
 /* data & helpers */
 import strings from 'lang';
-import { sum, abbreviateNumber } from 'utility';
-import { formatSeconds } from 'utility/time';
-import EventsHeaderButtons from './EventsHeaderButtons';
 /* css */
 import styled from 'styled-components';
 import constants from 'components/constants';
+
+import EventsHeaderButtons from './EventsHeaderButtons';
 
 const CompactContainer = styled.div`
     composes: container;
@@ -83,9 +76,10 @@ const EventStat = styled(CardTitle)`
     }
 `;
 
-export const EventsHeaderStats = ({
-  events = [],
-}) => {
+export const EventsHeaderStats = (propsVar) => {
+  const {
+    events = [],
+  } = propsVar;
   const totalEvents = events.length;
   const upComingEvents = events.filter(o => o.status === 1).length;
 
@@ -106,14 +100,12 @@ export const EventsHeaderStats = ({
   </div>);
 };
 
-const { number, bool, shape, string } = PropTypes;
-
 EventsHeaderStats.propTypes = {
-  loading: bool,
-  error: bool,
-  compact: bool,
+  // loading: PropTypes.bool,
+  // error: PropTypes.bool,
+  // compact: PropTypes.bool,
 };
 
-const mapStateToProps = state => ({});
+// const mapStateToProps = state => ({});
 
-export default connect(mapStateToProps)(EventsHeaderStats);
+export default connect(null)(EventsHeaderStats);

@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { toggleShowForm } from 'actions';
 /* components */
 import { Link } from 'react-router-dom';
@@ -11,11 +12,17 @@ import IconEdit from 'material-ui/svg-icons/editor/mode-edit';
 import ShowFormToggle from 'components/Form/ShowFormToggle';
 /* data */
 import strings from 'lang';
-import { FORM_NAME_EDIT_GROUP } from '../Forms';
 import styled from 'styled-components';
-import constants from 'components/constants';
 
 class GroupHeaderButtons extends React.Component {
+  static propTypes = {
+    showFormCreateEvent: PropTypes.bool,
+    showFormEditGroup: PropTypes.bool,
+    toggleShowFormCreateEvent: PropTypes.func,
+    toggleShowFormEditGroup: PropTypes.func,
+    groupId: PropTypes.number,
+    user: PropTypes.shape({}),
+  };
   componentWillMount() {
     this.setState({
       disableRefresh: false,

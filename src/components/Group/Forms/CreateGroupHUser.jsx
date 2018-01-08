@@ -5,16 +5,14 @@ import update from 'react-addons-update';
 /* actions & helpers */
 import { toggleShowForm } from 'actions/formActions';
 import { createHotspotHUser } from 'actions';
-import { toDateTimeString } from 'utility/time';
 import util from 'util';
 /* data */
 import strings from 'lang';
 /* components */
-import { AutoComplete, TextField, FlatButton, RaisedButton } from 'material-ui';
+import { TextField, RaisedButton } from 'material-ui';
 import Error from 'components/Error/index';
-import Spinner from 'components/Spinner/index';
 import { ValidatorForm } from 'react-form-validator-core';
-import { TextValidator, SelectValidator, AutoCompleteValidator } from 'react-material-ui-form-validator';
+import { TextValidator } from 'react-material-ui-form-validator';
 
 export const FORM_NAME_CREATE_EVENT = 'createHotspot';
 
@@ -33,7 +31,7 @@ class CreateHotspotForm extends React.Component {
     //
   }
 
-  submitCreateHUser(e) {
+  submitCreateHUser() {
     const that = this;
     const newHUser = {
       username: that.state.huser.username.value,
@@ -53,13 +51,12 @@ class CreateHotspotForm extends React.Component {
   }
 
   handleBlur(event) {
-    this.refs[event.target.name].validate(event.target.value);
+    this[event.target.name].validate(event.target.value);
   }
 
   render() {
     return (
       <ValidatorForm
-        ref="form"
         onSubmit={this.submitCreateHUser}
         onError={errors => console.log(errors)}
       >
@@ -72,7 +69,6 @@ class CreateHotspotForm extends React.Component {
           />
           <TextValidator
             name="huser_username"
-            ref="huser_username"
             type="text"
             hintText={strings.tooltip_username}
             floatingLabelText={strings.tooltip_username}
@@ -89,7 +85,6 @@ class CreateHotspotForm extends React.Component {
           />
 
           <TextValidator
-            ref="huser_password"
             name="huser_password"
             type="password"
             hintText={strings.tooltip_password}
@@ -107,7 +102,6 @@ class CreateHotspotForm extends React.Component {
           />
 
           <TextValidator
-            ref="huser_fullname"
             name="huser_fullname"
             type="text"
             hintText={strings.tooltip_full_name}
@@ -142,7 +136,6 @@ class CreateHotspotForm extends React.Component {
 
           <TextValidator
             name="email"
-            ref="email"
             hintText={strings.tooltip_email}
             floatingLabelText={strings.tooltip_email}
             onBlur={this.handleBlur}
@@ -164,13 +157,9 @@ class CreateHotspotForm extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  currentQueryString: window.location.search,
-});
-
 const mapDispatchToProps = dispatch => ({
   toggleShowForm: () => dispatch(toggleShowForm(FORM_NAME_CREATE_EVENT)),
   postHotspotHUser: (hotspotId, params) => dispatch(createHotspotHUser(hotspotId, params)),
 });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CreateHotspotForm));
+export default withRouter(connect(null, mapDispatchToProps)(CreateHotspotForm));

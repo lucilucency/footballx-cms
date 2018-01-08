@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import PropTypes from 'prop-types';
 /* data */
 import strings from 'lang';
 import _ from 'lodash';
@@ -30,9 +31,21 @@ const eventTabs = [
 ];
 
 class RequestLayer extends React.Component {
-  render() {
-    let { location, match, events } = this.props;
+  static propTypes = {
+    location: PropTypes.shape({}),
+    match: PropTypes.shape({}),
+    history: PropTypes.shape({
+      push: PropTypes.func,
+    }),
+    events: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
+    user: PropTypes.shape({
+      user_type: PropTypes.number,
+    }),
+  };
 
+  render() {
+    const { location, match } = this.props;
+    let { events } = this.props;
     // filter local
     const filter = queryString.parse(location.search.replace('?', ''));
     if (!_.isEmpty(filter)) {
@@ -72,7 +85,7 @@ class RequestLayer extends React.Component {
       return false;
     }
 
-    const tab = eventTabs.find(tab => tab.key === route);
+    const tab = eventTabs.find(el => el.key === route);
     return (<div>
       <Helmet title={strings.title_events} />
 
@@ -94,8 +107,8 @@ class RequestLayer extends React.Component {
 const mapStateToProps = state => ({
   user: state.app.metadata.data.user,
   events: state.app.events.data.sort((a, b) => {
-    const aDate = a.match_date * 1000 - Date.now();
-    const bDate = b.match_date * 1000 - Date.now();
+    const aDate = (a.match_date * 1000) - Date.now();
+    const bDate = (b.match_date * 1000) - Date.now();
 
     if (aDate > 0 && bDate > 0) {
       return a.match_date - b.match_date;
@@ -104,6 +117,6 @@ const mapStateToProps = state => ({
   }),
 });
 
-const mapDispatchToProps = dispatch => ({});
+// const mapDispatchToProps = dispatch => ({});
 
-export default connect(mapStateToProps, mapDispatchToProps)(RequestLayer);
+export default connect(mapStateToProps, null)(RequestLayer);

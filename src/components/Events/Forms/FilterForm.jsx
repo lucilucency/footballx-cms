@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import fetch from 'isomorphic-fetch';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import queryString from 'querystring';
@@ -9,12 +8,11 @@ import { getHotspots } from 'actions';
 import { toggleShowForm } from 'actions/formActions';
 /* components */
 import FormField from 'components/Form/FormField';
-/* data */
-import * as data from './FilterForm.config';
 import strings from 'lang';
 /* css */
-import { css } from 'styled-components';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+/* data */
+import * as data from './FilterForm.config';
 
 const FormGroup = styled.div`
     padding: 0 15px;
@@ -35,8 +33,6 @@ const FormGroupWrapper = styled.div`
     `)}
 `;
 
-export const FORM_NAME_FILTER = 'filter';
-
 const setShowFormState = (props) => {
   if (Boolean(props.currentQueryString.substring(1)) !== props.showForm) {
     console.log('do toggle');
@@ -46,6 +42,10 @@ const setShowFormState = (props) => {
 };
 
 class FilterForm extends React.Component {
+  static propTypes = {
+    getHotspots: PropTypes.func,
+    hotspots: PropTypes.shape([]),
+  };
   constructor() {
     super();
     this.state = {
@@ -58,16 +58,12 @@ class FilterForm extends React.Component {
     this.props.getHotspots();
   }
 
-  componentWillUpdate(nextProps) {
-    if (nextProps.playerId !== this.props.playerId) {
-      setShowFormState(nextProps);
-      this.props.getHotspots();
-    }
-  }
-
   render() {
     const { showForm, currentQueryString, history } = this.props;
     const formSelectionState = queryString.parse(currentQueryString.substring(1));
+    console.log("========");
+    console.log(currentQueryString)
+    console.log(formSelectionState);
 
     return (
       <FormGroupWrapper show={showForm}>
@@ -78,7 +74,7 @@ class FilterForm extends React.Component {
             dataSource={this.props.hotspots.map(peer => ({ text: `${peer.name}`, value: peer.id }))}
             formSelectionState={formSelectionState}
             history={history}
-            limit={5}
+            // limit={5}
           />
           <FormField
             name="clubs"
@@ -86,7 +82,7 @@ class FilterForm extends React.Component {
             dataSource={data.clubList}
             formSelectionState={formSelectionState}
             history={history}
-            limit={5}
+            // limit={5}
           />
           <FormField
             name="status"
@@ -94,7 +90,7 @@ class FilterForm extends React.Component {
             dataSource={data.statusList}
             formSelectionState={formSelectionState}
             history={history}
-            limit={5}
+            // limit={5}
           />
           <FormField
             name="place"
@@ -102,7 +98,7 @@ class FilterForm extends React.Component {
             dataSource={data.placeList}
             formSelectionState={formSelectionState}
             history={history}
-            limit={5}
+            // limit={5}
           />
         </FormGroup>
       </FormGroupWrapper>
@@ -114,7 +110,6 @@ FilterForm.propTypes = {
   showForm: PropTypes.bool,
   currentQueryString: PropTypes.string,
   history: PropTypes.shape({}),
-  playerId: PropTypes.string,
 };
 
 const mapStateToProps = state => ({
@@ -124,7 +119,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  toggleShowForm: () => dispatch(toggleShowForm(FORM_NAME_FILTER)),
+  toggleShowForm: () => dispatch(toggleShowForm('filter')),
   getHotspots: () => dispatch(getHotspots()),
 });
 

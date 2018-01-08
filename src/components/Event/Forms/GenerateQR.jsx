@@ -1,16 +1,11 @@
-/* global FX_API, FX_VERSION */
-/* react - redux */
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-
+import PropTypes from 'prop-types';
 /* actions - helpers */
 import { toggleShowForm } from 'actions/formActions';
-
 /* components */
 import { RaisedButton } from 'material-ui';
-import Error from 'components/Error/index';
-import QRCode from 'qrcode.react';
 /* data */
 import strings from 'lang';
 /* css */
@@ -42,6 +37,9 @@ const FormGroup = styled.div`
 `;
 
 class GenerateQR extends React.Component {
+  static propTypes = {
+    showForm: PropTypes.bool,
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -57,7 +55,7 @@ class GenerateQR extends React.Component {
     setShowFormState(this.props);
   }
 
-  doRandomXUser(e) {
+  doRandomXUser() {
     const that = this;
 
     if (that.props.xusers.length) {

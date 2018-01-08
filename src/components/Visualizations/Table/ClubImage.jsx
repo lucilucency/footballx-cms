@@ -31,10 +31,10 @@ const TableClubImage = ({
         />
 
         {hotspotSlot !== undefined &&
-        <div
-          className={styles.hotspotSlot}
-          style={{ backgroundColor: playerColors[hotspotSlot] }}
-        />
+          <div
+            className={styles.hotspotSlot}
+            style={{ backgroundColor: playerColors[hotspotSlot] }}
+          />
         }
       </div>}
     {!hideText &&
@@ -58,9 +58,9 @@ const TableClubImage = ({
             : title}
         </span>
         {subtitle &&
-        <span className={styles.subText}>
-          {subtitle}
-        </span>
+          <span className={styles.subText}>
+            {subtitle}
+          </span>
         }
       </div>
     }

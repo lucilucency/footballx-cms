@@ -5,14 +5,15 @@ import { connect } from 'react-redux';
 import Avatar from 'material-ui/Avatar';
 import Badge from 'material-ui/Badge';
 import Spinner from 'components/Spinner';
-import GroupHeaderStats from './GroupHeaderStats';
-import GroupHeaderButtons from './GroupHeaderButtons';
 import IconValidated from 'material-ui/svg-icons/action/check-circle';
 /* data */
 import strings from 'lang';
 import constants from 'components/constants';
 /* css */
 import styled from 'styled-components';
+
+import { GroupHeaderStats } from './GroupHeaderStats';
+import GroupHeaderButtons from './GroupHeaderButtons';
 
 const LARGE_IMAGE_SIZE = 124;
 const Container = styled.div`
@@ -98,7 +99,8 @@ const getRegistrationBadge = registered => registered && (
 );
 
 
-const GroupHeader = ({ groupId, group, small, extraSmall, events, isOwner, user }) => {
+const GroupHeader = (propsVar) => {
+  const { groupId, group, small, extraSmall, events, isOwner, user } = propsVar;
   const groupData = group.data || {};
   if (group.loading) {
     return <Spinner />;

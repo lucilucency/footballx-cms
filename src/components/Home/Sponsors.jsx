@@ -2,8 +2,8 @@ import React from 'react';
 import FlatButton from 'material-ui/FlatButton';
 import strings from 'lang';
 import styled from 'styled-components';
-import { ButtonsDiv } from './Styled';
 import { IconGithub, IconFacebook } from 'components/Icons';
+import { ButtonsDiv } from './Styled';
 
 const StyledDiv = styled.div`
     display: flex;

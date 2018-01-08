@@ -1,7 +1,6 @@
 import React from 'react';
-import {
-  connect,
-} from 'react-redux';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { getHotspotHUsers } from 'actions';
 import Table from 'components/Table';
 import Container from 'components/Container';
@@ -25,21 +24,31 @@ const HUsersColumns = [{
   field: 'email',
 }];
 
-const Husers = ({
-  data,
-  error = false,
-  loading = false,
-}) => (
-  <Container title={strings.hotspot_husers} error={error} loading={loading}>
+const Husers = (propsVar) => {
+  const {
+    data,
+    error = false,
+    loading = false,
+  } = propsVar;
+  return (<Container title={strings.hotspot_husers} error={error} loading={loading}>
     <Table paginated columns={HUsersColumns} data={data} error={false} loading={loading} />
-  </Container>
-);
+  </Container>);
+};
 
 const getData = (props) => {
   props.getHotspotHUsers(props.hotspotId);
 };
 
 class RequestLayer extends React.Component {
+  static propTypes = {
+    hotspotId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    hotspotHUsers: PropTypes.shape({}),
+    location: PropTypes.shape({
+      key: PropTypes.string,
+    }),
+    routeParams: PropTypes.shape({}),
+  };
+
   componentDidMount() {
     getData(this.props);
   }

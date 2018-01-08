@@ -1,12 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import { withRouter } from 'react-router-dom';
-import Long from 'long';
-import {
-  getGroup,
-  getGroupEvents,
-} from 'actions';
+import { getGroup, getGroupEvents } from 'actions';
 import strings from 'lang';
 import TabBar from 'components/TabBar';
 import Spinner from 'components/Spinner';
@@ -21,9 +18,19 @@ const getEvents = (props) => {
 };
 
 class RequestLayer extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+  static propTypes = {
+    groupId: PropTypes.number,
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        groupId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      }),
+    }),
+    location: PropTypes.shape({
+      key: PropTypes.string,
+    }),
+    group: PropTypes.shape({}),
+    metadata: PropTypes.shape({}),
+  };
 
   componentDidMount() {
     const that = this;

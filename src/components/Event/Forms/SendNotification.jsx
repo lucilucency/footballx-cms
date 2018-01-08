@@ -1,13 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import queryString from 'querystring';
+import PropTypes from 'prop-types';
 /* actions - helpers */
 import { toggleShowForm } from 'actions/formActions';
 import util from 'util';
 import update from 'react-addons-update';
 /* components */
-import { AutoComplete, TextField, RaisedButton, SelectField, MenuItem, FlatButton, Dialog, List, ListItem } from 'material-ui';
+import { RaisedButton, FlatButton, Dialog, List, ListItem } from 'material-ui';
 import { TextValidator } from 'react-material-ui-form-validator';
 import IconFail from 'material-ui/svg-icons/content/clear';
 import IconSuccess from 'material-ui/svg-icons/navigation/check';
@@ -20,7 +20,6 @@ import { topics } from 'components/topics';
 import Clubs from 'fxconstants/build/clubsObj.json';
 import { sendNotificationTopic } from 'actions';
 /* css */
-import {} from 'components/palette.css';
 import styled, { css } from 'styled-components';
 import constants from '../../constants';
 
@@ -60,6 +59,13 @@ const FormFieldStyled = styled(FormField)`
 `;
 
 class EventSendNotification extends React.Component {
+  static propTypes = {
+    showForm: PropTypes.bool,
+    eventXUsers: PropTypes.array, // eslint-disable-line react/forbid-prop-types
+    event: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    toggleShowForm: PropTypes.func,
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -73,10 +79,11 @@ class EventSendNotification extends React.Component {
     };
 
     this.sendNotification = this.sendNotification.bind(this);
+    this.closeDialog = this.closeDialog.bind(this);
   }
 
-  handleBlur(event) {
-    // this.refs[event.target.name].validate(event.target.value);
+  componentDidMount() {
+    setShowFormState(this.props);
   }
 
   closeDialog() {
@@ -89,11 +96,11 @@ class EventSendNotification extends React.Component {
     });
   }
 
-  componentDidMount() {
-    setShowFormState(this.props);
+  handleBlur(event) {
+    this[event.target.name] && this[event.target.name].validate(event.target.value);
   }
 
-  sendNotification(e) {
+  sendNotification() {
     const that = this;
 
     if (that.state.topics.length) {
@@ -165,7 +172,6 @@ class EventSendNotification extends React.Component {
     }];
     return (
       <ValidatorForm
-        ref="form"
         onSubmit={this.sendNotification}
         onError={errors => console.log(errors)}
       >
@@ -195,7 +201,6 @@ class EventSendNotification extends React.Component {
               }}
             />
             <TextValidator
-              ref="message"
               name="message"
               hintText={strings.tooltip_message}
               floatingLabelText={strings.tooltip_message}
@@ -228,7 +233,7 @@ class EventSendNotification extends React.Component {
           />}
           modal={false}
           open={this.state.submitResults.show}
-          onRequestClose={this.closeDialog.bind(this)}
+          onRequestClose={this.closeDialog}
         >
           <List>
             {this.state.submitResults.data.map(r => (<ListItem

@@ -1,6 +1,8 @@
+/* eslint-disable react/prefer-stateless-function */
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 /* actions & helpers */
 import { createHotspotEvent } from 'actions';
 
@@ -8,6 +10,11 @@ import { createHotspotEvent } from 'actions';
 import CreateEventForm from 'components/Group/Forms/CreateEventForm';
 
 class CreateHotspotEventForm extends React.Component {
+  static propTypes = {
+    hotspotId: PropTypes.number,
+    createHotspotEvent: PropTypes.func,
+  };
+
   render() {
     return <CreateEventForm hotspotId={Number(this.props.hotspotId)} dispatch={this.props.createHotspotEvent} />;
   }

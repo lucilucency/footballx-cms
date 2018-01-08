@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { getGroupHUsers } from 'actions';
 import Table from 'components/Table';
 import Container from 'components/Container';
@@ -23,21 +24,31 @@ const HUsersColumns = [{
   field: 'email',
 }];
 
-const Husers = ({
-  data,
-  error = false,
-  loading = false,
-}) => (
-  <Container title={strings.title_group_husers} error={error} loading={loading}>
-    <Table paginated columns={HUsersColumns} data={data} error={false} loading={loading} />
-  </Container>
-);
+const Husers = (propsVar) => {
+  const {
+    data,
+    error = false,
+    loading = false,
+  } = propsVar;
+  return (
+    <Container title={strings.title_group_husers} error={error} loading={loading}>
+      <Table paginated columns={HUsersColumns} data={data} error={false} loading={loading} />
+    </Container>
+  );
+};
 
 const getData = (props) => {
   props.getGroupHUsers(props.groupId);
 };
 
 class RequestLayer extends React.Component {
+  static propTypes = {
+    routeParams: PropTypes.shape({}),
+    location: PropTypes.shape({ key: PropTypes.string }),
+    groupId: PropTypes.number,
+    groupHUsers: PropTypes.shape([]),
+  };
+
   componentDidMount() {
     getData(this.props);
   }
@@ -49,12 +60,12 @@ class RequestLayer extends React.Component {
   }
 
   render() {
-    const { routeParams } = this.props;
+    const { routeParams, groupHUsers } = this.props;
     const subInfo = routeParams.subInfo;
 
     return (<div>
       {subInfo && subInfo === 'add' && <CreateGroupHUserForm groupId={this.props.groupId} />}
-      <Husers {...this.props.groupHUsers} />
+      <Husers {...groupHUsers} />
     </div>);
   }
 }

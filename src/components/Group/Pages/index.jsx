@@ -3,7 +3,6 @@ import strings from 'lang';
 import OverviewPage from './OverviewPage';
 import EventsPage from './GroupEventsPage';
 import HUsersPage from './HusersPage';
-import _ from 'lodash';
 
 const pages = [{
   name: strings.tab_hotspot_overview,

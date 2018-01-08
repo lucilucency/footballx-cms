@@ -14,6 +14,7 @@ class LoginForm extends React.Component {
       message: '',
     };
     this.doLogin = this.doLogin.bind(this);
+    this.handleTextFieldKeyDown = this.handleTextFieldKeyDown.bind(this);
   }
 
   componentWillMount() {
@@ -34,9 +35,9 @@ class LoginForm extends React.Component {
           data.user.user_type = 2; // huser
           localStorage.setItem('access_token', data.access_token);
           localStorage.setItem('account_user', JSON.stringify(data.user));
-          that.props.getHUserHotspot(data.user.id).then((o) => {
-            localStorage.setItem('account_hotspot', JSON.stringify(o.payload));
-            that.props.getHUserMetadata({ access_token: data.access_token, account_hotspot: o.payload, account_user: data.user });
+          that.props.getHUserHotspot(data.user.id).then((h) => {
+            localStorage.setItem('account_hotspot', JSON.stringify(h.payload));
+            that.props.getHUserMetadata({ access_token: data.access_token, account_hotspot: h.payload, account_user: data.user });
           });
           that.props.history.push('');
         } else {
@@ -69,7 +70,7 @@ class LoginForm extends React.Component {
             hintText="Enter your Username"
             floatingLabelText="Username"
             onChange={(event, newValue) => this.setState({ username: newValue, message: '' })}
-            onKeyDown={this.handleTextFieldKeyDown.bind(this)}
+            onKeyDown={this.handleTextFieldKeyDown}
           />
           <br />
           <TextField
@@ -78,7 +79,7 @@ class LoginForm extends React.Component {
             floatingLabelText="Password"
             onChange={(event, newValue) => this.setState({ password: newValue })}
             errorText={this.state.message}
-            onKeyDown={this.handleTextFieldKeyDown.bind(this)}
+            onKeyDown={this.handleTextFieldKeyDown}
           />
           <br />
           <FlatButton label={strings.home_login} primary onClick={event => this.handleClick(event)} />

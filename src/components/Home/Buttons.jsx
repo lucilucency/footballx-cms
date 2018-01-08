@@ -6,16 +6,17 @@ import strings from 'lang';
 import { ButtonsDiv } from './Styled';
 
 
-const Button = props => (
-  <ButtonsDiv>
+const Button = (propsVar) => {
+  const { user, userHotspot, userGroup } = propsVar;
+  return (<ButtonsDiv>
     <div>
-      {!props.user && <FlatButton
+      {!user && <FlatButton
         label={<span className={'label'}>{strings.home_login} <b>{strings.home_login_desc}</b></span>}
         containerElement={<Link to="login">{strings.home_parse}</Link>}
       />}
     </div>
     <div className={'bottomButtons'}>
-      {props.user && props.user.user_type === 1 && <div>
+      {user && user.user_type === 1 && <div>
         <FlatButton
           label={<span className={'label'}>{strings.home_view} <b>{strings.general_events}</b></span>}
           containerElement={<Link to={'/events'} />}
@@ -25,22 +26,22 @@ const Button = props => (
           containerElement={<Link to={'/hotspots'} />}
         />
       </div>}
-      {props.user && props.user.user_type === 2 && <div>
-        {props.userHotspot && props.userHotspot.id && <FlatButton
+      {user && user.user_type === 2 && <div>
+        {userHotspot && userHotspot.id && <FlatButton
           label={<span className={'label'}>{strings.home_view_your} <b>{strings.home_hotspot}</b></span>}
-          containerElement={<Link to={`/hotspot/${props.userHotspot.id}`} />}
+          containerElement={<Link to={`/hotspot/${userHotspot.id}`} />}
         />}
 
       </div>}
-      {props.user && props.user.user_type === 3 && <div>
-        {props.userGroup && props.userGroup.id && <FlatButton
+      {user && user.user_type === 3 && <div>
+        {userGroup && userGroup.id && <FlatButton
           label={<span className={'label'}>{strings.home_view_your} <b>{strings.home_group}</b></span>}
-          containerElement={<Link to={`/group/${props.userGroup.id}`} />}
+          containerElement={<Link to={`/group/${userGroup.id}`} />}
         />}
       </div>}
     </div>
-  </ButtonsDiv>
-);
+  </ButtonsDiv>);
+};
 
 const mapStateToProps = state => ({
   user: state.app.metadata.data.user,

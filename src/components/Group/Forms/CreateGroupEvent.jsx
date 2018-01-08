@@ -1,14 +1,19 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 /* actions & helpers */
 import { createGroupEvent } from 'actions';
 
 /* component */
 import CreateEventForm from 'components/Group/Forms/CreateEventForm';
 
-
 class CreateGroupEventForm extends React.Component {
+  static propTypes = {
+    groupId: PropTypes.number,
+    createGroupEvent: PropTypes.func,
+  };
+  componentDidMount() {}
   render() {
     return <CreateEventForm groupId={this.props.groupId} dispatch={this.props.createGroupEvent} />;
   }

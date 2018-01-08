@@ -6,8 +6,6 @@ import {
 import {
   CardTitle,
 } from 'material-ui/Card';
-import Error from 'components/Error';
-import Spinner from 'components/Spinner';
 import strings from 'lang';
 import styled, { css } from 'styled-components';
 import constants from '../../constants';
@@ -81,17 +79,17 @@ export const HotspotHeaderStats = ({
   </Container>
 );
 
-const { number, bool, shape, string } = PropTypes;
+const { number, bool } = PropTypes;
 
 HotspotHeaderStats.propTypes = {
-  loading: bool,
-  error: bool,
   compact: bool,
   events: number,
   registeredXUsers: number,
   checkedInXUsers: number,
 };
 
-const mapStateToProps = state => ({});
+// const mapStateToProps = state => ({
+//
+// });
 
-export default connect(mapStateToProps)(HotspotHeaderStats);
+export default connect({})(HotspotHeaderStats);

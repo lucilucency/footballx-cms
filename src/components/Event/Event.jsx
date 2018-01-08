@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
-import Spinner from 'components/Spinner';
+import PropTypes from 'prop-types';
 import TabBar from 'components/TabBar';
 import {
   getEvent, getEventXUsers,
@@ -13,6 +13,22 @@ import GenerateQRForm from './Forms/GenerateQR';
 import SendNotificationForm from './Forms/SendNotification';
 
 class RequestLayer extends React.Component {
+  static propTypes = {
+    getEventXUsers: PropTypes.func,
+    getEvent: PropTypes.func,
+    user: PropTypes.shape({}),
+    history: PropTypes.shape({
+      push: PropTypes.func,
+    }),
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        eventId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      }),
+    }),
+    event: PropTypes.shape({
+      data: PropTypes.shape({}),
+    }),
+  };
   componentDidMount() {
     const eventId = this.props.match.params.eventId;
     this.props.getEvent(eventId);
@@ -25,12 +41,12 @@ class RequestLayer extends React.Component {
       return false;
     }
 
-    const { location, match, event } = this.props;
+    const { match, event } = this.props;
 
     const eventId = match.params.eventId || event.data.event_id;
 
     const info = match.params.info || 'overview';
-    const page = pages(eventId).find(page => page.key.toLowerCase() === info);
+    const page = pages(eventId).find(el => el.key.toLowerCase() === info);
     const pageTitle = page ? `${eventId} - ${page.name}` : eventId;
 
     if (this.props.user) {
@@ -50,6 +66,8 @@ class RequestLayer extends React.Component {
         {page && page.content(this.props, event.loading)}
       </div>);
     }
+
+    return false;
   }
 }
 

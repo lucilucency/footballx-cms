@@ -1,22 +1,20 @@
-/* global FX_API, FX_VERSION */
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import update from 'react-addons-update';
+import PropTypes from 'prop-types';
 /* actions & helpers */
 import { toggleShowForm } from 'actions/formActions';
 import { createHotspot } from 'actions';
-import { toDateTimeString } from 'utility/time';
 /* data */
 import strings from 'lang';
 /* components */
-import { AutoComplete, TextField, FlatButton, RaisedButton } from 'material-ui';
+import { TextField, RaisedButton } from 'material-ui';
 import Error from 'components/Error/index';
 import Spinner from 'components/Spinner/index';
 import MapWithSearchBox from '../../Visualizations/GoogleMap/MapWithSearchBox';
 /* css */
 import styles from './index.css';
-import {} from 'components/palette.css';
 
 export const FORM_NAME_CREATE_EVENT = 'createHotspot';
 
@@ -35,7 +33,24 @@ class CreateHotspotForm extends React.Component {
     //
   }
 
-  submitCreateHotspot(e) {
+  onPlaceChanged(places) {
+    const that = this;
+    console.log('Got from maps: ');
+    console.log(places[0]);
+    if (places.length) {
+      const viewport = places[0].geometry.viewport;
+      that.setState({
+        hotspot: update(that.state.hotspot, {
+          name: { $set: { value: places[0].name } },
+          address: { $set: { value: places[0].formatted_address } },
+          lon: { $set: { value: (viewport.b.b + viewport.b.f) / 2 } },
+          lat: { $set: { value: (viewport.f.b + viewport.f.f) / 2 } },
+        }),
+      });
+    }
+  }
+
+  submitCreateHotspot() {
     const that = this;
     const newHotspot = {
       name: that.state.hotspot.name.value,
@@ -54,23 +69,6 @@ class CreateHotspotForm extends React.Component {
         console.log('fail');
       }
     });
-  }
-
-  onPlaceChanged(places) {
-    const that = this;
-    console.log('Got from maps: ');
-    console.log(places[0]);
-    if (places.length) {
-      const viewport = places[0].geometry.viewport;
-      that.setState({
-        hotspot: update(that.state.hotspot, {
-          name: { $set: { value: places[0].name } },
-          address: { $set: { value: places[0].formatted_address } },
-          lon: { $set: { value: (viewport.b.b + viewport.b.f) / 2 } },
-          lat: { $set: { value: (viewport.f.b + viewport.f.f) / 2 } },
-        }),
-      });
-    }
   }
 
   render() {
@@ -151,6 +149,10 @@ class CreateHotspotForm extends React.Component {
     );
   }
 }
+
+CreateHotspotForm.propTypes = {
+  loading: PropTypes.bool,
+};
 
 const mapStateToProps = state => ({
   currentQueryString: window.location.search,

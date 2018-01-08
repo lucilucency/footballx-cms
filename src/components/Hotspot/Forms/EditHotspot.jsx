@@ -1,12 +1,11 @@
-/* global FX_API, FX_VERSION */
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import update from 'react-addons-update';
+import PropTypes from 'prop-types';
 /* actions & helpers */
 import { editHotspot } from 'actions';
 import { toggleShowForm } from 'actions/formActions';
-import _ from 'lodash';
 /* data & components */
 import strings from 'lang';
 import { TextField, RaisedButton } from 'material-ui';
@@ -29,8 +28,6 @@ const FormContainer = styled.div`
     `)}
 `;
 
-export const FORM_NAME_EDIT_HOTSPOT = 'editHotspot';
-
 const setShowFormState = (props) => {
   if (Boolean(props.currentQueryString.substring(1)) !== props.showForm) {
     // If query string state has a filter, turn on the form
@@ -52,12 +49,6 @@ class EditHotspotForm extends React.Component {
     // setShowFormState(this.props);
   }
 
-  componentWillUpdate(nextProps) {
-    if (nextProps.hotspot.id !== this.props.hotspot.id) {
-      setShowFormState(nextProps);
-    }
-  }
-
   componentWillReceiveProps(newProps) {
     this.setState({
       hotspot: {
@@ -71,25 +62,10 @@ class EditHotspotForm extends React.Component {
     });
   }
 
-  submitEditHotspot(e) {
-    const that = this;
-    const editedHotspot = {
-      name: that.state.hotspot.name.value,
-      address: that.state.hotspot.address.value,
-      phone: that.state.hotspot.phone.value,
-      wifi: that.state.hotspot.wifi.value,
-      lon: that.state.hotspot.lon.value,
-      lat: that.state.hotspot.lat.value,
-    };
-
-    that.props.putHotspot(that.props.hotspot.id, editedHotspot).then((dispatch) => {
-      if (dispatch.type.indexOf('OK') === 0) {
-        console.log('success');
-        that.props.toggleShowForm(FORM_NAME_EDIT_HOTSPOT);
-      } else {
-        console.log('fail');
-      }
-    });
+  componentWillUpdate(nextProps) {
+    if (nextProps.hotspot.id !== this.props.hotspot.id) {
+      setShowFormState(nextProps);
+    }
   }
 
   onPlaceChanged(places) {
@@ -109,14 +85,36 @@ class EditHotspotForm extends React.Component {
     }
   }
 
+  submitEditHotspot() {
+    const that = this;
+    const editedHotspot = {
+      name: that.state.hotspot.name.value,
+      address: that.state.hotspot.address.value,
+      phone: that.state.hotspot.phone.value,
+      wifi: that.state.hotspot.wifi.value,
+      lon: that.state.hotspot.lon.value,
+      lat: that.state.hotspot.lat.value,
+    };
+
+    that.props.putHotspot(that.props.hotspot.id, editedHotspot).then((dispatch) => {
+      if (dispatch.type.indexOf('OK') === 0) {
+        console.log('success');
+        that.props.toggleShowForm('editHotspot');
+      } else {
+        console.log('fail');
+      }
+    });
+  }
+
   render() {
     const {
       showForm,
+      error,
     } = this.props;
 
     return (
       <div>
-        {this.props.error && <Error text={this.props.error} />}
+        {error && <Error text={error} />}
         <FormContainer show={showForm}>
           <MapWithSearchBox
             onChanged={this.onPlaceChanged}
@@ -137,7 +135,7 @@ class EditHotspotForm extends React.Component {
                 }),
               })}
               fullWidth
-              value={this.state.hotspot.name && this.state.hotspot.name.value || ''}
+              value={this.state.hotspot.name && (this.state.hotspot.name.value || '')}
               errorText={this.state.hotspot.name && this.state.hotspot.name.error}
             />
 
@@ -152,7 +150,7 @@ class EditHotspotForm extends React.Component {
                 }),
               })}
               fullWidth
-              value={this.state.hotspot.address && this.state.hotspot.address.value || ''}
+              value={this.state.hotspot.address && (this.state.hotspot.address.value || '')}
               errorText={this.state.hotspot.address && this.state.hotspot.address.error}
             />
 
@@ -167,7 +165,7 @@ class EditHotspotForm extends React.Component {
                 }),
               })}
               fullWidth
-              value={this.state.hotspot.phone && this.state.hotspot.phone.value || ''}
+              value={this.state.hotspot.phone && (this.state.hotspot.phone.value || '')}
               errorText={this.state.hotspot.phone && this.state.hotspot.phone.error}
             />
 
@@ -182,7 +180,7 @@ class EditHotspotForm extends React.Component {
                 }),
               })}
               fullWidth
-              value={this.state.hotspot.wifi && this.state.hotspot.wifi.value || ''}
+              value={this.state.hotspot.wifi && (this.state.hotspot.wifi.value || '')}
               errorText={this.state.hotspot.wifi && this.state.hotspot.wifi.error}
             />
           </div>
@@ -198,6 +196,17 @@ class EditHotspotForm extends React.Component {
     );
   }
 }
+
+EditHotspotForm.propTypes = {
+  showForm: PropTypes.bool,
+  error: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.shape({}),
+  ]),
+  hotspot: PropTypes.shape({
+    id: PropTypes.number,
+  }),
+};
 
 const mapStateToProps = state => ({
   showForm: state.app.formEditHotspot.show,
