@@ -62,9 +62,8 @@ export const deleteEvent = eventId => fxActionDelete('DELETE/event', `event/${ev
 export const sendNotificationTopic = (params = { topic: '', message: '' }) => fxActionPost('sendNotification', 'notification/topic', params);
 
 
-export const getMetadata = () => action('metadata', API_HOST, 'api/metadata');
 export const setSearchQuery = query => dispatch => dispatch(({ type: 'QUERY/search', query }));
-export const getSearchResult = query => action('search', API_HOST, 'api/search', { q: query });
+export const getSearchResult = query => fxActionGet('search', 'api/search', { q: query });
 export const getSearchResultAndPros = query => dispatch => Promise.all([
   dispatch(setSearchQuery(query)),
   dispatch(getSearchResult(query)),

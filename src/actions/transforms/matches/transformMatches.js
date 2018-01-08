@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import _ from 'lodash';
 
 function transformMatches(data) {
@@ -5,7 +6,7 @@ function transformMatches(data) {
   const matchClubs = data.clubs;
 
   data.matches = _.map(matches, (match) => {
-    matchClubs.filter(o => o.match_id === match.id).map((club) => {
+    matchClubs.filter(o => o.match_id === match.id).forEach((club) => {
       if (club.home) {
         match.home = club;
       } else {

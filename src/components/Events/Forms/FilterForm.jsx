@@ -34,7 +34,8 @@ const FormGroupWrapper = styled.div`
 `;
 
 const setShowFormState = (props) => {
-  if (Boolean(props.currentQueryString.substring(1)) !== props.showForm) {
+  const currentQueryString = window.location.search;
+  if (Boolean(currentQueryString.substring(1)) !== props.showForm) {
     console.log('do toggle');
     // If query string state has a filter, turn on the form
     props.toggleShowForm();
@@ -59,11 +60,9 @@ class FilterForm extends React.Component {
   }
 
   render() {
-    const { showForm, currentQueryString, history } = this.props;
+    const { showForm, history } = this.props;
+    const currentQueryString = window.location.search;
     const formSelectionState = queryString.parse(currentQueryString.substring(1));
-    console.log("========");
-    console.log(currentQueryString)
-    console.log(formSelectionState);
 
     return (
       <FormGroupWrapper show={showForm}>
@@ -108,13 +107,12 @@ class FilterForm extends React.Component {
 
 FilterForm.propTypes = {
   showForm: PropTypes.bool,
-  currentQueryString: PropTypes.string,
   history: PropTypes.shape({}),
 };
 
 const mapStateToProps = state => ({
   showForm: state.app.formFilter.show,
-  currentQueryString: window.location.search,
+  // currentQueryString: window.location.search,
   hotspots: state.app.hotspots.data || [],
 });
 

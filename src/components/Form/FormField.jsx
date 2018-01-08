@@ -183,7 +183,6 @@ class FormField extends React.Component {
         return fromSource || { text: element, value: element };
       }) : [{}];
 
-
       return (
         <div className={className}>
           <AutoComplete

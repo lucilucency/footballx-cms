@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 /* global FX_API */
 /* global FX_VERSION */
 import fetch from 'isomorphic-fetch';
@@ -5,6 +6,9 @@ import queryString from 'querystring';
 import update from 'react-addons-update';
 
 const request = require('superagent');
+const FormData = require('form-data');
+const FormUrlEncoded = require('form-urlencoded');
+
 
 export function action(type, host, path, params = {}, transform) {
   return (dispatch) => {
@@ -62,9 +66,9 @@ export function fxActionPost(type, path, params = {}, transform, payload) {
     const options = { method: 'POST' };
 
     if (type === 'auth') {
-      const Form = require('form-data');
-      const form = new Form();
+      const form = new FormData();
 
+      // eslint-disable-next-line guard-for-in
       for (const key in params) {
         form.append(key, params[key]);
       }
@@ -85,8 +89,7 @@ export function fxActionPost(type, path, params = {}, transform, payload) {
       };
     } else {
       if (typeof params === 'object') {
-        const Form = require('form-urlencoded');
-        options.body = Form(params);
+        options.body = FormUrlEncoded(params);
         options.contentType = 'application/x-www-form-urlencoded';
       }
 
@@ -117,7 +120,7 @@ export function fxActionPost(type, path, params = {}, transform, payload) {
               }
               return dispatch(dispatchOK(dispatchData));
             }
-            setTimeout(() => fetchDataWithRetry(delay + 2000, tries - 1, err), delay);
+            return setTimeout(() => fetchDataWithRetry(delay + 2000, tries - 1, err), delay);
           })
           .catch((err) => {
             console.log(`Error in ${type}`);
@@ -198,19 +201,17 @@ export function fxActionPut(type, path, params = {}, transform) {
       error,
     });
 
-    let fetchDataWithRetry;
     const options = { method: 'PUT' };
 
 
     if (typeof params === 'object') {
-      const Form = require('form-urlencoded');
-      options.body = Form(params);
+      options.body = FormUrlEncoded(params);
       options.contentType = 'application/x-www-form-urlencoded';
     }
 
     const accessToken = localStorage.getItem('access_token') || '';
 
-    fetchDataWithRetry = (delay, tries, error) => {
+    const fetchDataWithRetry = (delay, tries, error) => {
       if (tries < 1) {
         return dispatchFail(error);
       }
@@ -259,18 +260,16 @@ export function fxActionDelete(type, path, params = {}, transform) {
       error,
     });
 
-    let fetchDataWithRetry;
     const options = { method: 'DELETE' };
 
     if (typeof params === 'object') {
-      const Form = require('form-urlencoded');
-      options.body = Form(params);
+      options.body = FormUrlEncoded(params);
       options.contentType = 'application/x-www-form-urlencoded';
     }
 
     const accessToken = localStorage.getItem('access_token') || '';
 
-    fetchDataWithRetry = (delay, tries, error) => {
+    const fetchDataWithRetry = (delay, tries, error) => {
       if (tries < 1) {
         return dispatchFail(error);
       }

@@ -14,6 +14,7 @@ class LoginForm extends React.Component {
       message: '',
     };
     this.doLogin = this.doLogin.bind(this);
+    this.handleTextFieldKeyDown = this.handleTextFieldKeyDown.bind(this);
   }
 
   componentWillMount() {
@@ -66,7 +67,7 @@ class LoginForm extends React.Component {
             hintText="Enter your Username"
             floatingLabelText="Username"
             onChange={(event, newValue) => this.setState({ username: newValue, message: '' })}
-            onKeyDown={this.handleTextFieldKeyDown.bind(this)}
+            onKeyDown={this.handleTextFieldKeyDown}
           />
           <br />
           <TextField
@@ -74,7 +75,7 @@ class LoginForm extends React.Component {
             hintText="Enter your Password"
             floatingLabelText="Password"
             onChange={(event, newValue) => this.setState({ password: newValue })}
-            onKeyDown={this.handleTextFieldKeyDown.bind(this)}
+            onKeyDown={this.handleTextFieldKeyDown}
             errorText={this.state.message}
           />
           <br />

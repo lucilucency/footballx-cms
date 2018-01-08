@@ -108,7 +108,7 @@ if (!isProd) {
   ];
   config.plugins.push(new webpack.NamedModulesPlugin());
 } else {
-  config.plugins.push(new webpack.optimize.UglifyJsPlugin());
+  // config.plugins.push(new webpack.optimize.UglifyJsPlugin());
   config.plugins.push(new HashBundlePlugin());
 }
 
