@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import constants from 'components/constants';
 /* components */
 // import ActionSearch from 'material-ui/svg-icons/action/search';
-import { ToolbarGroup } from 'material-ui/Toolbar';
+import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
 import IconButton from 'material-ui/IconButton';
 import Add from 'material-ui/svg-icons/av/playlist-add';
 import ActionSettings from 'material-ui/svg-icons/action/settings';
@@ -29,12 +29,16 @@ const navbarPages = [
 
 const navbarPagesGUser = group => [
   <Link key={strings.header_matches} to="/matches">{strings.header_matches}</Link>,
-  group && group.id && <Link key={strings.header_events} to={`/group/${group.id}`}>{strings.header_groups}</Link>,
+  group && group.id &&
+  <Link key={strings.header_events} to={`/group/${group.id}`}>{strings.header_groups}</Link>,
 ];
 
 const navbarPagesHUser = hotspot => ([
   <Link key={strings.header_matches} to="/matches">{strings.header_matches}</Link>,
-  hotspot && hotspot.id && <Link key={strings.header_events} to={`/hotspot/${hotspot.id}`}>{strings.header_my_hotspot}</Link>,
+  hotspot && hotspot.id && <Link
+    key={strings.header_events}
+    to={`/hotspot/${hotspot.id}`}
+  >{strings.header_my_hotspot}</Link>,
 ]);
 
 const navbarPagesCUser = [
@@ -119,28 +123,48 @@ const LinkGroup = (propsVar) => {
     <VerticalAlignToolbar>
       {navbarPages.map(page => (
         <TabContainer key={page.key}>
-          <div style={{ margin: '0 10px', textAlign: 'center', fontWeight: `${constants.fontWeightNormal} !important` }}>
+          <div style={{
+            margin: '0 10px',
+            textAlign: 'center',
+            fontWeight: `${constants.fontWeightNormal} !important`,
+          }}
+          >
             {page}
           </div>
         </TabContainer>
       ))}
       {(user && user.user_type === 2) && navbarPagesHUser(hotspot).map(page => (
         <TabContainer key={page.key}>
-          <div style={{ margin: '0 10px', textAlign: 'center', fontWeight: `${constants.fontWeightNormal} !important` }}>
+          <div style={{
+            margin: '0 10px',
+            textAlign: 'center',
+            fontWeight: `${constants.fontWeightNormal} !important`,
+          }}
+          >
             {page}
           </div>
         </TabContainer>
       ))}
       {(user && user.user_type === 3) && navbarPagesGUser(hotspot).map(page => (
         <TabContainer key={page.key}>
-          <div style={{ margin: '0 10px', textAlign: 'center', fontWeight: `${constants.fontWeightNormal} !important` }}>
+          <div style={{
+            margin: '0 10px',
+            textAlign: 'center',
+            fontWeight: `${constants.fontWeightNormal} !important`,
+          }}
+          >
             {page}
           </div>
         </TabContainer>
       ))}
       {(user && user.user_type === 1) ? navbarPagesCUser.map(page => (
         <TabContainer key={page.key}>
-          <div style={{ margin: '0 10px', textAlign: 'center', fontWeight: `${constants.fontWeightNormal} !important` }}>
+          <div style={{
+            margin: '0 10px',
+            textAlign: 'center',
+            fontWeight: `${constants.fontWeightNormal} !important`,
+          }}
+          >
             {page}
           </div>
         </TabContainer>
@@ -188,29 +212,47 @@ const FastActionGroup = () => (
   />
 );
 
+const ToolbarHeader = styled(Toolbar)`
+  background-color: ${constants.defaultPrimaryColor} !important;
+  padding: 8px !important;
+  & a {
+    color: ${constants.primaryTextColor};
+
+    &:hover {
+      color: ${constants.primaryTextColor};
+      opacity: 0.6;
+    }
+  }
+`;
+
 const Header = (propsVar) => {
-  const { small, auth } = propsVar;
+  const {
+    // location,
+    small,
+    auth,
+  } = propsVar;
   return (
     <div>
-      <VerticalAlignToolbar>
+      <ToolbarHeader>
         <VerticalAlignDiv>
           <LogoGroup small={small} auth={auth} />
           {small && <LinkGroup user={auth} />}
           {/* <SearchGroup/> */}
         </VerticalAlignDiv>
         <VerticalAlignDiv>
-          {auth.user && (auth.user.user_type === 1 || (auth.user.user_type === 2 && auth.user.type === 'group')) && <FastActionGroup />}
+          {auth.user && (auth.user.user_type === 1 || (auth.user.user_type === 2 && auth.user.type === 'group')) &&
+          <FastActionGroup />}
           {<SettingsGroup user={auth.user} />}
         </VerticalAlignDiv>
-      </VerticalAlignToolbar>
 
-      {/* <Announce location={location}/> */}
+        {/* <Announce location={location}/> */}
 
-      {/* <div className={styles.adBanner}> */}
-      {/* {location.pathname !== '/' && */}
-      {/* <IconFootballX/> */}
-      {/* } */}
-      {/* </div> */}
+        {/* <div className={styles.adBanner}> */}
+        {/* {location.pathname !== '/' && */}
+        {/* <IconFootballX/> */}
+        {/* } */}
+        {/* </div> */}
+      </ToolbarHeader>
     </div>
   );
 };

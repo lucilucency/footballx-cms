@@ -84,7 +84,7 @@ export default () => (
             {strings.home_become_sponsor}
           </span>
         }
-        href="/register"
+        // href="/register"
       />
     </ButtonsDiv>
   </StyledDiv>
