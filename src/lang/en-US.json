@@ -50,6 +50,8 @@
   "app_public_players": "Public Players",
   "app_my_profile": "My Profile",
   "app_my_hotspot": "My Hotspot",
+  "app_monitor": "Monitoring",
+  "app_on_store": "Use App",
 
   "benchmarks_description": "%d %s is equal or higher than %d% of recent performances on this hero",
   "fantasy_description": "%d for %d points",
@@ -230,7 +232,9 @@
   "header_hotspots": "Hotspots",
   "header_groups": "Groups",
   "header_my_hotspot": "My Hotspot",
+
   "header_my_account": "My account",
+  "header_send_notification": "Send notifications",
 
   "heading_courier": "Courier",
   "heading_tower": "Tower",

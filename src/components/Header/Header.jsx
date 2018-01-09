@@ -11,6 +11,7 @@ import constants from 'components/constants';
 // import ActionSearch from 'material-ui/svg-icons/action/search';
 import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
 import IconButton from 'material-ui/IconButton';
+import NoficationIcon from 'material-ui/svg-icons/social/notifications-active';
 import Add from 'material-ui/svg-icons/av/playlist-add';
 import ActionSettings from 'material-ui/svg-icons/action/settings';
 import FlatButton from 'material-ui/FlatButton';
@@ -21,7 +22,7 @@ import DropDown from './Dropdown';
 import Logout from './Logout';
 // import SearchForm from '../Search/SearchForm';
 import AppLogo from '../App/AppLogo';
-import BurgerMenu from '../BurgerMenu';
+import BurgerMenu from './BurgerMenu/index';
 
 const navbarPages = [
   <Link key={strings.header_clubs} to="/clubs">{strings.header_clubs}</Link>,
@@ -186,6 +187,22 @@ const AccountGroup = () => (
   </VerticalAlignToolbar>
 );
 
+
+const StyledFlatButton = styled(FlatButton)`
+ min-width: 30px !important;
+ & > div > span {
+   display: inline-block;
+   max-width: 150px;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   text-transform: none !important;
+   white-space: nowrap;
+   font-size: 16px !important;
+   padding-right: 10px !important;
+   padding-left: 0 !important;
+ }
+`;
+
 const SettingsGroup = (propsVar) => {
   const { user } = propsVar;
   return (
@@ -195,6 +212,13 @@ const SettingsGroup = (propsVar) => {
     >
       <LocalizationMenu />
       <AccountGroup />
+      {user && <Link to={'/notify'}>
+        <StyledFlatButton
+          label={strings.header_send_notification}
+          hoverColor="transparent"
+          icon={<NoficationIcon />}
+        />
+      </Link>}
       {user ? <Logout /> : null}
     </VerticalAlignDropdown>
   );

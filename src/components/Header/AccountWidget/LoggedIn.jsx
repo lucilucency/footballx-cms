@@ -5,7 +5,24 @@ import strings from 'lang';
 import FlatButton from 'material-ui/FlatButton';
 import UserIcon from 'material-ui/svg-icons/action/verified-user';
 import Spinner from 'components/Spinner';
-import constants from 'components/constants';
+// import constants from 'components/constants';
+import styled from 'styled-components';
+
+const StyledFlatButton = styled(FlatButton)`
+ min-width: 30px !important;
+ & > div > span {
+   display: inline-block;
+   max-width: 150px;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   text-transform: none !important;
+   white-space: nowrap;
+   font-size: 16px !important;
+   padding-right: 10px !important;
+   padding-left: 0 !important;
+ }
+`;
+
 
 const LoggedIn = (propsVar) => {
   const { user } = propsVar;
@@ -13,14 +30,12 @@ const LoggedIn = (propsVar) => {
     return <Spinner color="#fff" size={0.5} />;
   }
   return (
-    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+    <div>
       <Link to={`/user/${user.id}`}>
-        <FlatButton
-          icon={<UserIcon />}
+        <StyledFlatButton
           label={user.fullname || strings.header_my_account}
-          // labelPosition="before"
           hoverColor="transparent"
-          style={{ fontSize: constants.fontSizeMedium, fontWeight: constants.fontWeightLight, color: constants.colorMutedLight }}
+          icon={<UserIcon />}
         />
       </Link>
     </div>

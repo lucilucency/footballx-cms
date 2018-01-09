@@ -1,15 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ReactTooltip from 'react-tooltip';
-import ActionDoneAll from 'material-ui/svg-icons/action/done-all';
 import strings from 'lang';
 import { TableLink } from 'components/Table';
-import playerColors from 'dotaconstants/build/player_colors.json';
-import { IconDice, IconCrystalBall, IconCheckCircle } from 'components/Icons';
-import SocialPerson from 'material-ui/svg-icons/social/person';
-import NotificationSync from 'material-ui/svg-icons/notification/sync';
-import styled from 'styled-components';
+import CheckCircle from 'material-ui/svg-icons/action/check-circle';
 import { subTextStyle } from 'utility';
+import styled from 'styled-components';
 import constants from 'components/constants';
 
 const Styled = styled.div`
@@ -140,7 +135,7 @@ const Styled = styled.div`
   justify-content: center;
 }
 
-.playerSlot {
+.hotspotSlot {
   width: 2px;
   height: 29px;
   position: absolute;
@@ -209,7 +204,7 @@ const Styled = styled.div`
 }
 `;
 
-const ClubImageContainer = styled.div`
+const UserImageContainer = styled.div`
   display: flex;
   position: relative;
   height: 100%;
@@ -225,35 +220,19 @@ const expand = {
   left: '-10px',
 };
 
-const TableClubImage = ({
-  parsed,
+const TableUserImage = ({
   image,
-  registered,
+  checkedIn,
   title,
   subtitle,
   accountId,
-  playerSlot,
-  hideText,
+  hotspotSlot,
   confirmed,
   party,
-  clubName,
-  showPvgnaGuide,
-  pvgnaGuideInfo,
-  randomed,
-  repicked,
-  predictedVictory,
   leaverStatus,
 }) => (
   <Styled style={expand}>
-    <ClubImageContainer>
-      {parsed !== undefined &&
-      <div
-        className={parsed ? 'parsed' : 'unparsed'}
-        data-hint={parsed && strings.tooltip_parsed}
-      >
-        <ActionDoneAll />
-      </div>
-      }
+    <UserImageContainer>
       {party &&
       <div className="party">
         {party}
@@ -263,8 +242,8 @@ const TableClubImage = ({
       <div className="imageContainer">
         <img
           src={image}
-          alt=""
           className="image"
+          alt=""
         />
         {leaverStatus !== undefined && leaverStatus > 1 &&
         <span
@@ -276,33 +255,30 @@ const TableClubImage = ({
             src="/assets/images/dota2/disconnect_icon.png"
             alt=""
           />
-        </span>
-        }
-        {playerSlot !== undefined &&
+        </span>}
+        {hotspotSlot !== undefined &&
         <div
-          className="playerSlot"
-          style={{ backgroundColor: playerColors[playerSlot] }}
-        />
-        }
+          className="hotspotSlot"
+        />}
       </div>
       }
-      {!hideText &&
+
       <div className="textContainer" style={{ marginLeft: !image && 59 }}>
         <span>
-          {registered &&
+          {checkedIn &&
           <div
-            className="registered"
-            data-hint={strings.tooltip_registered_user}
+            className="checkedIn"
+            data-hint={strings.tooltip_checkedIn_user}
             data-hint-position="top"
           />
           }
           {confirmed &&
           <div
-            className="badge"
+            className="confirmed"
             data-hint={`${strings.app_confirmed_as} ${title}`}
             data-hint-position="top"
           >
-            <IconCheckCircle className="golden" />
+            <CheckCircle className="golden" />
           </div>
           }
           {accountId ?
@@ -312,108 +288,31 @@ const TableClubImage = ({
             : title}
         </span>
         {subtitle &&
-        <span style={subTextStyle} className="subTextContainer">
+        <span style={{ ...subTextStyle }}>
           {subtitle}
-          <span>
-            {randomed &&
-            <span
-              className="hoverIcon"
-              data-hint={strings.general_randomed}
-              data-hint-position="top"
-            >
-              <IconDice fill="currentcolor" />
-            </span>
-            }
-            {repicked &&
-            <span
-              className="hoverIcon"
-              data-hint={strings.general_repicked}
-              data-hint-position="top"
-            >
-              <NotificationSync />
-            </span>
-            }
-            {predictedVictory &&
-            <span
-              className="hoverIcon"
-              data-hint={strings.general_predicted_victory}
-              data-hint-position="top"
-            >
-              <IconCrystalBall fill="currentcolor" />
-            </span>
-            }
-          </span>
         </span>
         }
       </div>
-      }
-      { !!showPvgnaGuide && pvgnaGuideInfo && clubName &&
-      <div className="pvgnaGuideContainer" data-tip data-for={clubName}>
-        <a href={pvgnaGuideInfo.url}>
-          <img className="pvgnaGuideIcon" src="/assets/images/pvgna-guide-icon.png" alt={`Learn ${clubName} on Pvgna`} />
-        </a>
-        <ReactTooltip id={clubName} place="top" type="light" effect="solid" offset="{'top': 1, 'right': 3}">
-          {`Learn ${clubName} on Pvgna`}
-        </ReactTooltip>
-      </div>
-      }
-    </ClubImageContainer>
+    </UserImageContainer>
   </Styled>
+
 );
 
-const {
-  string, oneOfType, bool, node, shape, object,
-} = PropTypes;
+const { number, string, oneOfType, bool, node } = PropTypes;
 
-TableClubImage.propTypes = {
-  parsed: PropTypes.number,
+TableUserImage.propTypes = {
   image: string,
-  title: oneOfType([string, object]),
-  subtitle: oneOfType([string, node]),
-  registered: string,
-  accountId: PropTypes.number,
-  playerSlot: PropTypes.number,
-  hideText: bool,
+  title: node,
+  subtitle: oneOfType([
+    string,
+    node,
+  ]),
+  checkedIn: bool,
+  accountId: number,
+  hotspotSlot: number,
   party: node,
   confirmed: bool,
-  clubName: string,
-  showPvgnaGuide: oneOfType([bool, PropTypes.number]),
-  pvgnaGuideInfo: shape({ url: string }),
-  randomed: bool,
-  repicked: string,
-  predictedVictory: bool,
-  leaverStatus: PropTypes.number,
+  leaverStatus: number,
 };
 
-// If need party or estimated, just add new prop with default val = solo and change icons depending what needs
-export const Mmr = ({ number }) => (
-  <span>
-    <section
-      data-hint={strings.th_solo_mmr}
-      data-hint-position="bottom"
-    >
-      <SocialPerson />
-    </section>
-    {number || strings.general_unknown}
-  </span>
-);
-Mmr.propTypes = {
-  number: PropTypes.number,
-};
-
-export const CompetitiveRank = ({ rankTier }) => (
-  <span>
-    <section
-      data-hint={strings.th_rank}
-      data-hint-position="bottom"
-    >
-      <SocialPerson />
-    </section>
-    {rankTier}
-  </span>
-);
-CompetitiveRank.propTypes = {
-  rankTier: PropTypes.number,
-};
-
-export default TableClubImage;
+export default TableUserImage;

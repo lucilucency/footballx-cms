@@ -6,22 +6,19 @@ import strings from 'lang';
 import items from 'dotaconstants/build/items.json';
 import itemIds from 'dotaconstants/build/item_ids.json';
 import Clubs from 'fxconstants/build/clubsObj.json';
-/* css */
-// import styles from 'components/palette.css';
-// import styled from 'styled-components';
-import subTextStyle from 'components/Visualizations/Table/subText.css';
 /* components */
 import { TableLink } from 'components/Table';
 import {
   TableXUserImage,
   TableClubImage,
-  TableClubVsClubImage,
   FromNowTooltip,
 } from 'components/Visualizations';
-/* helpers */
-// import findLast from 'lodash.findlast';
-// import _ from 'lodash/fp';
+
 import * as timeHelper from './time';
+import * as styleHelper from './style';
+
+export * from './time';
+export * from './style';
 
 export function abbreviateNumber(num) {
   if (!num) {
@@ -122,7 +119,7 @@ export const transformations = {
         {timeHelper.formatHoursSeconds(field)}
       </span>
       {row &&
-      <span className={subTextStyle.subText} style={{ display: 'block', marginTop: 1 }}>
+      <span style={{ ...styleHelper.subTextStyle, display: 'block', marginTop: 1 }}>
         <FromNowTooltip timestamp={row.start_time + row.duration} />
       </span>}
     </div>
@@ -135,7 +132,7 @@ export const transformations = {
   match_id: (row, col, field) => <Link to={`/matches/${field}`}>{field}</Link>,
   match_id_with_time: (row, col, field) => (<div>
     <TableLink to={`/matches/${field}`}>{field}</TableLink>
-    <span className={subTextStyle.subText} style={{ display: 'block', marginTop: 1 }}>
+    <span style={{ ...styleHelper.subTextStyle, display: 'block', marginTop: 1 }}>
       {timeHelper.fromNow(row.start_time || row.start_time_checkin)}
     </span>
   </div>),
@@ -166,14 +163,14 @@ export const transformations = {
     <div>
       <Link to={`/events/${row.event_id}`}>
         <span style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-          <TableClubVsClubImage
+          <TableClubImage
             image={Clubs[row.home] && Clubs[row.home].icon}
             title={<span>{Clubs[row.home] && Clubs[row.home].name}</span>}
             // subtitle={Clubs[row.home] && Clubs[row.home].name}
             clubName={Clubs[row.home] && Clubs[row.home].name}
           />
           <span style={{ marginTop: 5 }}>vs</span>
-          <TableClubVsClubImage
+          <TableClubImage
             image={Clubs[row.away] && Clubs[row.away].icon}
             title={<span>{Clubs[row.away] && Clubs[row.away].name}</span>}
             // subtitle={Clubs[row.away] && Clubs[row.away].name}

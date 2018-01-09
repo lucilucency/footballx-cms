@@ -1,31 +1,28 @@
 import React from 'react';
 import strings from 'lang';
 import { IconGithub, IconDiscord } from '../Icons';
-import styles from './Footer.css';
 
 const links = [{
   tooltip: strings.app_github,
-  path: '//github.com/odota',
+  path: '//ci.ttab.me/web/footballx-ui',
   icon: <IconGithub />,
 }, {
   tooltip: strings.app_discord,
-  path: '//discord.gg/0o5SQGbXuWCNDcaF',
+  path: '//www.pivotaltracker.com/n/projects/2136932',
   icon: <IconDiscord />,
 }];
 
-export default () => (
-  <div className={styles.SocialLinks}>
-    {links.map((link, index) => (
-      <a
-        key={index}
-        target="_blank"
-        rel="noopener noreferrer"
-        data-hint-position="top"
-        data-hint={link.tooltip}
-        href={link.path}
-      >
-        {link.icon}
-      </a>
-    ))}
-  </div>
-);
+export default () => (<div>
+  {links.map((link, index) => (
+    <a
+      key={index}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-hint-position="top"
+      data-hint={link.tooltip}
+      href={link.path}
+    >
+      {link.icon}
+    </a>
+  ))}
+</div>);

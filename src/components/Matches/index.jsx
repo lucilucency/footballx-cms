@@ -5,8 +5,7 @@ import Helmet from 'react-helmet';
 import { getMatchesLeague } from 'actions';
 import strings from 'lang';
 import Table from 'components/Table';
-import { transformations } from 'utility';
-import subTextStyle from 'components/Visualizations/Table/subText.css';
+import { transformations, subTextStyle } from 'utility';
 import { IconTrophy } from 'components/Icons';
 import TabBar from 'components/TabBar';
 import Clubs from 'fxconstants/build/clubsObj.json';
@@ -19,55 +18,6 @@ const ConfirmedIcon = styled.span`
       fill: var(--colorGolden);
   }
 `;
-
-const columns = [{
-  displayName: strings.th_match_id,
-  field: 'id',
-  sortFn: true,
-  displayFn: (row, col, field) => (<div>
-    {field}
-    <span className={subTextStyle.subText} style={{ display: 'block', marginTop: 1 }}>
-      {row.league_name || strings.th_premier_league}
-    </span>
-  </div>),
-}, {
-  displayName: strings.th_time,
-  tooltip: strings.tooltip_time,
-  field: 'date',
-  sortFn: true,
-  displayFn: transformations.start_time,
-}, {
-  displayName: <span>{strings.general_home}</span>,
-  field: 'home',
-  color: constants.green,
-  displayFn: row => (<div>
-    {(row.home && row.home.result === 1) && <ConfirmedIcon><IconTrophy /></ConfirmedIcon>}
-    {(row.home && Clubs[row.home.club_id]) && Clubs[row.home.club_id].name}
-  </div>),
-}, {
-  displayName: <span>{strings.general_away}</span>,
-  field: 'away',
-  color: constants.red,
-  displayFn: row => (<div>
-    {(row.away && row.away.result === 1) && <ConfirmedIcon><IconTrophy /></ConfirmedIcon>}
-    {(row.away && Clubs[row.away.club_id]) && Clubs[row.away.club_id].name}</div>),
-}];
-
-const matchTabs = [{
-  name: strings.matches_league,
-  key: 'league',
-  content: propsPar => (<div>
-    <Table data={propsPar.matchesLeague} columns={columns} loading={propsPar.loading} />
-  </div>),
-  route: '/matches/league',
-}, {
-  name: strings.matches_national,
-  key: 'national',
-  content: propsPar => (<div>
-    <Table data={propsPar.matchesNation} columns={columns} loading={propsPar.loading} />
-  </div>),
-  route: '/matches/national',
-}];
 
 const getData = (props) => {
   const route = props.match.params.matchId || 'league';
@@ -95,6 +45,55 @@ class RequestLayer extends React.Component {
     if (!this.props.user) {
       window.location.href = '/login';
     }
+
+    const columns = [{
+      displayName: strings.th_match_id,
+      field: 'id',
+      sortFn: true,
+      displayFn: (row, col, field) => (<div>
+        {field}
+        <span style={{ ...subTextStyle, display: 'block', marginTop: 1 }}>
+          {row.league_name || strings.th_premier_league}
+        </span>
+      </div>),
+    }, {
+      displayName: strings.th_time,
+      tooltip: strings.tooltip_time,
+      field: 'date',
+      sortFn: true,
+      displayFn: transformations.start_time,
+    }, {
+      displayName: <span>{strings.general_home}</span>,
+      field: 'home',
+      color: constants.green,
+      displayFn: row => (<div>
+        {(row.home && row.home.result === 1) && <ConfirmedIcon><IconTrophy /></ConfirmedIcon>}
+        {(row.home && Clubs[row.home.club_id]) && Clubs[row.home.club_id].name}
+      </div>),
+    }, {
+      displayName: <span>{strings.general_away}</span>,
+      field: 'away',
+      color: constants.red,
+      displayFn: row => (<div>
+        {(row.away && row.away.result === 1) && <ConfirmedIcon><IconTrophy /></ConfirmedIcon>}
+        {(row.away && Clubs[row.away.club_id]) && Clubs[row.away.club_id].name}</div>),
+    }];
+
+    const matchTabs = [{
+      name: strings.matches_league,
+      key: 'league',
+      content: propsPar => (<div>
+        <Table data={propsPar.matchesLeague} columns={columns} loading={propsPar.loading} />
+      </div>),
+      route: '/matches/league',
+    }, {
+      name: strings.matches_national,
+      key: 'national',
+      content: propsPar => (<div>
+        <Table data={propsPar.matchesNation} columns={columns} loading={propsPar.loading} />
+      </div>),
+      route: '/matches/national',
+    }];
 
     const route = this.props.match.params.matchId || 'league';
 
