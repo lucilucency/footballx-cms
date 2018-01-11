@@ -1,5 +1,5 @@
 import * as transform from 'actions/transforms';
-import { action, fxActionPost, fxActionGet, fxActionPut, fxActionDelete } from 'actions/action';
+import { action, fxActionPost, fxActionGet, fxActionPut, fxActionDelete } from 'actions/dispatchAction';
 import queryString from 'querystring';
 
 export const getUserMetadata = (params = {}) => (dispatch) => {
@@ -26,7 +26,7 @@ export const cuserLogin = (username, password) => fxActionPost('auth', 'cuser/lo
 export const getHUserHotspot = accountId => fxActionGet('hotspot', `huser/${accountId}/hotspot`);
 /* matches */
 export const getMatchesLeague = params => fxActionGet('matchesLeague', 'matches', params, transform.transformMatches);
-export const getNationalMatches = params => action('nationalMatches', 'matches', params, transform.transformMatches);
+export const getNationalMatches = params => fxActionGet('nationalMatches', 'matches', params, transform.transformMatches);
 /* hotspot */
 export const getHotspots = () => fxActionGet('hotspots', 'hotspots');
 export const createHotspot = params => fxActionPost('ADD/hotspots', 'hotspot', params);
@@ -61,9 +61,8 @@ export const deleteEvent = eventId => fxActionDelete('DELETE/event', `event/${ev
 /* notification */
 export const sendNotificationTopic = (params = { topic: '', message: '' }) => fxActionPost('sendNotification', 'notification/topic', params);
 
-
 export const setSearchQuery = query => dispatch => dispatch(({ type: 'QUERY/search', query }));
-export const getSearchResult = query => fxActionGet('search', 'api/search', { q: query });
+export const getSearchResult = query => action('search', 'https://api.opendota.com', 'api/search', { q: query });
 export const getSearchResultAndPros = query => dispatch => Promise.all([
   dispatch(setSearchQuery(query)),
   dispatch(getSearchResult(query)),
@@ -75,5 +74,5 @@ export const getGithubPulls = merged => action('ghPulls', 'https://api.github.co
   per_page: 1,
 });
 
-export * from './postRequestMatch';
-export * from './formActions';
+export * from './dispatchForm';
+export * from './request';

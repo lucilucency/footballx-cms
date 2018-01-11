@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 /* actions - helpers */
-import { toggleShowForm } from 'actions/formActions';
+import { toggleShowForm } from 'actions/dispatchForm';
 import util from 'util';
 import update from 'react-addons-update';
 /* components */
@@ -11,7 +11,6 @@ import { RaisedButton, FlatButton, Dialog, List, ListItem } from 'material-ui';
 import { TextValidator } from 'react-material-ui-form-validator';
 import IconFail from 'material-ui/svg-icons/content/clear';
 import IconSuccess from 'material-ui/svg-icons/navigation/check';
-
 import FormField from 'components/Form/FormField';
 import { ValidatorForm } from 'react-form-validator-core';
 /* data */

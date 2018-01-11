@@ -23,6 +23,7 @@ import Hotspots from 'components/Hotspots';
 import Hotspot from 'components/Hotspot';
 import Groups from 'components/Groups';
 import Group from 'components/Group';
+import Notify from 'components/Notify';
 
 import constants from 'components/constants';
 import styled from 'styled-components';
@@ -105,6 +106,8 @@ class App extends React.Component {
             <Route exact path="/hotspot/:hotspotId?/:info?/:subInfo?" component={Hotspot} />
             <Route exact path="/groups/:info?/:subInfo?" component={Groups} />
             <Route exact path="/group/:groupId?/:info?/:subInfo?" component={Group} />
+
+            <Route exact path="/notify" component={Notify} />
 
             {/* <Route exact path="/events/:eventId?/:info?" component={} /> */}
           </StyledBodyDiv>

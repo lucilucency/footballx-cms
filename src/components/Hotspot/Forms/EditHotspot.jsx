@@ -5,7 +5,7 @@ import update from 'react-addons-update';
 import PropTypes from 'prop-types';
 /* actions & helpers */
 import { editHotspot } from 'actions';
-import { toggleShowForm } from 'actions/formActions';
+import { toggleShowForm } from 'actions/dispatchForm';
 /* data & components */
 import strings from 'lang';
 import { TextField, RaisedButton } from 'material-ui';

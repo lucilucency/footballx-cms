@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import update from 'react-addons-update';
 import PropTypes from 'prop-types';
 /* actions & helpers */
-import { toggleShowForm } from 'actions/formActions';
+import { toggleShowForm } from 'actions/dispatchForm';
 import { createHotspotHUser } from 'actions';
 import util from 'util';
 /* data */

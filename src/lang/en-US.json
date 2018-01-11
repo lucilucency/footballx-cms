@@ -143,6 +143,7 @@
   "filter_status": "Status",
   "filter_place": "Place",
   "filter_xuser": "X-User",
+  "filter_event": "Event",
   "filter_notification_user": "User segment",
   "filter_notification_topic": "Topic",
 
@@ -188,6 +189,9 @@
   "form_filter_close": "Close Filter",
   "form_send_notification": "Send Notification",
   "form_send_notification_close": "Close Send Notification",
+  "form_send_notification_topic": "Topic",
+  "form_send_notification_single_user": "Single User",
+
   "form_confirm_general": "Confirm Dialog",
   "form_confirm_question_general": "Do you really want to do this?",
   "form_confirm_delete": "Delete Confirm Dialog",
@@ -427,6 +431,7 @@
   "pagination_first": "First",
   "pagination_last": "Last",
   "pagination_of": "of",
+  "placeholder_filter_heroes": "Filter Heroes",
 
   "request_title": "Request a Parse",
   "request_match_id": "Match ID",
@@ -481,7 +486,6 @@
   "tab_story": "Story",
   "tab_fantasy": "Fantasy",
 
-  "placeholder_filter_heroes": "Filter Heroes",
 
   "td_win": "Win",
   "td_loss": "Loss",
@@ -638,12 +642,6 @@
   "th_phone": "Tel.",
   "th_email": "Email",
   "th_place": "Place",
-
-
-  "log_detail": "Detail",
-
-  "tier_professional": "Professional",
-  "tier_premium": "Premium",
 
   "time_next": "Will be in %s",
   "time_past": "%s ago",

@@ -35,9 +35,9 @@ const mapStateToProps = (state) => {
     done,
     data,
     query,
-    pros: fuzzy.filter(query, state.app.proPlayers.data, { extract }).map(item => ({ ...item.original })),
-    prosLoading: state.app.proPlayers.loading,
-    prosError: state.app.proPlayers.error,
+    pros: fuzzy.filter(query, state.app.events.data, { extract }).map(item => ({ ...item.original })),
+    prosLoading: state.app.events.loading,
+    prosError: state.app.events.error,
   };
 };
 

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 /* actions - helpers */
-import { toggleShowForm } from 'actions/formActions';
+import { toggleShowForm } from 'actions/dispatchForm';
 /* components */
 import { RaisedButton } from 'material-ui';
 /* data */

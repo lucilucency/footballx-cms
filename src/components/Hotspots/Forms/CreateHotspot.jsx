@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import update from 'react-addons-update';
 import PropTypes from 'prop-types';
 /* actions & helpers */
-import { toggleShowForm } from 'actions/formActions';
+import { toggleShowForm } from 'actions/dispatchForm';
 import { createHotspot } from 'actions';
 /* data */
 import strings from 'lang';
@@ -12,7 +12,7 @@ import strings from 'lang';
 import { TextField, RaisedButton } from 'material-ui';
 import Error from 'components/Error/index';
 import Spinner from 'components/Spinner/index';
-import MapWithSearchBox from '../../Visualizations/GoogleMap/MapWithSearchBox';
+import MapWithSearchBox from 'components/Visualizations/GoogleMap/MapWithSearchBox';
 /* css */
 import styles from './index.css';
 

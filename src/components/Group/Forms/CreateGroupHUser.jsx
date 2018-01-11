@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import update from 'react-addons-update';
 /* actions & helpers */
-import { toggleShowForm } from 'actions/formActions';
+import { toggleShowForm } from 'actions/dispatchForm';
 import { createHotspotHUser } from 'actions';
 import util from 'util';
 /* data */
