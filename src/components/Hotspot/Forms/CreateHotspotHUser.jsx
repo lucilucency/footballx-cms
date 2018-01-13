@@ -174,4 +174,4 @@ const mapDispatchToProps = dispatch => ({
   postHotspotHUser: (params, payload) => dispatch(createHotspotHUser(params, payload)),
 });
 
-export default withRouter(connect({}, mapDispatchToProps)(CreateHotspotForm));
+export default withRouter(connect(null, mapDispatchToProps)(CreateHotspotForm));

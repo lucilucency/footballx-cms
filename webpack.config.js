@@ -90,28 +90,6 @@ const config = {
       FX_API: JSON.stringify(isProd ? 'http://web-api.ttab.me' : isDev ? 'http://code.ttab.me:51168' : 'http://localhost:51168'),
       FX_VERSION: JSON.stringify(process.env.FX_VERSION || 'v1'),
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      mangle: true,
-      compress: {
-        warnings: false, // Suppress uglification warnings
-        pure_getters: true,
-        unsafe: true,
-        unsafe_comps: true,
-        screw_ie8: true
-      },
-      output: {
-        comments: false,
-      },
-      exclude: [/\.min\.js$/gi] // skip pre-minified libs
-    }),
-    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-    new CompressionPlugin({
-      asset: "[path].gz[query]",
-      algorithm: "gzip",
-      test: /\.js$|\.css$|\.html$/,
-      threshold: 10240,
-      minRatio: 0
-    })
   ].filter(o => o),
   devServer: {
     contentBase: __dirname,
@@ -136,6 +114,30 @@ if (!isProd) {
   config.plugins.push(new webpack.NamedModulesPlugin());
 } else {
   // config.plugins.push(new webpack.optimize.DedupePlugin());
+  config.plugins.concat([
+    new webpack.optimize.UglifyJsPlugin({
+      mangle: true,
+      compress: {
+        warnings: false, // Suppress uglification warnings
+        pure_getters: true,
+        unsafe: true,
+        unsafe_comps: true,
+        screw_ie8: true
+      },
+      output: {
+        comments: false,
+      },
+      exclude: [/\.min\.js$/gi] // skip pre-minified libs
+    }),
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    new CompressionPlugin({
+      asset: "[path].gz[query]",
+      algorithm: "gzip",
+      test: /\.js$|\.css$|\.html$/,
+      threshold: 10240,
+      minRatio: 0
+    })
+  ])
 }
 
 module.exports = config;
