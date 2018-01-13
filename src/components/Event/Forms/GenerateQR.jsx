@@ -23,17 +23,17 @@ const setShowFormState = (props) => {
 };
 
 const FormGroup = styled.div`
-    padding: 0 15px;
-    box-sizing: border-box;
-    text-align: center;
-    overflow: hidden;
-    transition: max-height 0.4s;
-    
-    ${props => (props.show ? css`
-        max-height: 1000px;
-    ` : css`
-        max-height: 0;
-    `)}
+  padding: 0 15px;
+  box-sizing: border-box;
+  text-align: center;
+  overflow: hidden;
+  transition: max-height 0.4s;
+  
+  ${props => (props.show ? css`
+      max-height: 1000px;
+  ` : css`
+      max-height: 0;
+  `)}
 `;
 
 class GenerateQR extends React.Component {
@@ -90,45 +90,44 @@ class GenerateQR extends React.Component {
     const winner = this.state.winner;
 
     const ImageRotation = styled.img`
-            ${props => props.isFlipped && css`
-                -webkit-animation-name: spinner; 
-                -webkit-animation-timing-function: linear; 
-                -webkit-animation-iteration-count: infinite; 
-                -webkit-animation-duration: 0.5s; 
-                animation-name: spinner; 
-                animation-timing-function: linear; 
-                animation-iteration-count: infinite; 
-                animation-duration: 0.5s; 
-                -webkit-transform-style: preserve-3d; 
-                -moz-transform-style: preserve-3d; 
-                -ms-transform-style: preserve-3d; 
-                transform-style: preserve-3d;
-                
-                @-webkit-keyframes spinner { 
-                    from 
-                    { 
-                        -webkit-transform: rotateY(0deg); 
-                    } 
-                    to { 
-                        -webkit-transform: rotateY(-360deg); 
-                    } 
-                } 
-                @keyframes spinner { 
-                    from { 
-                        -moz-transform: rotateY(0deg); 
-                        -ms-transform: rotateY(0deg); 
-                        transform: rotateY(0deg); 
-                    } 
-                    to 
-                    { 
-                        -moz-transform: rotateY(-360deg); 
-                        -ms-transform: rotateY(-360deg); 
-                        transform: rotateY(-360deg); 
-                    
-                    } 
-                }
-            `}
-        `;
+      ${props => props.isFlipped && css`
+        -webkit-animation-name: spinner; 
+        -webkit-animation-timing-function: linear; 
+        -webkit-animation-iteration-count: infinite; 
+        -webkit-animation-duration: 0.5s; 
+        animation-name: spinner; 
+        animation-timing-function: linear; 
+        animation-iteration-count: infinite; 
+        animation-duration: 0.5s; 
+        -webkit-transform-style: preserve-3d; 
+        -moz-transform-style: preserve-3d; 
+        -ms-transform-style: preserve-3d; 
+        transform-style: preserve-3d;
+        
+        @-webkit-keyframes spinner { 
+          from 
+          { 
+              -webkit-transform: rotateY(0deg); 
+          } 
+          to { 
+              -webkit-transform: rotateY(-360deg); 
+          } 
+        } 
+        @keyframes spinner { 
+          from { 
+              -moz-transform: rotateY(0deg); 
+              -ms-transform: rotateY(0deg); 
+              transform: rotateY(0deg); 
+          } 
+          to 
+          { 
+              -moz-transform: rotateY(-360deg); 
+              -ms-transform: rotateY(-360deg); 
+              transform: rotateY(-360deg); 
+          } 
+        }
+      `}
+  `;
 
     return (
       <FormGroup show={showForm}>

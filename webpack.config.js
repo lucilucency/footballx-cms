@@ -7,10 +7,13 @@ const path = require('path');
 const webpack = require('webpack');
 const postcssImport = require('postcss-import');
 const postcssCssNext = require('postcss-cssnext');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const CompressionPlugin = require('compression-webpack-plugin');
 
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = process.env.NODE_ENV === 'development';
-// const isLocal = process.env.NODE_ENV === 'local';
+const isTest = process.env.NODE_ENV === 'test';
 
 function HashBundlePlugin() {
 }
@@ -62,15 +65,16 @@ const config = {
       loader: 'babel-loader',
     }],
     loaders: [{
-      test: /\.jsx?$/,
+      test: /\.es6$/,
       exclude: /node_modules/,
-      loader: 'babel',
+      loader: 'babel-loader',
       query: {
         presets: ['es2015', 'react'],
       },
     }],
   },
   plugins: [
+    isTest && new BundleAnalyzerPlugin(),
     new webpack.LoaderOptionsPlugin({
       options: {
         postcss: [
@@ -86,7 +90,29 @@ const config = {
       FX_API: JSON.stringify(isProd ? 'http://web-api.ttab.me' : isDev ? 'http://code.ttab.me:51168' : 'http://localhost:51168'),
       FX_VERSION: JSON.stringify(process.env.FX_VERSION || 'v1'),
     }),
-  ],
+    new webpack.optimize.UglifyJsPlugin({
+      mangle: true,
+      compress: {
+        warnings: false, // Suppress uglification warnings
+        pure_getters: true,
+        unsafe: true,
+        unsafe_comps: true,
+        screw_ie8: true
+      },
+      output: {
+        comments: false,
+      },
+      exclude: [/\.min\.js$/gi] // skip pre-minified libs
+    }),
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+    new CompressionPlugin({
+      asset: "[path].gz[query]",
+      algorithm: "gzip",
+      test: /\.js$|\.css$|\.html$/,
+      threshold: 10240,
+      minRatio: 0
+    })
+  ].filter(o => o),
   devServer: {
     contentBase: __dirname,
     host: '0.0.0.0',
@@ -106,10 +132,10 @@ if (!isProd) {
     'babel-polyfill',
     path.resolve(__dirname, 'src'),
   ];
+
   config.plugins.push(new webpack.NamedModulesPlugin());
 } else {
-  // config.plugins.push(new webpack.optimize.UglifyJsPlugin());
-  config.plugins.push(new HashBundlePlugin());
+  // config.plugins.push(new webpack.optimize.DedupePlugin());
 }
 
 module.exports = config;

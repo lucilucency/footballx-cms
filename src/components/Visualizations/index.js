@@ -4,4 +4,3 @@ export { default as TableXUserImage } from './Table/UserImage';
 export { default as TableClubImage } from './Table/ClubImage';
 export { default as FromNowTooltip } from './FromNowTooltip';
 export { default as Graph, TrendGraph, HistogramGraph, MMRGraph } from './Graph';
-export { default as inflictorWithValue } from './inflictorWithValue';

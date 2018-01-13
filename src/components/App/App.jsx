@@ -23,6 +23,8 @@ import Hotspots from 'components/Hotspots';
 import Hotspot from 'components/Hotspot';
 import Groups from 'components/Groups';
 import Group from 'components/Group';
+import Cards from 'components/Cards';
+
 import Notify from 'components/Notify';
 
 import constants from 'components/constants';
@@ -100,12 +102,13 @@ class App extends React.Component {
             <Route exact path="/admin" component={Admin} />
             <Route exact path="/clubs/:clubId?/:info?" component={Clubs} />
             <Route exact path="/matches/:matchId?/:info?" component={Matches} />
-            <Route exact path="/events/:eventId?/:info?/:subInfo?" component={Events} />
+            <Route exact path="/events/:info?/:subInfo?" component={Events} />
             <Route exact path="/event/:eventId?/:info?/:subInfo?" component={Event} />
             <Route exact path="/hotspots/:info?/:subInfo?" component={Hotspots} />
             <Route exact path="/hotspot/:hotspotId?/:info?/:subInfo?" component={Hotspot} />
             <Route exact path="/groups/:info?/:subInfo?" component={Groups} />
             <Route exact path="/group/:groupId?/:info?/:subInfo?" component={Group} />
+            <Route exact path="/cards/:info?/:subInfo?" component={Cards} />
 
             <Route exact path="/notify" component={Notify} />
 

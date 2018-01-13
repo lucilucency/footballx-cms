@@ -19,6 +19,6 @@ const pages = [{
 
 export default eventId => pages.map(page => ({
   ...page,
-  route: `/events/${eventId}/${page.key.toLowerCase()}`,
+  route: `/event/${eventId}/${page.key.toLowerCase()}`,
   disabled: false,
 }));

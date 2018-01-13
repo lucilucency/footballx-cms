@@ -4,29 +4,38 @@ import Helmet from 'react-helmet';
 import PropTypes from 'prop-types';
 /* data */
 import strings from 'lang';
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 import queryString from 'querystring';
 /* components */
 import Event from 'components/Event';
 import TabBar from 'components/TabBar';
+
 import CreateEventsForm from './Forms/CreateEventsForm';
 import EventsHeader from './Header';
 import FilterForm from './Forms/FilterForm';
-import Overview from './Pages/Overview';
 
+import CardsPage from './Pages/Cards';
+import CardLabelsPage from './Pages/CardLabels';
+import IssuesPage from './Pages/Issues';
 
 const eventTabs = [
   {
-    name: strings.tab_events_all,
-    key: 'all',
-    content: (events, routeParams, location) => (<Overview routeParams={routeParams} location={location} events={events} />),
-    route: '/events/all',
+    name: strings.tab_cards_issues,
+    key: 'issues',
+    content: (events, routeParams, location) => (<IssuesPage routeParams={routeParams} location={location} />),
+    route: '/cards/issues',
   },
   {
-    name: strings.tab_events_add,
-    key: 'add',
-    content: () => (<CreateEventsForm />),
-    route: '/events/add',
+    name: strings.tab_cards_all,
+    key: 'all',
+    content: (events, routeParams, location) => (<CardsPage routeParams={routeParams} location={location} />),
+    route: '/cards/all',
+  },
+  {
+    name: strings.tab_cards_labels,
+    key: 'labels',
+    content: (events, routeParams, location) => (<CardLabelsPage routeParams={routeParams} location={location} />),
+    route: '/cards/labels',
   },
 ];
 
@@ -48,7 +57,7 @@ class RequestLayer extends React.Component {
     let { events } = this.props;
     // filter local
     const filter = queryString.parse(location.search.replace('?', ''));
-    if (!_.isEmpty(filter)) {
+    if (!isEmpty(filter)) {
       const keys = Object.keys(filter);
       keys.forEach((key) => {
         let value = filter[key];
@@ -74,16 +83,9 @@ class RequestLayer extends React.Component {
       this.props.history.push('/login');
       return false;
     }
-
+    console.log(match);
     const route = match.params.info || 'all';
-    if (Number.isInteger(Number(route))) {
-      return <Event {...this.props} eventId={route} />;
-    }
-
-    if (this.props.user.user_type !== 1 && location.pathname !== '/events/add') {
-      this.props.history.push('/');
-      return false;
-    }
+    console.log(match.params);
 
     const tab = eventTabs.find(el => el.key === route);
     return (<div>

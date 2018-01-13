@@ -1,10 +1,7 @@
-/* global FX_API */
 import React from 'react';
 import { Link } from 'react-router-dom';
 /* data */
 import strings from 'lang';
-import items from 'dotaconstants/build/items.json';
-import itemIds from 'dotaconstants/build/item_ids.json';
 import Clubs from 'fxconstants/build/clubsObj.json';
 /* components */
 import { TableLink } from 'components/Table';
@@ -155,13 +152,13 @@ export const transformations = {
     const homeName = Clubs[row.home] && Clubs[row.home].name;
     const awayName = Clubs[row.away] && Clubs[row.away].name;
     if (homeName && awayName) {
-      return <Link to={`/events/${field}`}>{`${homeName} vs ${awayName}`}</Link>;
+      return <Link to={`/event/${field}`}>{`${homeName} vs ${awayName}`}</Link>;
     }
-    return <Link to={`/events/${field}`}>{'Go to event >'}</Link>;
+    return <Link to={`/event/${field}`}>{'Go to event >'}</Link>;
   },
   th_event_club_vs_club_image: row => (
     <div>
-      <Link to={`/events/${row.event_id}`}>
+      <Link to={`/event/${row.event_id}`}>
         <span style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
           <TableClubImage
             image={Clubs[row.home] && Clubs[row.home].icon}
@@ -198,19 +195,6 @@ export const transformations = {
 
   winPercent: (row, col, field) => `${(field * 100).toFixed(2)}%`,
 };
-
-const transformMatchItem = ({
-  field,
-}) => {
-  if (field === 0) {
-    return false;
-  }
-  return `${FX_API}${items[itemIds[field]].img}`;
-};
-
-for (let i = 0; i < 6; i += 1) {
-  transformations[`item_${i}`] = transformMatchItem;
-}
 
 export const defaultSort = (array, sortState, sortField, sortFn) =>
   array.sort((a, b) => {

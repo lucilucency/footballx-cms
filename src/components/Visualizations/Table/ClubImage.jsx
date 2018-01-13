@@ -4,7 +4,6 @@ import ReactTooltip from 'react-tooltip';
 import ActionDoneAll from 'material-ui/svg-icons/action/done-all';
 import strings from 'lang';
 import { TableLink } from 'components/Table';
-import playerColors from 'dotaconstants/build/player_colors.json';
 import { IconDice, IconCrystalBall, IconCheckCircle } from 'components/Icons';
 import SocialPerson from 'material-ui/svg-icons/social/person';
 import NotificationSync from 'material-ui/svg-icons/notification/sync';
@@ -232,7 +231,6 @@ const TableClubImage = ({
   title,
   subtitle,
   accountId,
-  playerSlot,
   hideText,
   confirmed,
   party,
@@ -277,12 +275,6 @@ const TableClubImage = ({
             alt=""
           />
         </span>
-        }
-        {playerSlot !== undefined &&
-        <div
-          className="playerSlot"
-          style={{ backgroundColor: playerColors[playerSlot] }}
-        />
         }
       </div>
       }
@@ -372,7 +364,6 @@ TableClubImage.propTypes = {
   subtitle: oneOfType([string, node]),
   registered: string,
   accountId: PropTypes.number,
-  playerSlot: PropTypes.number,
   hideText: bool,
   party: node,
   confirmed: bool,

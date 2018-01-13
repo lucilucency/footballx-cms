@@ -1,9 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  connect,
-} from 'react-redux';
-
+import { connect } from 'react-redux';
 /* actions & helpers */
 import { getEvents } from 'actions';
 import { transformations } from 'utility';
@@ -17,14 +14,22 @@ import strings from 'lang';
 import constants from 'components/constants';
 import { colors } from 'material-ui/styles';
 import { subTextStyle } from 'utility/style';
-import { EventsSummary } from './EventsSummary';
+import { EventsSummary } from './CardsSummary';
 
-const tableEventsColumns = browser => [browser.greaterThan.medium && {
+/*
+id
+pack_id
+card_label_id
+xuser_id
+code
+*/
+
+const tableCardsColumns = browser => [browser.greaterThan.medium && {
   displayName: strings.th_event_id,
   field: 'event_id',
   sortFn: true,
   displayFn: (row, col, field) => (<div>
-    <TableLink to={`/event/${field}`}>{field}</TableLink>
+    <TableLink to={`/events/${field}`}>{field}</TableLink>
   </div>),
 }, {
   displayName: strings.th_event,
@@ -99,10 +104,9 @@ const tableEventsColumns = browser => [browser.greaterThan.medium && {
   </div>),
 }];
 
-
 const TableEvents = propsVar => (
-  <Container title={strings.heading_events_all}>
-    <Table paginated columns={tableEventsColumns(propsVar.browser)} data={propsVar.events} pageLength={30} />
+  <Container title={strings.heading_cards}>
+    <Table paginated columns={tableCardsColumns(propsVar.browser)} data={propsVar.events} pageLength={30} />
   </Container>
 );
 
@@ -119,7 +123,7 @@ class Overview extends React.Component {
     const { events } = this.props;
 
     return (<div>
-      <EventsSummary {...this.props} events={events} loading={false} error={false} />
+      {/* <EventsSummary {...this.props} events={events} loading={false} error={false} /> */}
       <TableEvents {...this.props} events={events} loading={false} error={false} />
     </div>);
   }

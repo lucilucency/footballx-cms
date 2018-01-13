@@ -153,6 +153,10 @@ class CreateNotificationForm extends React.Component {
     event: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     xusers: PropTypes.array, // eslint-disable-line react/forbid-prop-types
     target: PropTypes.string,
+
+    history: PropTypes.shape({
+      push: PropTypes.func,
+    }),
   };
 
   constructor(props) {

@@ -47,6 +47,7 @@ const navbarPagesCUser = [
   <Link key={strings.header_hotspots} to="/hotspots">{strings.header_hotspots}</Link>,
   <Link key={strings.header_groups} to="/groups">{strings.header_groups}</Link>,
   <Link key={strings.header_events} to="/events">{strings.header_events}</Link>,
+  <Link key={strings.header_cards} to="/cards">{strings.header_cards}</Link>,
 ];
 
 const burgerItems = (user, hotspot, group) => {
