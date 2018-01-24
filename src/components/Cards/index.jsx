@@ -7,15 +7,12 @@ import strings from 'lang';
 import { isEmpty } from 'lodash';
 import queryString from 'querystring';
 /* components */
-import Event from 'components/Event';
 import TabBar from 'components/TabBar';
-
-import CreateEventsForm from './Forms/CreateEventsForm';
 import EventsHeader from './Header';
 import FilterForm from './Forms/FilterForm';
 
-import CardsPage from './Pages/Cards';
-import CardLabelsPage from './Pages/CardLabels';
+import PackagesPage from './Pages/Packages';
+import LabelsPage from './Pages/Labels';
 import IssuesPage from './Pages/Issues';
 
 const eventTabs = [
@@ -26,16 +23,16 @@ const eventTabs = [
     route: '/cards/issues',
   },
   {
-    name: strings.tab_cards_all,
-    key: 'all',
-    content: (events, routeParams, location) => (<CardsPage routeParams={routeParams} location={location} />),
-    route: '/cards/all',
-  },
-  {
     name: strings.tab_cards_labels,
     key: 'labels',
-    content: (events, routeParams, location) => (<CardLabelsPage routeParams={routeParams} location={location} />),
+    content: (events, routeParams, location) => (<LabelsPage routeParams={routeParams} location={location} />),
     route: '/cards/labels',
+  },
+  {
+    name: strings.tab_cards_packages,
+    key: 'packages',
+    content: (events, routeParams, location) => (<PackagesPage routeParams={routeParams} location={location} />),
+    route: '/cards/packages',
   },
 ];
 
@@ -84,7 +81,7 @@ class RequestLayer extends React.Component {
       return false;
     }
     console.log(match);
-    const route = match.params.info || 'all';
+    const route = match.params.info || 'labels';
     console.log(match.params);
 
     const tab = eventTabs.find(el => el.key === route);

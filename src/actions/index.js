@@ -1,5 +1,5 @@
 import * as transform from 'actions/transforms';
-import { action, fxActionPost, fxActionGet, fxActionPut, fxActionDelete } from 'actions/dispatchAction';
+import { action, fxActionPost, fxActionGet, fxActionPut, fxActionDelete, fxActionGetDummy } from 'actions/dispatchAction';
 import queryString from 'querystring';
 
 export const getUserMetadata = (params = {}) => (dispatch) => {
@@ -56,8 +56,10 @@ export const getEventXUsers = (eventId, params) => fxActionGet('eventXUsers', `e
 export const createEvent = params => fxActionPost('ADD/events', 'event', params, transform.transformCreateEvent);
 export const editEvent = (eventId, params) => fxActionPut('EDIT/event', `event/${eventId}`, params, transform.transformEditEvent);
 export const deleteEvent = eventId => fxActionDelete('DELETE/event', `event/${eventId}`);
-
-
+/* card */
+export const getCardLabels = () => fxActionGet('cardLabels', 'card/labels', {});
+export const getCardIssues = () => fxActionGetDummy('cardIssues', 'card/issues');
+export const getCardPackages = () => fxActionGet('cardPackages', 'packes');
 /* notification */
 export const sendNotificationTopic = (params = { topic: '', message: '' }) => fxActionPost('sendNotification', 'notification/topic', params);
 

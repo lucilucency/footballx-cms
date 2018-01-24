@@ -110,7 +110,8 @@ export function formatHoursSeconds(input) {
 }
 
 export function toDateTimeString(input) {
-  return new Date(Number(input)).toLocaleDateString(window.localStorage.getItem('localization') || 'en-US', {
+  const inputParse = isNaN(input) ? input.trim() : Number(input);
+  return new Date(inputParse).toLocaleDateString(window.localStorage.getItem('localization') || 'en-US', {
     minute: 'numeric',
     hour: 'numeric',
     day: 'numeric',
@@ -121,7 +122,8 @@ export function toDateTimeString(input) {
 }
 
 export function toDateString(input) {
-  return new Date(Number(input)).toLocaleDateString(window.localStorage.getItem('localization') || 'en-US', {
+  const inputParse = isNaN(input) ? input.trim() : Number(input);
+  return new Date(inputParse).toLocaleDateString(window.localStorage.getItem('localization') || 'en-US', {
     day: 'numeric',
     month: 'numeric',
     year: 'numeric',

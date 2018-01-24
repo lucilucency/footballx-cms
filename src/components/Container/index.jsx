@@ -1,8 +1,12 @@
+/* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import Heading from 'components/Heading';
 import Spinner from 'components/Spinner';
 import Error from 'components/Error';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import AddIcon from 'material-ui/svg-icons/content/add';
+import { IconMenu, MenuItem, IconButton, FontIcon } from 'material-ui';
 
 export const AsyncContainer = ({ loading, error, children }) => {
   if (error) {
@@ -20,9 +24,14 @@ AsyncContainer.propTypes = {
   children: PropTypes.node,
 };
 
-const Container = ({ title, subtitle, style, className, children, error, loading, hide, titleTo }) => (!hide ? (
+const Container = ({ title, subtitle, style, className, children, error, loading, hide, titleTo, actions }) => (!hide ? (
   <div className={className} style={{ ...style }}>
-    {title && <Heading title={title} subtitle={subtitle} titleTo={titleTo} />}
+    {title && <Heading title={title} subtitle={subtitle} titleTo={titleTo} actions={Boolean(actions)} />}
+    {actions && <div style={{ float: 'right' }}>
+      <IconMenu iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}>
+        {actions.map(action => <MenuItem key={action.key} primaryText={action.title} leftIcon={action.icon && action.icon} onClick={action.onClick} />)}
+      </IconMenu>
+    </div>}
     <AsyncContainer error={error} loading={loading}>
       {children}
     </AsyncContainer>
@@ -33,6 +42,7 @@ Container.propTypes = {
   title: PropTypes.string,
   subtitle: PropTypes.string,
   style: PropTypes.shape({}),
+  actions: PropTypes.array,
   className: PropTypes.string,
   loading: PropTypes.bool,
   error: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),

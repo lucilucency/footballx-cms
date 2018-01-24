@@ -1,22 +1,13 @@
 import { combineReducers } from 'redux';
-import reducer from 'reducers/reducer';
 import fxReducer from 'reducers/fxReducer';
 import request from 'reducers/request';
 import form from 'reducers/form';
 
 export default combineReducers({
-  metadata: reducer('metadata'),
-
-  search: reducer('search'),
-  distributions: reducer('distributions'),
-  leagues: reducer('leagues'),
-  teams: reducer('teams'),
-  clubs: reducer('clubs'),
-  records: reducer('records'),
-  /*-------------------------*/
+  metadata: fxReducer('metadata'),
   auth: fxReducer('auth', {}),
-  matchesLeague: reducer('matchesLeague'),
-  matchesNation: reducer('matchesNation'),
+  matchesLeague: fxReducer('matchesLeague'),
+  matchesNation: fxReducer('matchesNation'),
 
   groups: fxReducer('groups', []),
   group: fxReducer('group', []),
@@ -32,6 +23,10 @@ export default combineReducers({
   events: fxReducer('events', []),
   event: fxReducer('event', {}),
   eventXUsers: fxReducer('eventXUsers', []),
+
+  cardIssues: fxReducer('cardIssues', []),
+  cardPackages: fxReducer('cardPackages', []),
+  cardLabels: fxReducer('cardLabels', []),
   /*--------------------------*/
   formCreateEvents: form('createEvent'),
   formCreateEvent: form('createEvent'),
