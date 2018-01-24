@@ -13,6 +13,9 @@ import Container from 'components/Container/index';
 import { FlatButton, Dialog, IconButton } from 'material-ui';
 import IconPrint from 'material-ui/svg-icons/action/print';
 import constants from 'components/constants';
+
+import CreateEventForm from 'components/Event/Forms/CreateEventForm';
+
 import PackageViewer from './PackageViewer';
 import PackageCreateForm from './PackageCreateForm';
 
@@ -34,10 +37,7 @@ const tableCardLabelsColumns = that => [{
 }, {
   displayName: 'Created At',
   field: 'created_at',
-  displayFn: (row, col, field) => {
-    console.log(field);
-    return (<div>{toDateTimeString(field)}</div>);
-  },
+  displayFn: (row, col, field) => (<div>{toDateTimeString(field)}</div>),
 }, {
   displayName: 'Date Available',
   field: 'date_available',
@@ -138,6 +138,7 @@ class PackagesPage extends React.Component {
             newPackage = formData;
           }}
         />,
+        // view: <CreateEventForm toggle={false} />,
       },
     }, () => {
       this.handleOpen();

@@ -423,7 +423,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  defaultCreateEvent: params => dispatch(defaultCreateEvent(params)),
+  defaultSubmitFunction: params => dispatch(defaultCreateEvent(params)),
   toggleShowForm: state => dispatch(toggleShowForm('sendNotification', state)),
   sendNotificationTopic: params => dispatch(sendNotificationTopic(params)),
 });

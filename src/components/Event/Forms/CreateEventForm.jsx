@@ -237,7 +237,7 @@ class CreateEventForm extends React.Component {
         show: { $set: true },
       }),
     }, () => {
-      const createEventFn = that.props.dispatch ? that.props.dispatch : that.props.defaultCreateEvent;
+      const createEventFn = that.props.dispatch ? that.props.dispatch : that.props.defaultSubmitFunction;
       const doCreateEvent = (eventData, payload) => new Promise((resolve) => {
         resolve(createEventFn(eventData, payload));
       });
@@ -307,7 +307,6 @@ class CreateEventForm extends React.Component {
 
   handleInputMatch(searchText) {
     console.log(searchText);
-    console.log(this.state);
     // const that = this;
     // that.setState({
     //     event: update(that.state.event, {
@@ -547,7 +546,7 @@ class CreateEventForm extends React.Component {
                 value={this.state.event.match.value}
                 dataSource={this.state.matches}
                 onNewRequest={this.handleSelectMatch}
-                onUpdateInput={this.handleInputMatch}
+                // onUpdateInput={this.handleInputMatch}
                 filter={AutoComplete.fuzzyFilter}
                 openOnFocus
                 maxSearchResults={maxSearchResults}
@@ -927,7 +926,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  defaultCreateEvent: params => dispatch(defaultCreateEvent(params)),
+  defaultSubmitFunction: params => dispatch(defaultCreateEvent(params)),
   toggleShowForm: state => dispatch(toggleShowForm('createEvent', state)),
 });
 

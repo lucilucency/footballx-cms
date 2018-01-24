@@ -120,6 +120,7 @@
   "filter_region": "Region",
   "filter_match": "Match",
   "filter_group": "Group",
+  "filter_card_label": "Card Label",
   "filter_with_hero_id": "Allied Heroes",
   "filter_against_hero_id": "Opposing Heroes",
   "filter_included_account_id": "Included Account ID",

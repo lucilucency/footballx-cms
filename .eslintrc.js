@@ -25,6 +25,7 @@ module.exports = {
         "radix": 0,
         // "indent": 0,
         "no-unused-expressions": ["error", { "allowShortCircuit": true }],
+        "no-underscore-dangle": 0,
         "no-shadow": 1,
         "import/named": ["error"],
         "jsx-a11y/anchor-is-valid": ["warn", {

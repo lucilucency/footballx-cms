@@ -122,22 +122,22 @@ if (!isProd) {
         pure_getters: true,
         unsafe: true,
         unsafe_comps: true,
-        screw_ie8: true
+        screw_ie8: true,
       },
       output: {
         comments: false,
       },
-      exclude: [/\.min\.js$/gi] // skip pre-minified libs
+      exclude: [/\.min\.js$/gi], // skip pre-minified libs
     }),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     new CompressionPlugin({
-      asset: "[path].gz[query]",
-      algorithm: "gzip",
+      asset: '[path].gz[query]',
+      algorithm: 'gzip',
       test: /\.js$|\.css$|\.html$/,
       threshold: 10240,
-      minRatio: 0
-    })
-  ])
+      minRatio: 0,
+    }),
+  ]);
 }
 
 module.exports = config;

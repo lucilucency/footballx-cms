@@ -81,7 +81,7 @@ class RequestLayer extends React.Component {
       return false;
     }
     console.log(match);
-    const route = match.params.info || 'labels';
+    const route = match.params.info || 'packages';
     console.log(match.params);
 
     const tab = eventTabs.find(el => el.key === route);
