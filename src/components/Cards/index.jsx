@@ -80,9 +80,7 @@ class RequestLayer extends React.Component {
       this.props.history.push('/login');
       return false;
     }
-    console.log(match);
     const route = match.params.info || 'packages';
-    console.log(match.params);
 
     const tab = eventTabs.find(el => el.key === route);
     return (<div>

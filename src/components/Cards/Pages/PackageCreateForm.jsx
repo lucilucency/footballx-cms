@@ -1,109 +1,56 @@
-/* global FX_API, FX_VERSION */
+/* eslint camelcase: 0, no-underscore-dangle: 0 */
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import queryString from 'querystring';
-import update from 'immutability-helper';
-import PropTypes from 'prop-types';
-/* actions & helpers */
-import { toDateTimeString } from 'utility/time';
-import transformMatches from 'actions/transforms/matches/transformMatches';
-import { createEvent as defaultCreateEvent, toggleShowForm } from 'actions';
-/* data */
+import update from 'react-addons-update';
 import strings from 'lang';
-import * as data from 'components/Event/Event.config';
-import Clubs from 'fxconstants/build/clubsObj.json';
-import util from 'util';
-/* components */
-import {
-  AutoComplete,
-  Dialog,
-  FlatButton,
-  List,
-  ListItem,
-  MenuItem,
-  RaisedButton,
-  TextField,
-} from 'material-ui';
+// import { validateEmail } from 'utility/misc';
+import { ajaxGet, createCardPackage } from 'actions';
+
+import { Dialog, AutoComplete, TextField, FlatButton, List, ListItem } from 'material-ui';
 import IconFail from 'material-ui/svg-icons/content/clear';
 import IconSuccess from 'material-ui/svg-icons/navigation/check';
-import DateTimePicker from 'material-ui-datetimepicker';
-import DatePickerDialog from 'material-ui/DatePicker/DatePickerDialog';
-import TimePickerDialog from 'material-ui/TimePicker/TimePickerDialog';
-import Error from 'components/Error/index';
-import Spinner from 'components/Spinner/index';
-import { SketchPicker } from 'react-color';
-import { ValidatorForm } from 'react-form-validator-core';
-import { AutoCompleteValidator, SelectValidator } from 'react-material-ui-form-validator';
-/* css */
 import styled, { css } from 'styled-components';
-import constants from '../../constants';
+import constants from 'components/constants';
 
-const request = require('superagent');
+const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  ${props => props.right && css`
+    flex-direction: row-reverse;
+  `}
+`;
+const Col = styled.div`
+  margin: 10px;
+  text-align: center;
+  ${props => props.flex && css`
+    flex: ${props.flex};
+  `}
+`;
 
-const getMatches = (props, context) => {
-  const now = Date.now();
-  const params = {
-    start_time: parseInt(now / 1000),
-    end_time: parseInt(now / 1000) + 2592000,
-  };
-  const accessToken = localStorage.getItem('access_token');
-
-  return request
-    .get(`${FX_API}/${FX_VERSION}/matches?${queryString.stringify(params)}`)
-    .set('Content-Type', 'application/x-www-form-urlencoded')
-    .set('Authorization', `Bearer ${accessToken}`)
-    .then((res, err) => {
-      if (!err) {
-        const data = transformMatches(res.body.data);
-        const matches = data.matches.filter(o => o.home && o.away).map((o) => {
-          const matchTime = toDateTimeString(o.date * 1000);
-          return {
-            text: `${Clubs[o.home.club_id] && Clubs[o.home.club_id].name} vs ${Clubs[o.away.club_id] && Clubs[o.away.club_id].name} - ${matchTime}`,
-            value: `${o.id}`,
-            date: o.date,
-            home: o.home,
-            away: o.away,
-          };
-        });
-        context.setState({ matches });
-      } else {
-        console.error(err);
-      }
-    });
-};
-
-const getCardLabels = (props, context) => {
-  const accessToken = localStorage.getItem('access_token');
-
-  return request
-    .get(`${FX_API}/${FX_VERSION}/card/labels`)
-    .set('Content-Type', 'application/x-www-form-urlencoded')
-    .set('Authorization', `Bearer ${accessToken}`)
-    .then((res, err) => {
-      if (!err) {
-        const data = res.body.data;
-        const cardLabels = data.map(o => ({
-          text: o.name,
-          value: o.id,
-        }));
-        context.setState({ cardLabels });
-      } else {
-        console.error(err);
-      }
-    });
-};
+const getCardLabels = (props, context) => ajaxGet('card/labels')
+  .then((res, err) => {
+    if (!err) {
+      const data = res.body.data;
+      const dataSourceCardLabels = data.map(o => ({
+        text: o.name,
+        value: o.id,
+      }));
+      context.setState({ dataSourceCardLabels });
+    } else {
+      console.error(err);
+    }
+  });
 
 const initialState = props => ({
-  // hotspots: [],
-  // matches: [],
-  // groups: [],
-  event: {
-    match: props.matchId ? { value: props.matchId } : {},
-    cardLabel: props.cardLabelId ? { value: props.cardLabelId } : {},
-    seats: {},
-    notes: {},
-  },
+  cardLabelId: props.cardLabelId && props.cardLabelId,
+  cardLabelName: props.cardLabelName && props.cardLabelName,
+  cardLabelErrorText: null,
+  cardNumber: null,
+  cardNumberErrorText: null,
+  redirectTo: '/login',
+  disabled: true,
+
   payload: {},
   submitResults: {
     data: [],
@@ -111,115 +58,130 @@ const initialState = props => ({
   },
 });
 
-class CreateEventForm extends React.Component {
+class RegisterView extends React.Component {
   static propTypes = {
-    matchId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    cardLabelId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    showForm: PropTypes.bool,
-    toggle: PropTypes.bool,
-    toggleShowForm: PropTypes.func,
-    maxSearchResults: PropTypes.number,
-    loading: PropTypes.bool,
-  };
-
-  static defaultProps = {
-    toggle: false,
+    onChange: React.PropTypes.func,
+    callback: React.PropTypes.func,
+    submitFn: React.PropTypes.func,
+    cardLabelId: React.PropTypes.number,
+    // cardNumber: React.PropTypes.number,
   };
 
   constructor(props) {
     super(props);
-
     this.state = {
       ...initialState(props),
-      matches: [],
-      cardLabels: [],
+      dataSourceCardLabels: [],
     };
-    this.bindAll([
-      'submitForm',
-      'closeDialog',
-      'handleSelectMatch',
-      'handleClearMatch',
-      'handleSelectCardLabel',
-      'handleSelectSeats',
-      'handleInputSeats',
-      'handleInputNotes',
-    ]);
+
+    this.isDisabled = this.isDisabled.bind(this);
+    this.submit = this.submit.bind(this);
   }
 
   componentDidMount() {
-    if (!this.props.matchId) getMatches(this.props, this);
     if (!this.props.cardLabelId) getCardLabels(this.props, this);
   }
 
-  componentWillUpdate(nextProps) {
-    if (this.props.showForm !== nextProps.showForm) {
-      this.clearState();
+  getFormData() {
+    const { cardNumber: number_card } = this.state;
+    const card_label_id = this.state.cardLabelId.value;
+    return { card_label_id, number_card };
+  }
+
+  changeValue(e, key) {
+    const value = e.target.value;
+    const next_state = {};
+    next_state[key] = isNaN(value) ? value : Number(value);
+    this.setState(next_state, () => {
+      this.isDisabled();
+    });
+  }
+
+  handleOnNewRequest(o, type) {
+    const next_state = {};
+    next_state[type] = o;
+    this.setState(next_state, () => {
+      this.isDisabled();
+    });
+  }
+
+  __handleKeyPressOnForm(e) {
+    if (e.key === 'Enter') {
+      if (!this.state.disabled) {
+        this.handleOpenDialog();
+      }
     }
   }
 
-  clearState() {
-    console.log('do clear state');
-    this.setState(initialState(this.props));
+  isDisabled() {
+    let isValidCardNumber = false;
+    let isValidCardLabel = false;
+
+    if (!this.state.cardLabelId) {
+      this.setState({ cardLabelErrorText: null, cardLabelId: null });
+    } else {
+      isValidCardLabel = true;
+    }
+
+    if (!this.state.cardNumber) {
+      this.setState({
+        cardNumberErrorText: null,
+        cardNumber: null,
+      });
+    } else if (parseInt(this.state.cardNumber)) {
+      isValidCardNumber = true;
+      this.setState({
+        cardNumberErrorText: null,
+      });
+    } else {
+      this.setState({
+        cardNumberErrorText: 'Sorry, this is not a valid number',
+      });
+    }
+
+    if (isValidCardNumber && isValidCardLabel) {
+      this.setState({
+        disabled: false,
+      }, function () {
+        this.props.onChange(this.getFormData());
+      });
+    }
   }
 
-  submitForm() {
+  submit(e) {
     const that = this;
-    const event = that.state.event;
+    e.preventDefault();
+    this.props.submitFn();
+    this.handleCloseDialog();
+    const formData = that.getFormData();
 
     this.setState({
       submitResults: update(that.state.submitResults, {
         show: { $set: true },
+        data: {
+          $push: [{
+            action: <div>{`Create ${that.state.cardNumber} card(s) with label: `} <code>[{that.state.cardLabelId.text}]</code></div>,
+            submitting: true,
+          }],
+        },
       }),
     }, () => {
-      const submitFn = that.props.dispatch ? that.props.dispatch : that.props.defaultSubmitFunction;
-      const doSubmit = (formData, payload) => new Promise((resolve) => {
-        resolve(submitFn(formData, payload));
-      });
-
-      Promise.all(event.hotspots.map((o) => {
-        that.setState({
-          submitResults: update(that.state.submitResults, {
-            data: {
-              $push: [{
-                hotspot_name: !that.props.hotspotId ? that.state.hotspots.find(h => h.value === o).textShort : event.match.text,
-                submitting: true,
-              }],
-            },
-          }),
-        });
-        const formData = {
-          match_id: event.match.value,
-          hotspot_id: o,
-          group_id: event.group.value,
-          price: event.price.value,
-          discount: event.discount.value,
-          seats: event.seats.value,
-          start_time_register: event.start_time_register.value,
-          end_time_register: event.end_time_register.value,
-          start_time_checkin: event.start_time_checkin.value,
-          end_time_checkin: event.end_time_checkin.value,
-          notes: event.notes.value || '',
-          home_color: event.home_color && event.home_color.value,
-          away_color: event.away_color && event.away_color.value,
-          free_folk_color: event.free_folk_color && event.free_folk_color.value,
-        };
-
-        return doSubmit(formData, that.state.payload);
-      })).then((results) => {
-        const resultsReport = event.hotspots.map((hotspotId, index) => {
-          const hotspotName = !that.props.hotspotId ? that.state.hotspots.find(o => o.value === hotspotId).textShort : event.match.text;
-          if (results[index].type.indexOf('OK') === 0) {
-            return {
-              hotspot_name: hotspotName,
-              submitting: false,
-            };
-          }
-          return {
-            hotspot_name: hotspotName,
+      that.props.submitFn(formData).then((results) => {
+        const action = <div>{`Create ${that.state.cardNumber} card(s) with label: `} <code>[{that.state.cardLabelId.text}]</code></div>;
+        const resultsReport = [];
+        if (results.type.indexOf('OK') === 0) {
+          resultsReport.push({
+            action,
             submitting: false,
-            error: results[index].error,
-          };
-        });
+          });
+        } else {
+          resultsReport.push({
+            action,
+            submitting: false,
+            error: results.error,
+          });
+        }
+
         that.setState({
           submitResults: update(that.state.submitResults, {
             data: { $set: resultsReport },
@@ -229,240 +191,109 @@ class CreateEventForm extends React.Component {
     });
   }
 
-  closeDialog() {
-    const that = this;
+  handleOpenDialog = () => {
+    this.setState({ open: true });
+  };
 
-    that.setState({
-      submitResults: update(that.state.submitResults, {
-        show: { $set: false },
-      }),
-    });
-  }
-
-  handleClearMatch() {
-    this.setState({
-      event: update(this.state.event, {
-        match: { $set: {} },
-      }),
-    });
-  }
-
-  handleSelectMatch(o) {
-    const that = this;
-    that.setState({
-      event: update(that.state.event, {
-        match: { $set: o },
-      }),
-      payload: update(that.state.payload, {
-        home: { $set: o.home.club_id },
-        away: { $set: o.away.club_id },
-        match_date: { $set: o.date },
-        match_id: { $set: o.value },
-      }),
-    });
-  }
-
-  handleSelectCardLabel(o) {
-    const that = this;
-    that.setState({
-      event: update(that.state.event, {
-        cardLabel: { $set: o },
-      }),
-    });
-  }
-
-  handleSelectSeats(o) {
-    this.setState({
-      event: update(this.state.event, {
-        // seats: { $set: { value: Number(text), text } },
-        seats: { $set: o },
-      }),
-    });
-  }
-
-  handleInputSeats(text) {
-    console.log(text);
-    // this.setState({
-    //   event: update(this.state.event, {
-    //     // seats: { $set: { value: Number(text), text } },
-    //     seats: { $set: o },
-    //   }),
-    // });
-  }
-
-  handleInputNotes(event, notes) {
-    console.log(notes);
-    console.log(event.target.value);
-    console.log(this.state.event);
-    this.setState({
-      event: update(this.state.event, {
-        notes: { $set: { text: notes, value: notes } },
-      }),
-    }, function () {
-      console.log(this.state.event);
-    });
-  }
-
-  bindAll(methods) {
-    methods.forEach((item) => {
-      this[item] = this[item].bind(this);
-    });
-  }
+  handleCloseDialog = () => {
+    this.setState({ open: false });
+  };
 
   render() {
-    const {
-      toggle = true,
-      maxSearchResults = 100,
-      loading = false,
-      showForm,
-    } = this.props;
-
-    const FormContainer = styled.div`
-            transition: max-height 1s;
-            padding: 15px;
-            box-sizing: border-box;
-            overflow: hidden;
-            ${props => (props.show ? css`
-                max-height: 2000px;
-            ` : css`
-                max-height: 0;
-            `)}
-        `;
-
-    const __renderMatchSelector = () => (<AutoCompleteValidator
-      name="match"
-      ref={(input) => {
-        this.inputMatch = input;
-      }}
-      hintText={strings.filter_match}
-      floatingLabelText={strings.filter_match}
-      searchText={this.state.event.match && this.state.event.match.text}
-      value={this.state.event.match.value}
-      dataSource={this.state.matches}
-      onNewRequest={this.handleSelectMatch}
-      // onUpdateInput={this.handleInputMatch}
-      filter={AutoComplete.fuzzyFilter}
-      openOnFocus
-      maxSearchResults={maxSearchResults}
-      fullWidth
-      listStyle={{ maxHeight: 300, overflow: 'auto' }}
-      validators={['required']}
-      errorMessages={[strings.validate_is_required]}
-    />);
-    const __renderCardLabelSelector = () => (<AutoCompleteValidator
+    const __renderCardLabelSelector = () => (<AutoComplete
       name="card_label_id"
       ref={(input) => { this.inputCardLabel = input; }}
       floatingLabelText={strings.filter_card_label}
-      searchText={this.state.event.cardLabel && this.state.event.cardLabel.text}
-      value={this.state.event.cardLabel.value}
-      dataSource={this.state.cardLabels}
-      onNewRequest={this.handleSelectCardLabel}
+      // searchText={this.state.event.cardLabel && this.state.event.cardLabel.text}
+      // value={this.state.event.cardLabel.value}
+      dataSource={this.state.dataSourceCardLabels || []}
+      onNewRequest={selectedObj => this.handleOnNewRequest(selectedObj, 'cardLabelId')}
       filter={AutoComplete.fuzzyFilter}
       openOnFocus
-      maxSearchResults={maxSearchResults}
+      maxSearchResults={100}
       fullWidth
       listStyle={{ maxHeight: 300, overflow: 'auto' }}
       validators={['required']}
       errorMessages={[strings.validate_is_required]}
     />);
-    const __renderSeats = () => (<AutoCompleteValidator
-      name="seats"
+
+    const __renderCardNumberInput = () => (<TextField
+      hintText={strings.hint_number}
+      floatingLabelText={strings.filter_number_card}
       type="number"
-      hintText={strings.filter_seats}
-      floatingLabelText={strings.filter_seats}
-      searchText={this.state.event.seats && this.state.event.seats.text}
-      value={this.state.event.seats.value}
-      dataSource={data.seatsArr}
-      onNewRequest={this.handleSelectSeats}
-      onUpdateInput={this.handleInputSeats}
-      // filter={(searchText, key) => (key.indexOf(searchText) !== -1)}
-      filter={AutoComplete.fuzzyFilter}
-      openOnFocus
-      errorText={this.state.event.seats.error}
-      validators={['required', 'minNumber:0']}
-      errorMessages={[strings.validate_is_required, util.format(strings.validate_minimum, 0)]}
+      errorText={this.state.cardNumberErrorText}
+      onChange={e => this.changeValue(e, 'cardNumber')}
+      fullWidth
     />);
 
     return (
-      <ValidatorForm
-        onSubmit={this.submitForm}
-        onError={errors => console.log(errors)}
-      >
-        {loading && <Spinner />}
-        {this.state.error && <Error text={this.state.error} />}
-        <FormContainer show={!toggle || showForm}>
-          <div>
-            {!this.props.matchId && this.state.matches && __renderMatchSelector()}
-
-            {/* card labels */}
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+      <div onKeyPress={e => this.__handleKeyPressOnForm(e)} role="form">
+        <Row>
+          <Col flex={5}>
             {__renderCardLabelSelector()}
+          </Col>
+          <Col flex={7}>
+            {__renderCardNumberInput()}
+          </Col>
+        </Row>
 
-            {/* input seats */}
-            {__renderSeats()}
-
-            {/* input notes */}
-            <TextField
-              type="text"
-              hintText={strings.tooltip_note}
-              floatingLabelText={strings.tooltip_note}
-              value={this.state.event.notes.value}
-              multiLine
-              rows={1}
-              rowsMax={4}
-              onChange={this.handleInputNotes}
-              fullWidth
-              errorText={this.state.event.notes.error}
-            />
-          </div>
-          <RaisedButton
-            type="submit"
-            label={strings.form_create_event}
-          />
-        </FormContainer>
-
-        <Dialog
-          title={strings.form_create_events_dialog_desc}
-          actions={<FlatButton
-            label="Ok"
-            primary
-            keyboardFocused
-            onClick={() => {
-              this.closeDialog();
-              // this.props.history.push('/events');
-              this.props.toggleShowForm(false);
-            }}
-          />}
-          modal={false}
-          open={this.state.submitResults.show}
-          onRequestClose={this.closeDialog}
-        >
+        {this.state.submitResults.show && <Row>
           <List>
             {this.state.submitResults.data.map(r => (<ListItem
-              primaryText={r.hotspot_name}
+              primaryText={r.action}
               leftIcon={r.error ?
-                <IconFail color={constants.colorRed} title={strings.form_create_event_fail} />
+                <IconFail color={constants.colorRed} title={strings.form_general_fail} />
                 : <IconSuccess
                   color={constants.colorSuccess}
-                  title={strings.form_create_event_success}
+                  title={strings.form_general_success}
                 />}
               secondaryText={r.error && r.error}
               secondaryTextLines={1}
             />))}
           </List>
+        </Row>}
+
+        <Row right>
+          <FlatButton
+            label="Close"
+            onClick={this.props.callback}
+            secondary
+          />
+          <FlatButton
+            disabled={this.state.disabled}
+            label="Submit"
+            onClick={this.handleOpenDialog}
+            primary
+          />
+        </Row>
+
+        <Dialog
+          actions={[
+            <FlatButton
+              label="Cancel"
+              secondary
+              onClick={this.handleCloseDialog}
+            />,
+            <FlatButton
+              label="OK"
+              primary
+              onClick={this.submit}
+            />,
+          ]}
+          modal={false}
+          open={this.state.open}
+          onRequestClose={this.handleCloseDialog}
+        >
+          Discard draft?
         </Dialog>
-      </ValidatorForm>
+      </div>
     );
   }
 }
 
-const mapStateToProps = state => ({
-  currentQueryString: window.location.search,
-  showForm: state.app.formCreateEvent.show,
-});
-
 const mapDispatchToProps = dispatch => ({
-  defaultSubmitFunction: params => dispatch(defaultCreateEvent(params)),
-  toggleShowForm: state => dispatch(toggleShowForm('createEvent', state)),
+  submitFn: params => dispatch(createCardPackage(params)),
 });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CreateEventForm));
+export default connect(null, mapDispatchToProps)(RegisterView);

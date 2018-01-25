@@ -121,6 +121,7 @@
   "filter_match": "Match",
   "filter_group": "Group",
   "filter_card_label": "Card Label",
+  "filter_number_card": "Number of cards",
   "filter_with_hero_id": "Allied Heroes",
   "filter_against_hero_id": "Opposing Heroes",
   "filter_included_account_id": "Included Account ID",
@@ -734,6 +735,7 @@
   "tooltip_full_name": "Full name",
 
   "hint_number": "Quantity eg: 100",
+  "label_number_of_cards_in_package": "Number of cards",
 
   "region_0": "Automatic",
   "region_1": "US West",

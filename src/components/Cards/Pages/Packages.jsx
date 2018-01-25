@@ -14,8 +14,6 @@ import { FlatButton, Dialog, IconButton } from 'material-ui';
 import IconPrint from 'material-ui/svg-icons/action/print';
 import constants from 'components/constants';
 
-import CreateEventForm from 'components/Event/Forms/CreateEventForm';
-
 import PackageViewer from './PackageViewer';
 import PackageCreateForm from './PackageCreateForm';
 
@@ -68,6 +66,7 @@ class PackagesPage extends React.Component {
     super(props);
     this.state = {
       openEditor: false,
+      createPackageFormData: {},
     };
 
     this.handleOpen = this.handleOpen.bind(this);
@@ -113,29 +112,35 @@ class PackagesPage extends React.Component {
   }
 
   handleCreateAndPrint() {
-    let newPackage;
     this.setState({
       dialogCons: {
-        actions: [
-          <FlatButton
-            label="Create & Print"
-            primary
-            keyboardFocused
-            onClick={() => {
-              console.log('data to push: ');
-              console.log(newPackage);
-            }}
-          />,
-          <FlatButton
-            label="Cancel"
-            secondary
-            onClick={this.handleClose}
-          />,
-        ],
+        title: 'More cards more fun!',
+        // actions: [
+        //   <FlatButton
+        //     label="Create & Print"
+        //     primary
+        //     keyboardFocused
+        //     onClick={() => {
+        //       console.log('data to push: ');
+        //       console.log(this.state.createPackageFormData);
+        //     }}
+        //     // disabled={isEmpty(this.state.createPackageFormData)}
+        //   />,
+        //   <FlatButton
+        //     label="Close"
+        //     secondary
+        //     onClick={this.handleClose}
+        //   />,
+        // ],
         view: <PackageCreateForm
-          onChange={(formData) => {
-            console.log(formData);
-            newPackage = formData;
+          onChange={(returnFormData) => {
+            this.setState({
+              createPackageFormData: returnFormData,
+            });
+          }}
+          callback={() => {
+            console.log('callback');
+            this.handleClose();
           }}
         />,
         // view: <CreateEventForm toggle={false} />,
@@ -148,14 +153,7 @@ class PackagesPage extends React.Component {
   renderDialog(dialogCons = {}, trigger) {
     const defaultDialogCons = {
       title: 'Example Dialog',
-      actions: [
-        <FlatButton
-          label="OK"
-          primary
-          keyboardFocused
-          onClick={this.handleClose}
-        />,
-      ],
+      actions: [],
       view: <h1>Welcome!</h1>,
     };
     const { title, actions, view } = Object.assign(defaultDialogCons, dialogCons);
