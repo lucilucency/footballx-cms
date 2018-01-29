@@ -25,29 +25,27 @@ const tableCardLabelsColumns = that => [{
     <TableLink to={`/cards/packages/${field}`}>{field}</TableLink>
   </div>),
 }, {
-  displayName: 'Total Card',
+  displayName: strings.th_cards,
   field: 'total_card',
   sortFn: true,
 }, {
   displayName: 'Status',
   field: 'status',
   sortFn: true,
-}, {
-  displayName: 'Created At',
-  field: 'created_at',
-  displayFn: (row, col, field) => (<div>{toDateTimeString(field)}</div>),
+  displayFn: (row, col, field) => (<div>{strings[`enum_package_status_${field}`]}</div>),
 }, {
   displayName: 'Date Available',
   field: 'date_available',
   sortFn: true,
-}, that.props.browser.greaterThan.medium && {
-  displayName: 'Card Label',
-  field: 'card_label',
-  sortFn: true,
+  displayFn: (row, col, field) => (<div>{field && toDateTimeString(field)}</div>),
+}, {
+  displayName: 'Created At',
+  field: 'created_at',
+  displayFn: (row, col, field) => (<div>{field && toDateTimeString(field)}</div>),
 }, {
   field: 'id',
   displayName: '',
-  displayFn: () => (<IconButton tooltip={strings.tooltip_print} onClick={that.handleView}>
+  displayFn: () => (<IconButton tooltip={strings.tooltip_print} onClick={that.handleViewPackage}>
     <IconPrint color={constants.blue500} />
   </IconButton>),
 }];
@@ -65,55 +63,51 @@ class PackagesPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      openEditor: false,
+      openDialog: false,
       createPackageFormData: {},
     };
 
-    this.handleOpen = this.handleOpen.bind(this);
-    this.handleClose = this.handleClose.bind(this);
-    this.handleView = this.handleView.bind(this);
+    this.handleOpenDialog = this.handleOpenDialog.bind(this);
+    this.handleCloseDialog = this.handleCloseDialog.bind(this);
     this.renderDialog = this.renderDialog.bind(this);
-    this.handleCreateAndPrint = this.handleCreateAndPrint.bind(this);
+    this.handleViewPackage = this.handleViewPackage.bind(this);
+    this.handleCreatePackage = this.handleCreatePackage.bind(this);
   }
 
   componentDidMount() {
     getData(this.props);
   }
 
-  handleOpen() {
-    this.setState({ openEditor: true });
+  handleOpenDialog() {
+    this.setState({ openDialog: true });
   }
 
-  handleClose() {
-    this.setState({ openEditor: false, dialogCons: {} });
+  handleCloseDialog() {
+    this.setState({ openDialog: false, dialogConstruct: {} });
   }
 
-  handleView() {
+  handleViewPackage() {
     this.setState({
-      dialogCons: {
+      dialogConstruct: {
+        title: 'Package Details',
         actions: [
           <FlatButton
-            label="Submit"
+            label="OK"
             primary
             keyboardFocused
-            onClick={this.handleClose}
-          />,
-          <FlatButton
-            label="Cancel"
-            secondary
-            onClick={this.handleClose}
+            onClick={this.handleCloseDialog}
           />,
         ],
         view: <PackageViewer />,
       },
     }, () => {
-      this.handleOpen();
+      this.handleOpenDialog();
     });
   }
 
-  handleCreateAndPrint() {
+  handleCreatePackage() {
     this.setState({
-      dialogCons: {
+      dialogConstruct: {
         title: 'More cards more fun!',
         // actions: [
         //   <FlatButton
@@ -129,34 +123,33 @@ class PackagesPage extends React.Component {
         //   <FlatButton
         //     label="Close"
         //     secondary
-        //     onClick={this.handleClose}
+        //     onClick={this.handleCloseDialog}
         //   />,
         // ],
         view: <PackageCreateForm
-          onChange={(returnFormData) => {
-            this.setState({
-              createPackageFormData: returnFormData,
-            });
-          }}
+          // onChange={(returnFormData) => {
+          //   this.setState({
+          //     createPackageFormData: returnFormData,
+          //   });
+          // }}
           callback={() => {
             console.log('callback');
-            this.handleClose();
+            this.handleCloseDialog();
           }}
         />,
-        // view: <CreateEventForm toggle={false} />,
       },
     }, () => {
-      this.handleOpen();
+      this.handleOpenDialog();
     });
   }
 
-  renderDialog(dialogCons = {}, trigger) {
+  renderDialog(dialogConstruct = {}, trigger) {
     const defaultDialogCons = {
       title: 'Example Dialog',
       actions: [],
       view: <h1>Welcome!</h1>,
     };
-    const { title, actions, view } = Object.assign(defaultDialogCons, dialogCons);
+    const { title, actions, view } = Object.assign(defaultDialogCons, dialogConstruct);
 
     return (
       <Dialog
@@ -164,7 +157,7 @@ class PackagesPage extends React.Component {
         actions={actions}
         modal={false}
         open={trigger}
-        onRequestClose={this.handleClose}
+        onRequestClose={this.handleCloseDialog}
         autoScrollBodyContent
       >
         {view}
@@ -179,10 +172,9 @@ class PackagesPage extends React.Component {
       <Container
         title={strings.heading_packages}
         actions={[{
-          key: 'createAndPrint',
-          title: 'Create Package and Print',
+          title: 'Create Package',
           icon: <IconPrint />,
-          onClick: this.handleCreateAndPrint,
+          onClick: this.handleCreatePackage,
         }]}
       >
         <Table
@@ -192,7 +184,7 @@ class PackagesPage extends React.Component {
           pageLength={30}
         />
       </Container>
-      {this.renderDialog(this.state.dialogCons, this.state.openEditor)}
+      {this.renderDialog(this.state.dialogConstruct, this.state.openDialog)}
     </div>);
   }
 }

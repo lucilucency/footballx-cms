@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint camelcase: 0, no-underscore-dangle: 0 */
 import React from 'react';
 import { connect } from 'react-redux';
@@ -58,7 +59,7 @@ const initialState = props => ({
   },
 });
 
-class RegisterView extends React.Component {
+class IssueCreateForm extends React.Component {
   static propTypes = {
     onChange: React.PropTypes.func,
     callback: React.PropTypes.func,
@@ -301,4 +302,4 @@ const mapDispatchToProps = dispatch => ({
   submitFn: params => dispatch(createCardPackage(params)),
 });
 
-export default connect(null, mapDispatchToProps)(RegisterView);
+export default connect(null, mapDispatchToProps)(IssueCreateForm);

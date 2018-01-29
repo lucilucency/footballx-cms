@@ -72,6 +72,9 @@
   "distributions_warning_1": "This data set is limited to players displaying MMR on profile and sharing public match data.",
   "distributions_warning_2": "Players do not have to sign in, but due to the opt-in nature of the data collected, averages are likely higher than expected.",
 
+  "enum_package_status_1": "Printing",
+  "enum_package_status_2": "Available",
+
   "event": "Event",
   "events": "Events",
   "events_heading_total": "Total Events",
@@ -273,7 +276,7 @@
   "heading_total_matches": "Total Matches",
 
   "heading_cards": "Cards",
-  "heading_card_labels": "Labels",
+  "heading_labels": "Labels",
   "heading_issues": "Issues",
   "heading_packages": "Packages",
 
@@ -411,8 +414,7 @@
   "tab_events_all": "All",
   "tab_events_add": "+ Event",
 
-  "tab_cards_labels": "Card Labels",
-  "tab_cards_all": "All",
+  "tab_cards_labels": "Labels",
   "tab_cards_issues": "Issues",
   "tab_cards_packages": "Packages",
 
@@ -563,6 +565,7 @@
   "th_home": "Team Home",
   "th_hotspots": "Hotspot",
   "th_hotspot": "Hotspot",
+  "th_cards": "Cards",
   "th_hotspot_id": "ID",
   "th_permanent_buffs": "Buffs",
   "th_winner": "Winner",

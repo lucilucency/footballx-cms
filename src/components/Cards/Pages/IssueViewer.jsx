@@ -2,7 +2,7 @@ import React from 'react';
 /* css */
 import styled from 'styled-components';
 
-class Package extends React.Component {
+class IssueViewer extends React.Component {
   static propTypes = {
     // eslint-disable-next-line react/forbid-prop-types
     package: React.PropTypes.object,
@@ -45,4 +45,4 @@ class Package extends React.Component {
   }
 }
 
-export default Package;
+export default IssueViewer;

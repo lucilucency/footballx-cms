@@ -1,4 +1,7 @@
+import * as materialColor from 'material-ui/styles/colors';
+
 export default {
+  ...materialColor,
   defaultPrimaryColor: 'rgba(0, 0, 0, 0.4)',
   darkPrimaryColor: 'rgba(0, 0, 0, 0.6)',
   almostBlack: 'rgba(0, 0, 0, 0.9)',

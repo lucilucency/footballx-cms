@@ -5,11 +5,11 @@ import ActionLabelOutline from 'material-ui/svg-icons/action/label-outline';
 import { StyledDiv, TwoLineDiv } from './Styled';
 
 const Heading = ({
-  title = '', titleTo, icon = <ActionLabelOutline />, subtitle, twoLine,
+  title = '', titleTo, icon = <ActionLabelOutline />, subtitle, twoLine, actions,
 }) => {
   const DivToUse = twoLine ? TwoLineDiv : StyledDiv;
   return (
-    <DivToUse>
+    <DivToUse style={actions ? { float: 'left' } : {}}>
       {icon}
       <span className="title">
         {titleTo ?
@@ -40,6 +40,7 @@ Heading.propTypes = {
     string,
   ]),
   twoLine: bool,
+  actions: bool,
 };
 
 export default Heading;

@@ -3,122 +3,164 @@ import PropTypes from 'prop-types';
 import {
   connect,
 } from 'react-redux';
-
 /* actions & helpers */
-import { getEvents } from 'actions';
-import { transformations } from 'utility';
-import { toDateString, toTimeString, fromNow } from 'utility/time';
+import { getCardLabels } from 'actions';
+import strings from 'lang';
 /* components */
 import Table, { TableLink } from 'components/Table';
 import Container from 'components/Container/index';
-/* data */
-import strings from 'lang';
-/* css */
-import constants from 'components/constants';
-import { colors } from 'material-ui/styles';
-import { subTextStyle } from 'utility/style';
-import { EventsSummary } from './CardsSummary';
+import { FlatButton, Dialog, RadioButton, RadioButtonGroup } from 'material-ui';
+import IconAdd from 'material-ui/svg-icons/content/add';
+import IconRefresh from 'material-ui/svg-icons/navigation/refresh';
 
-/*
-id
-name
-value
-expense
-xpoint
-total_available_card
-total_printed_card
-total_card
-*/
+import CardLabelAddQuantity from './LabelAddQuantity';
 
-
-const tableCardLabelsColumns = browser => [browser.greaterThan.medium && {
+const tableCardLabelsColumns = browser => [{
   displayName: 'Label',
   field: 'name',
   sortFn: true,
   displayFn: (row, col, field) => (<div>
-    <TableLink to={`/cards/labels/${field}`}>{field}</TableLink>
+    <TableLink to={`/cards/labels/${field}`}>{field.toUpperCase()}</TableLink>
   </div>),
+}, {
+  displayName: 'Total',
+  field: 'total_card',
+  sortFn: true,
+}, {
+  displayName: 'Used',
+  field: 'total_card_used',
+  sortFn: true,
+}, {
+  displayName: 'Available',
+  field: 'total_card_available',
+  sortFn: true,
 }, {
   displayName: 'Value',
   field: 'value',
   sortFn: true,
 }, {
-  displayName: 'Expense',
-  field: 'expense',
-  sortFn: true,
-}, {
-  displayName: 'Number of uses',
-  field: 'xpoint',
+  displayName: 'Cost',
+  field: 'cost',
   sortFn: true,
 }, browser.greaterThan.medium && {
-  displayName: 'Number in warehouse',
-  field: 'remaining',
+  displayName: 'Subscription',
+  field: 'subscription',
   sortFn: true,
 }, {
+  field: 'id',
   displayName: '',
-  displayFn: row => (<div>
-    <span className="subText ellipsis" style={{ display: 'block', marginTop: 1 }}>
-      +Add more
-    </span>
-  </div>),
+  displayFn: (row, col, field) => <CardLabelAddQuantity cardLabelId={field} cardLabelName={row.name} />,
 }];
 
-
 const getData = (props) => {
-  props.dispatchEvents(props.location.search);
+  props.dispatchCardLabels();
 };
 
-class Overview extends React.Component {
+class CardLabelsPage extends React.Component {
+  static propTypes = {
+    browser: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+    cardLabels: PropTypes.shape([]),
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      openEditor: false,
+    };
+    this.openEditor = this.openEditor.bind(this);
+  }
+
   componentDidMount() {
     getData(this.props);
   }
 
+  openEditor() {
+    this.setState({ openEditor: true });
+  }
+
+  renderDialog() {
+    const actions = [
+      <FlatButton
+        label="Submit"
+        primary
+        keyboardFocused
+        onClick={this.handleClose}
+      />,
+      <FlatButton
+        label="Cancel"
+        secondary
+        onClick={this.handleClose}
+      />,
+    ];
+
+    const radios = [];
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < 30; i++) {
+      radios.push(
+        <RadioButton
+          key={i}
+          value={`value${i + 1}`}
+          label={`Option ${i + 1}`}
+          style={{ marginTop: 16 }}
+        />,
+      );
+    }
+
+    return (
+      <Dialog
+        title="Dialog"
+        actions={actions}
+        modal={false}
+        open={this.state.openEditor}
+        onRequestClose={this.handleClose}
+        autoScrollBodyContent
+      >
+        <RadioButtonGroup name="shipSpeed" defaultSelected="not_light">
+          {radios}
+        </RadioButtonGroup>
+      </Dialog>
+    );
+  }
+
   render() {
-    const events = [{
-      id: 1,
-      name: 'The 100.000',
-      value: 75000,
-      expense: 100000,
-      xpoint: 3,
-      remaining: 500,
-    }, {
-      id: 2,
-      name: 'The 200.000',
-      value: 150000,
-      expense: 200000,
-      xpoint: 10,
-      remaining: 1500,
-    }, {
-      id: 1,
-      name: 'The 500.000',
-      value: 30000,
-      expense: 500000,
-      xpoint: 15,
-      remaining: 80,
-    }];
+    const { cardLabels } = this.props;
 
     return (<div>
-      <Container title={strings.heading_card_labels}>
-        <Table paginated columns={tableCardLabelsColumns(this.props.browser)} data={events} pageLength={30} />
+      <Container
+        title={strings.heading_labels}
+        actions={[{
+          key: 'refresh',
+          title: 'Refresh',
+          icon: <IconRefresh />,
+          onClick: () => {
+            console.log(123);
+          },
+        }, {
+          key: 'add',
+          title: 'New Card Label',
+          icon: <IconAdd />,
+          onClick: this.openEditor,
+        }]}
+      >
+        <Table
+          paginated
+          columns={tableCardLabelsColumns(this.props.browser)}
+          data={cardLabels.data}
+          pageLength={30}
+        />
       </Container>
+      {this.renderDialog()}
     </div>);
   }
 }
 
-Overview.propTypes = {
-  location: PropTypes.shape({
-    key: PropTypes.string,
-  }),
-  events: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
-  browser: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-};
-
 const mapStateToProps = state => ({
   browser: state.browser,
+  cardLabels: state.app.cardLabels,
 });
 
 const mapDispatchToProps = dispatch => ({
-  dispatchEvents: options => dispatch(getEvents(options)),
+  dispatchCardLabels: () => dispatch(getCardLabels()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(Overview);
+export default connect(mapStateToProps, mapDispatchToProps)(CardLabelsPage);
