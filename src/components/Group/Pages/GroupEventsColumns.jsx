@@ -1,7 +1,7 @@
 import React from 'react';
-import { transformations } from 'utility';
-import { fromNow, toDateString, toTimeString } from 'utility/time';
-import { subTextStyle } from 'utility/style';
+import { transformations } from 'utils';
+import { fromNow, toDateString, toTimeString } from 'utils/time';
+import { subTextStyle } from 'utils/style';
 import strings from 'lang';
 import constants from 'components/constants';
 import { colors } from 'material-ui/styles';

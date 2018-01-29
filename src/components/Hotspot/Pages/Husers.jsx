@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { getHotspotHUsers } from 'actions';
 import Table from 'components/Table';
 import Container from 'components/Container';
-import { transformations } from 'utility';
+import { transformations } from 'utils';
 import CreateHotspotHUserForm from 'components/Hotspot/Forms/CreateHotspotHUser';
 
 import strings from 'lang';

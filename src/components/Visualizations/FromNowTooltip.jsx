@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { fromNow } from 'utility';
+import { fromNow } from 'utils';
 import styled from 'styled-components';
 
 const StyledDiv = styled.div`

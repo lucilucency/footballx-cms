@@ -1,8 +1,8 @@
 import React from 'react';
-import { transformations } from 'utility';
-import { fromNow, toDateString, toTimeString } from 'utility/time';
+import { transformations } from 'utils';
+import { fromNow, toDateString, toTimeString } from 'utils/time';
 import strings from 'lang';
-import { subTextStyle } from 'utility/style';
+import { subTextStyle } from 'utils/style';
 import constants from 'components/constants';
 import { colors } from 'material-ui/styles';
 

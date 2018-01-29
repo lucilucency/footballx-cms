@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import update from 'react-addons-update';
 import strings from 'lang';
-// import { validateEmail } from 'utility/misc';
+// import { validateEmail } from 'utils/misc';
 import { ajaxGet, createCardPackage } from 'actions';
 
 import { Dialog, AutoComplete, TextField, FlatButton, List, ListItem } from 'material-ui';

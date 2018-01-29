@@ -6,7 +6,7 @@ import strings from 'lang';
 import Table from 'components/Table';
 
 import clubs from 'fxconstants/build/clubsArr.json';
-import { transformations, getOrdinal } from 'utility';
+import { transformations, getOrdinal } from 'utils';
 
 const clubsColumns = [{
   displayName: strings.th_no,

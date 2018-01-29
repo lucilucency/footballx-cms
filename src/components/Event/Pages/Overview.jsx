@@ -11,8 +11,8 @@ import IconPlace from 'material-ui/svg-icons/maps/place';
 import IconPhone from 'material-ui/svg-icons/communication/phone';
 import IconWifi from 'material-ui/svg-icons/notification/wifi';
 /* actions & helpers */
-import { getOrdinal, transformations } from 'utility';
-import { toDateTimeString } from 'utility/time';
+import { getOrdinal, transformations } from 'utils';
+import { toDateTimeString } from 'utils/time';
 import strings from 'lang';
 /* css */
 import styled, { css } from 'styled-components';

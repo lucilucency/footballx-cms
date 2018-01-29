@@ -12,7 +12,7 @@ import Container from 'components/Container';
 import { FlatButton, Dialog, IconButton } from 'material-ui';
 import IconAdd from 'material-ui/svg-icons/action/note-add';
 import strings from 'lang';
-import { subTextStyle } from 'utility/style';
+import { subTextStyle } from 'utils/style';
 
 import IssueCreateForm from './IssueCreateForm';
 

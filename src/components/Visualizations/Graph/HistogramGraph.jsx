@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Graph } from 'components/Visualizations';
 import strings from 'lang';
-import { hsvToRgb } from 'utility';
+import { hsvToRgb } from 'utils';
 
 const colorFn = columns => (color, data) => {
   if (data.index || data.index === 0) {

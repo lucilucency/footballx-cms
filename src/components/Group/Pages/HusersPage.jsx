@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { getGroupHUsers } from 'actions';
 import Table from 'components/Table';
 import Container from 'components/Container';
-import { transformations } from 'utility';
+import { transformations } from 'utils';
 import CreateGroupHUserForm from 'components/Group/Forms/CreateGroupHUser';
 
 import strings from 'lang';

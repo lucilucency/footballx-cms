@@ -10,7 +10,7 @@ import Table, { TableLink } from 'components/Table';
 import Hotspot from 'components/Hotspot';
 import TabBar from 'components/TabBar';
 /* css */
-import { subTextStyle } from 'utility/style';
+import { subTextStyle } from 'utils/style';
 
 import CreateHotspotForm from './Forms/CreateHotspot';
 

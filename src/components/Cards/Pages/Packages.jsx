@@ -6,7 +6,7 @@ import {
 /* actions & helpers */
 import { getCardPackages } from 'actions';
 import strings from 'lang';
-import { toDateTimeString } from 'utility';
+import { toDateTimeString } from 'utils';
 /* components */
 import Table, { TableLink } from 'components/Table';
 import Container from 'components/Container/index';

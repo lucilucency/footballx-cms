@@ -8,7 +8,7 @@ import { IconDice, IconCrystalBall, IconCheckCircle } from 'components/Icons';
 import SocialPerson from 'material-ui/svg-icons/social/person';
 import NotificationSync from 'material-ui/svg-icons/notification/sync';
 import styled from 'styled-components';
-import { subTextStyle } from 'utility';
+import { subTextStyle } from 'utils';
 import constants from 'components/constants';
 
 const Styled = styled.div`

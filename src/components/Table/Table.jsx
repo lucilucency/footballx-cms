@@ -11,7 +11,7 @@ import { isEmpty } from 'lodash';
 
 import { TablePercent } from 'components/Visualizations';
 import Pagination from 'components/Table/PaginatedTable/Pagination';
-import { abbreviateNumber, sum, SORT_ENUM, defaultSort } from 'utility';
+import { abbreviateNumber, sum, SORT_ENUM, defaultSort } from 'utils';
 import TableHeader from './TableHeader';
 import Spinner from '../Spinner';
 import Error from '../Error';

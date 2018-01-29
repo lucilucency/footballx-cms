@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 /* actions - helpers */
 import { toggleShowForm } from 'actions';
-import { toDateTimeString } from 'utility/time';
+import { toDateTimeString } from 'utils/time';
 import strings from 'lang';
 /* components */
 import Spinner from 'components/Spinner';

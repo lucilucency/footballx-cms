@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import strings from 'lang';
 import { TableLink } from 'components/Table';
 import CheckCircle from 'material-ui/svg-icons/action/check-circle';
-import { subTextStyle } from 'utility';
+import { subTextStyle } from 'utils';
 import styled from 'styled-components';
 import constants from 'components/constants';
 

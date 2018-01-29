@@ -7,7 +7,7 @@ import queryString from 'querystring';
 import update from 'immutability-helper';
 import PropTypes from 'prop-types';
 /* actions & helpers */
-import { toDateTimeString } from 'utility/time';
+import { toDateTimeString } from 'utils/time';
 import { transformEvents } from 'actions/transforms';
 import { createEvent as defaultCreateEvent, toggleShowForm, sendNotificationTopic } from 'actions';
 /* data */

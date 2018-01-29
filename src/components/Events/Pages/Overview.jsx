@@ -6,8 +6,8 @@ import {
 
 /* actions & helpers */
 import { getEvents } from 'actions';
-import { transformations } from 'utility';
-import { toDateString, toTimeString, fromNow } from 'utility/time';
+import { transformations } from 'utils';
+import { toDateString, toTimeString, fromNow } from 'utils/time';
 /* components */
 import Table, { TableLink } from 'components/Table';
 import Container from 'components/Container/index';
@@ -16,7 +16,7 @@ import strings from 'lang';
 /* css */
 import constants from 'components/constants';
 import { colors } from 'material-ui/styles';
-import { subTextStyle } from 'utility/style';
+import { subTextStyle } from 'utils/style';
 import { EventsSummary } from './EventsSummary';
 
 const tableEventsColumns = browser => [browser.greaterThan.medium && {

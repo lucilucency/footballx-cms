@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import LinearProgress from 'material-ui/LinearProgress';
 // import PiePercent from '../../PiePercent';
-import { getPercentWin } from 'utility';
+import { getPercentWin } from 'utils';
 import styled from 'styled-components';
 import constants from '../constants';
 // const getPercentWin = (wins, games) => (games ? Math.ceil(1000 * (wins / games)) / 10 : 0);

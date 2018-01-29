@@ -4,8 +4,8 @@ import Container from 'components/Container/index';
 // import PropTypes from 'prop-types';
 /* data & helpers */
 import strings from 'lang';
-import { sum, abbreviateNumber } from 'utility';
-import { formatSeconds } from 'utility/time';
+import { sum, abbreviateNumber } from 'utils';
+import { formatSeconds } from 'utils/time';
 /* css */
 import styled from 'styled-components';
 import constants from 'components/constants';

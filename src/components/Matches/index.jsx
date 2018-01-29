@@ -5,7 +5,7 @@ import Helmet from 'react-helmet';
 import { getMatchesLeague } from 'actions';
 import strings from 'lang';
 import Table from 'components/Table';
-import { transformations, subTextStyle } from 'utility';
+import { transformations, subTextStyle } from 'utils';
 import { IconTrophy } from 'components/Icons';
 import TabBar from 'components/TabBar';
 import Clubs from 'fxconstants/build/clubsObj.json';
