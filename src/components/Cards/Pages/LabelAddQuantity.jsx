@@ -72,6 +72,7 @@ class CardLabelAddQuantity extends React.Component {
   handleCloseForm() {
     this.setState({
       openForm: false,
+      submitResults: initialState(this.props).submitResults,
     });
   }
 
@@ -104,7 +105,9 @@ class CardLabelAddQuantity extends React.Component {
 
     this.handleCloseDialog();
     const formData = that.getFormData();
-
+    const payload = {
+      total_card: formData.number_card,
+    };
     this.setState({
       submitResults: update(that.state.submitResults, {
         show: { $set: true },
@@ -116,7 +119,7 @@ class CardLabelAddQuantity extends React.Component {
         },
       }),
     }, () => {
-      this.props.submitFn(formData).then((results) => {
+      this.props.submitFn(formData, payload).then((results) => {
         const action = <div>{`Create ${that.state.cardNumber} card(s) with label: `} <code>[{that.state.cardLabelId.text}]</code></div>;
         const resultsReport = [];
         if (results.type.indexOf('OK') === 0) {
@@ -176,7 +179,7 @@ class CardLabelAddQuantity extends React.Component {
           </div>}
         </Row>}
 
-        {this.state.submitResults.show && <Row onClick={this.handleOpenDialog}>
+        {this.state.submitResults.show && <Row onClick={this.handleCloseForm}>
           <List>
             {this.state.submitResults.data.map(r => (<ListItem
               primaryText={r.action}
@@ -217,7 +220,7 @@ class CardLabelAddQuantity extends React.Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-  submitFn: params => dispatch(createCards(params)),
+  submitFn: (params, payload) => dispatch(createCards(params, payload)),
 });
 
 export default connect(null, mapDispatchToProps)(CardLabelAddQuantity);

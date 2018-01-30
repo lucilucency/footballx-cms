@@ -63,8 +63,9 @@ export const deleteEvent = eventId => fxActionDelete('DELETE/event', `event/${ev
 export const getCardLabels = () => fxActionGet('cardLabels', 'card/labels', {});
 export const getCardIssues = () => fxActionGet('cardIssues', 'issues');
 export const getCardPackages = () => fxActionGet('cardPackages', 'packes');
-export const createCards = params => fxActionPost('cards', 'cards', params);
+export const createCards = (params, payload) => fxActionPost('ADD/cardLabels', 'cards', params, null, payload);
 export const createCardPackage = params => fxActionPost('ADD/cardPackages', 'pack', params);
+export const createCardLabel = params => fxActionPost('ADD/cardLabels', 'card/label', params);
 /* notification */
 export const sendNotificationTopic = (params = { topic: '', message: '' }) => fxActionPost('sendNotification', 'notification/topic', params);
 

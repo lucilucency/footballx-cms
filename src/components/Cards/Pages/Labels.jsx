@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -6,50 +7,48 @@ import {
 /* actions & helpers */
 import { getCardLabels } from 'actions';
 import strings from 'lang';
+import { renderDialog, bindAll } from 'utils';
 /* components */
 import Table, { TableLink } from 'components/Table';
 import Container from 'components/Container/index';
-import { FlatButton, Dialog, RadioButton, RadioButtonGroup } from 'material-ui';
 import IconAdd from 'material-ui/svg-icons/content/add';
 import IconRefresh from 'material-ui/svg-icons/navigation/refresh';
 
-import CardLabelAddQuantity from './LabelAddQuantity';
+import LabelAddQuantity from './LabelAddQuantity';
+import LabelCreateForm from './LabelCreateForm';
 
 const tableCardLabelsColumns = browser => [{
   displayName: 'Label',
   field: 'name',
-  sortFn: true,
   displayFn: (row, col, field) => (<div>
     <TableLink to={`/cards/labels/${field}`}>{field.toUpperCase()}</TableLink>
   </div>),
 }, {
   displayName: 'Total',
   field: 'total_card',
-  sortFn: true,
 }, {
   displayName: 'Used',
   field: 'total_card_used',
-  sortFn: true,
 }, {
   displayName: 'Available',
-  field: 'total_card_available',
-  sortFn: true,
+  // field: 'total_card_available',
+  displayFn: row => (<div>{row.total_card - row.total_card_used}</div>),
 }, {
   displayName: 'Value',
   field: 'value',
-  sortFn: true,
 }, {
   displayName: 'Cost',
   field: 'cost',
-  sortFn: true,
-}, browser.greaterThan.medium && {
+}, {
   displayName: 'Subscription',
   field: 'subscription',
-  sortFn: true,
+}, {
+  displayName: 'Prefix',
+  field: 'prefix',
 }, {
   field: 'id',
   displayName: '',
-  displayFn: (row, col, field) => <CardLabelAddQuantity cardLabelId={field} cardLabelName={row.name} />,
+  displayFn: (row, col, field) => <LabelAddQuantity cardLabelId={field} cardLabelName={row.name} />,
 }];
 
 const getData = (props) => {
@@ -67,59 +66,33 @@ class CardLabelsPage extends React.Component {
     this.state = {
       openEditor: false,
     };
-    this.openEditor = this.openEditor.bind(this);
+    bindAll([
+      'openEditor',
+      'handleOpenDialog',
+      'handleCloseDialog',
+      'renderDialog',
+    ], this);
+    // this.openEditor = this.openEditor.bind(this);
   }
 
   componentDidMount() {
     getData(this.props);
   }
 
+  handleOpenDialog() {
+    this.setState({ openDialog: true });
+  }
+
+  handleCloseDialog() {
+    this.setState({ openDialog: false, dialogConstruct: {} });
+  }
+
   openEditor() {
     this.setState({ openEditor: true });
   }
 
-  renderDialog() {
-    const actions = [
-      <FlatButton
-        label="Submit"
-        primary
-        keyboardFocused
-        onClick={this.handleClose}
-      />,
-      <FlatButton
-        label="Cancel"
-        secondary
-        onClick={this.handleClose}
-      />,
-    ];
-
-    const radios = [];
-    // eslint-disable-next-line no-plusplus
-    for (let i = 0; i < 30; i++) {
-      radios.push(
-        <RadioButton
-          key={i}
-          value={`value${i + 1}`}
-          label={`Option ${i + 1}`}
-          style={{ marginTop: 16 }}
-        />,
-      );
-    }
-
-    return (
-      <Dialog
-        title="Dialog"
-        actions={actions}
-        modal={false}
-        open={this.state.openEditor}
-        onRequestClose={this.handleClose}
-        autoScrollBodyContent
-      >
-        <RadioButtonGroup name="shipSpeed" defaultSelected="not_light">
-          {radios}
-        </RadioButtonGroup>
-      </Dialog>
-    );
+  renderDialog(dialogConstruct = {}, trigger) {
+    return renderDialog(dialogConstruct, trigger);
   }
 
   render() {
@@ -133,23 +106,53 @@ class CardLabelsPage extends React.Component {
           title: 'Refresh',
           icon: <IconRefresh />,
           onClick: () => {
-            console.log(123);
+            console.log('Doing refresh!');
           },
         }, {
           key: 'add',
           title: 'New Card Label',
           icon: <IconAdd />,
-          onClick: this.openEditor,
+          onClick: () => {
+            this.setState({
+              dialogConstruct: {
+                title: strings.heading_create_card_label,
+                view: <LabelCreateForm
+                  callback={() => {
+                    this.handleCloseDialog();
+                  }}
+                />,
+              },
+            }, () => {
+              this.handleOpenDialog();
+            });
+          },
         }]}
       >
         <Table
           paginated
           columns={tableCardLabelsColumns(this.props.browser)}
-          data={cardLabels.data}
+          data={cardLabels.data.reduce((r, a) => {
+            r[a.id] = r[a.id] || [];
+            r[a.id].push(a);
+            return r;
+          }, []).map(z => z && z.reduce((r, a) => {
+            r.id = r.id || a.id;
+            r.name = r.name || a.name;
+            r.value = r.value || a.value;
+            r.cost = r.cost || a.cost;
+            r.prefix = r.prefix || a.prefix;
+            r.subscription = r.subscription || a.subscription;
+
+            r.total_card = r.total_card || 0;
+            r.total_card_used = r.total_card_used || 0;
+            r.total_card += a.total_card;
+            r.total_card_used += a.total_card_used;
+            return r;
+          }, Object.create(null))).filter(o => o)}
           pageLength={30}
         />
       </Container>
-      {this.renderDialog()}
+      {this.renderDialog(this.state.dialogConstruct, this.state.openDialog)}
     </div>);
   }
 }

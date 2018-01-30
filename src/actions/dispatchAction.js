@@ -108,22 +108,20 @@ export function fxActionPost(type, path, params = {}, transform, payload) {
           .then((res, err) => {
             if (!err) {
               let dispatchData = res.body.data;
-              if (transform) {
-                if (!payload) {
-                  dispatchData = transform(res.body.data);
-                } else {
-                  console.log(payload);
-                  dispatchData = update(transform(res.body.data), {
-                    $merge: payload,
-                  });
-                }
+              dispatchData = transform ? transform(res.body.data) : dispatchData;
+              if (payload) {
+                dispatchData = update(dispatchData, {
+                  $merge: payload,
+                });
               }
+
               return dispatch(dispatchOK(dispatchData));
             }
             return setTimeout(() => fetchDataWithRetry(delay + 2000, tries - 1, err), delay);
           })
           .catch((err) => {
             console.log(`Error in ${type}`);
+            console.error(err);
             return dispatch(dispatchFail(err.response.body.message));
           });
       };

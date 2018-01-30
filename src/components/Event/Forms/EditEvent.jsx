@@ -450,8 +450,8 @@ class EditEventForm extends React.Component {
             <AutoCompleteValidator
               name="seats"
               type="number"
-              hintText={strings.filter_seats}
-              floatingLabelText={strings.filter_seats}
+              hintText={strings.filter_number_of_seats}
+              floatingLabelText={strings.filter_number_of_seats}
               searchText={this.state.event.seats.text}
               value={this.state.event.seats.value}
               dataSource={data.seatsArr}

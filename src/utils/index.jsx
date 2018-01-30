@@ -4,18 +4,24 @@ import { Link } from 'react-router-dom';
 import strings from 'lang';
 import Clubs from 'fxconstants/build/clubsObj.json';
 /* components */
+import { Dialog } from 'material-ui';
 import { TableLink } from 'components/Table';
-import {
-  TableXUserImage,
-  TableClubImage,
-  FromNowTooltip,
-} from 'components/Visualizations';
+import { TableXUserImage, TableClubImage, FromNowTooltip } from 'components/Visualizations';
 
 import * as timeHelper from './time';
 import * as styleHelper from './style';
 
 export * from './time';
 export * from './style';
+export * from './sort';
+
+export function toNumber(input) {
+  return Number(input);
+}
+
+export function toUpperCase(input) {
+  return input.toString().toUpperCase();
+}
 
 export function abbreviateNumber(num) {
   if (!num) {
@@ -196,92 +202,32 @@ export const transformations = {
   winPercent: (row, col, field) => `${(field * 100).toFixed(2)}%`,
 };
 
-export const defaultSort = (array, sortState, sortField, sortFn) =>
-  array.sort((a, b) => {
-    const sortFnExists = typeof sortFn === 'function';
-    const aVal = (sortFnExists ? sortFn(a) : a[sortField]) || 0;
-    const bVal = (sortFnExists ? sortFn(b) : b[sortField]) || 0;
-    const desc = aVal < bVal ? 1 : -1;
-    const asc = aVal < bVal ? -1 : 1;
-    return sortState === 'desc' ? desc : asc;
-  });
+export function renderDialog(dialogConstruct = {}, trigger) {
+  const defaultDialogCons = {
+    title: 'Example Dialog',
+    actions: [],
+    view: <h1>Welcome!</h1>,
+    onRequestClose: () => { console.log('Do close dialog'); },
+  };
+  const { title, actions, view, onRequestClose } = Object.assign(defaultDialogCons, dialogConstruct);
 
-export const SORT_ENUM = {
-  0: 'asc',
-  1: 'desc',
-  asc: 0,
-  desc: 1,
-  next: state => SORT_ENUM[(state >= 1 ? 0 : state + 1)],
-};
-
-export function getObsWardsPlaced(pm) {
-  if (!pm.obs_log) {
-    return 0;
-  }
-
-  return pm.obs_log.filter(l => !l.entityleft).length;
+  return (
+    <Dialog
+      title={title}
+      actions={actions}
+      modal={false}
+      open={trigger}
+      onRequestClose={onRequestClose}
+      autoScrollBodyContent
+    >
+      {view}
+    </Dialog>
+  );
 }
 
-export const sum = (a, b) => a + b;
-
-/**
- * Converts an HSV color value to RGB. Conversion formula
- * adapted from http://en.wikipedia.org/wiki/HSV_color_space.
- * Assumes h, s, and v are contained in the set [0, 1] and
- * returns r, g, and b in the set [0, 255].
- *
- * @param   Number  h       The hue
- * @param   Number  s       The saturation
- * @param   Number  v       The value
- * @return  Array           The RGB representation
- */
-export const hsvToRgb = (h, s, v) => {
-  let r;
-  let g;
-  let b;
-
-  const i = Math.floor(h * 6);
-  const f = (h * 6) - i;
-  const p = v * (1 - s);
-  const q = v * (1 - (f * s));
-  const t = v * (1 - ((1 - f) * s));
-
-  switch (i % 6) {
-    case 0:
-      r = v;
-      g = t;
-      b = p;
-      break;
-    case 1:
-      r = q;
-      g = v;
-      b = p;
-      break;
-    case 2:
-      r = p;
-      g = v;
-      b = t;
-      break;
-    case 3:
-      r = p;
-      g = q;
-      b = v;
-      break;
-    case 4:
-      r = t;
-      g = p;
-      b = v;
-      break;
-    case 5:
-      r = v;
-      g = p;
-      b = q;
-      break;
-    default:
-      r = v;
-      g = t;
-      b = p;
-  }
-
-  return [r * 255, g * 255, b * 255];
-};
+export function bindAll(methods, self) {
+  methods.forEach((item) => {
+  // eslint-disable-next-line no-param-reassign
+    self[item] = self[item].bind(self);
+  });
+}

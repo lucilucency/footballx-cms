@@ -225,7 +225,7 @@ class RegisterView extends React.Component {
 
     const __renderCardNumberInput = () => (<TextField
       hintText={strings.hint_number}
-      floatingLabelText={strings.filter_number_card}
+      floatingLabelText={strings.filter_number_of_cards}
       type="number"
       errorText={this.state.cardNumberErrorText}
       onChange={e => this.changeValue(e, 'cardNumber')}
