@@ -87,7 +87,7 @@ const config = {
     }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-      FX_API: JSON.stringify(isProd ? 'http://web-api.ttab.me' : isDev ? 'http://code.ttab.me:51168' : 'http://localhost:51168'),
+      FX_API: JSON.stringify(isProd ? 'http://web-api.ttab.me' : isDev ? 'http://dev.ttab.me:51168' : 'http://localhost:51168'),
       FX_VERSION: JSON.stringify(process.env.FX_VERSION || 'v1'),
     }),
   ].filter(o => o),
