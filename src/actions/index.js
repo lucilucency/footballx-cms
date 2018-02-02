@@ -61,11 +61,18 @@ export const editEvent = (eventId, params) => fxActionPut('EDIT/event', `event/$
 export const deleteEvent = eventId => fxActionDelete('DELETE/event', `event/${eventId}`);
 /* card */
 export const getCardLabels = () => fxActionGet('cardLabels', 'card/labels', {});
-export const getCardIssues = () => fxActionGet('cardIssues', 'issues');
-export const getCardPackages = () => fxActionGet('cardPackages', 'packes');
+export const createCardLabel = (params, payload) => fxActionPost('ADD/cardLabels', 'card/label', params, null, payload);
 export const createCards = (params, payload) => fxActionPost('ADD/cardLabels', 'cards', params, null, payload);
+
+export const getCardIssues = () => fxActionGet('cardIssues', 'issues');
+export const createCardIssue = (params, payload) => fxActionPost('ADD/cardIssues', 'issue', params, null, payload);
+export const closeCardIssue = issueId => fxActionPut('EDIT/cardIssue', `issue/${issueId}/close`);
+export const returnCardToStockFromCardIssue = (issueId, number) => fxActionPut('EDIT/cardIssue', `issue/${issueId}/return-cards`, { issue_id: issueId, number_card: number });
+
+export const getCardPackages = () => fxActionGet('cardPackages', 'packes');
 export const createCardPackage = params => fxActionPost('ADD/cardPackages', 'pack', params);
-export const createCardLabel = params => fxActionPost('ADD/cardLabels', 'card/label', params);
+export const confirmPrintedPackage = packageId => fxActionPut('EDIT/cardPackage', `pack/${packageId}/print-complete`, {pack_id: packageId});
+
 /* notification */
 export const sendNotificationTopic = (params = { topic: '', message: '' }) => fxActionPost('sendNotification', 'notification/topic', params);
 

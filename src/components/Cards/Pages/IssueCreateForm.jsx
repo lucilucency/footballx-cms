@@ -1,15 +1,15 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint camelcase: 0, no-underscore-dangle: 0 */
 import React from 'react';
 import { connect } from 'react-redux';
 import update from 'react-addons-update';
 import strings from 'lang';
-// import { validateEmail } from 'utils/misc';
-import { ajaxGet, createCardPackage } from 'actions';
+import { toNumber, toUpperCase } from 'utils';
+import { ajaxGet, createCardIssue } from 'actions';
 
-import { Dialog, AutoComplete, TextField, FlatButton, List, ListItem } from 'material-ui';
+import { Dialog, TextField, FlatButton, List, ListItem, AutoComplete } from 'material-ui';
 import IconFail from 'material-ui/svg-icons/content/clear';
 import IconSuccess from 'material-ui/svg-icons/navigation/check';
+import IconProgress from 'material-ui/CircularProgress';
 import styled, { css } from 'styled-components';
 import constants from 'components/constants';
 
@@ -34,8 +34,9 @@ const getCardLabels = (props, context) => ajaxGet('card/labels')
     if (!err) {
       const data = res.body.data;
       const dataSourceCardLabels = data.map(o => ({
-        text: o.name,
+        text: `${o.name} (MAX: ${o.total_card_in_stock})`,
         value: o.id,
+        textShort: o.name,
       }));
       context.setState({ dataSourceCardLabels });
     } else {
@@ -43,29 +44,28 @@ const getCardLabels = (props, context) => ajaxGet('card/labels')
     }
   });
 
-const initialState = props => ({
-  cardLabelId: props.cardLabelId && props.cardLabelId,
-  cardLabelName: props.cardLabelName && props.cardLabelName,
-  cardLabelErrorText: null,
-  cardNumber: null,
-  cardNumberErrorText: null,
-  redirectTo: '/login',
-  disabled: true,
-
+const initialState = {
+  /* form data */
+  cardLabelId: {},
+  price: {},
+  notes: {},
+  amount: {},
+  /* misc */
   payload: {},
   submitResults: {
     data: [],
     show: false,
   },
-});
+  redirectTo: '/login',
+  disabled: true,
+  open: false,
+};
 
 class IssueCreateForm extends React.Component {
   static propTypes = {
     onChange: React.PropTypes.func,
     callback: React.PropTypes.func,
     submitFn: React.PropTypes.func,
-    cardLabelId: React.PropTypes.number,
-    // cardNumber: React.PropTypes.number,
   };
 
   static defaultProps = {
@@ -76,7 +76,7 @@ class IssueCreateForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      ...initialState(props),
+      ...initialState,
       dataSourceCardLabels: [],
     };
 
@@ -89,15 +89,18 @@ class IssueCreateForm extends React.Component {
   }
 
   getFormData() {
-    const { cardNumber: number_card } = this.state;
-    const card_label_id = this.state.cardLabelId.value;
-    return { card_label_id, number_card };
+    const { cardLabelId: card_label_id, amount: number_card, price, notes } = this.state;
+    const user_id = this.props.user.id;
+
+    return { card_label_id: card_label_id.value, number_card: number_card.value, user_id, price: price.value, notes: notes.value };
   }
 
-  changeValue(e, key) {
+  changeValue(e, key, transform) {
     const value = e.target.value;
     const next_state = {};
-    next_state[key] = isNaN(value) ? value : Number(value);
+    next_state[key] = {
+      value: transform ? transform(value) : value,
+    };
     this.setState(next_state, () => {
       this.isDisabled();
     });
@@ -105,7 +108,10 @@ class IssueCreateForm extends React.Component {
 
   handleOnNewRequest(o, type) {
     const next_state = {};
-    next_state[type] = o;
+    next_state[type] = {
+      text: o.textShort,
+      value: o.value,
+    };
     this.setState(next_state, () => {
       this.isDisabled();
     });
@@ -120,32 +126,13 @@ class IssueCreateForm extends React.Component {
   }
 
   isDisabled() {
-    let isValidCardNumber = false;
-    let isValidCardLabel = false;
-
-    if (!this.state.cardLabelId) {
-      this.setState({ cardLabelErrorText: null, cardLabelId: null });
+    if (!this.state.cardLabelId.value) {
+      this.setState({ cardLabelId: { value: null, errorText: null } });
     } else {
-      isValidCardLabel = true;
+      this.setState({ cardLabelId: { value: this.state.cardLabelId.value, isValid: true } });
     }
 
-    if (!this.state.cardNumber) {
-      this.setState({
-        cardNumberErrorText: null,
-        cardNumber: null,
-      });
-    } else if (parseInt(this.state.cardNumber)) {
-      isValidCardNumber = true;
-      this.setState({
-        cardNumberErrorText: null,
-      });
-    } else {
-      this.setState({
-        cardNumberErrorText: 'Sorry, this is not a valid number',
-      });
-    }
-
-    if (isValidCardNumber && isValidCardLabel) {
+    if (this.state.cardLabelId.isValid) {
       this.setState({
         disabled: false,
       }, function () {
@@ -159,6 +146,10 @@ class IssueCreateForm extends React.Component {
     e.preventDefault();
 
     const formData = that.getFormData();
+    const payload = {
+      total_card: formData.number_card,
+    };
+
     this.handleCloseDialog();
 
     this.setState({
@@ -166,15 +157,15 @@ class IssueCreateForm extends React.Component {
         show: { $set: true },
         data: {
           $push: [{
-            action: <div>{`Create ${that.state.cardNumber} card(s) with label: `} <code>[{that.state.cardLabelId.text}]</code></div>,
+            action: <div>{`Creating ${that.state.amount.value} card(s) with label: `} <code>[{that.state.cardLabelId.value}]</code></div>,
             submitting: true,
           }],
         },
       }),
       disabled: true,
     }, () => {
-      this.props.submitFn(formData).then((results) => {
-        const action = <div>{`Create ${that.state.cardNumber} card(s) with label: `} <code>[{that.state.cardLabelId.text}]</code></div>;
+      this.props.submitFn(formData, payload).then((results) => {
+        const action = <div>{`Created ${that.state.amount.value} card(s) with label: `} <code>[{that.state.cardLabelId.value}]</code></div>;
         const resultsReport = [];
         if (results.type.indexOf('OK') === 0) {
           resultsReport.push({
@@ -208,8 +199,6 @@ class IssueCreateForm extends React.Component {
 
   render() {
     const __renderCardLabelSelector = () => (<AutoComplete
-      name="card_label_id"
-      ref={(input) => { this.inputCardLabel = input; }}
       floatingLabelText={strings.filter_card_label}
       // searchText={this.state.event.cardLabel && this.state.event.cardLabel.text}
       // value={this.state.event.cardLabel.value}
@@ -220,40 +209,59 @@ class IssueCreateForm extends React.Component {
       maxSearchResults={100}
       fullWidth
       listStyle={{ maxHeight: 300, overflow: 'auto' }}
-      // validators={['required']}
-      // errorMessages={[strings.validate_is_required]}
     />);
 
-    const __renderCardNumberInput = () => (<TextField
-      hintText={strings.hint_number}
+    const __renderCardLabelAmount = () => (<TextField
+      hintText={strings.hint_card_label_number_of_cards}
       floatingLabelText={strings.filter_number_of_cards}
       type="number"
-      errorText={this.state.cardNumberErrorText}
-      onChange={e => this.changeValue(e, 'cardNumber')}
+      errorText={this.state.amount.errorText}
+      onChange={e => this.changeValue(e, 'amount', toNumber)}
+      fullWidth
+    />);
+
+    const __renderPrice = () => (<TextField
+      hintText={strings.hint_card_label_value}
+      floatingLabelText={strings.filter_card_label_value}
+      type="number"
+      errorText={this.state.price.errorText}
+      onChange={e => this.changeValue(e, 'price', toNumber)}
+      fullWidth
+    />);
+
+    const __renderNotes = () => (<TextField
+      hintText={strings.hint_issue_notes}
+      floatingLabelText={strings.filter_issue_notes}
+      type="text"
+      errorText={this.state.notes.errorText}
+      onChange={e => this.changeValue(e, 'notes', input => input.toUpperCase())}
       fullWidth
     />);
 
     return (
       <div onKeyPress={e => this.__handleKeyPressOnForm(e)} role="form">
         <Row>
-          <Col flex={5}>
-            {__renderCardLabelSelector()}
-          </Col>
-          <Col flex={7}>
-            {__renderCardNumberInput()}
-          </Col>
+          {__renderCardLabelSelector()}
+        </Row>
+        <Row>
+          {__renderPrice()}
+        </Row>
+        <Row>
+          {__renderNotes()}
+          {__renderCardLabelAmount()}
         </Row>
 
         {this.state.submitResults.show && <Row>
           <List fullWidth >
             {this.state.submitResults.data.map(r => (<ListItem
               primaryText={r.action}
-              leftIcon={r.error ?
+              leftIcon={r.submitting ? <IconProgress /> : (r.error ?
                 <IconFail color={constants.colorRed} title={strings.form_general_fail} />
                 : <IconSuccess
                   color={constants.colorSuccess}
                   title={strings.form_general_success}
-                />}
+                />)
+              }
               secondaryText={r.error && r.error}
               secondaryTextLines={1}
             />))}
@@ -298,8 +306,12 @@ class IssueCreateForm extends React.Component {
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-  submitFn: params => dispatch(createCardPackage(params)),
+const mapStateToProps = state => ({
+  user: state.app.metadata.data.user,
 });
 
-export default connect(null, mapDispatchToProps)(IssueCreateForm);
+const mapDispatchToProps = dispatch => ({
+  submitFn: (params, payload) => dispatch(createCardIssue(params, payload)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(IssueCreateForm);

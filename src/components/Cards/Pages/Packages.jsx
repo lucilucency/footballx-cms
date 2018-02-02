@@ -4,9 +4,9 @@ import {
   connect,
 } from 'react-redux';
 /* actions & helpers */
-import { getCardPackages } from 'actions';
+import { getCardPackages, confirmPrintedPackage } from 'actions';
 import strings from 'lang';
-import { toDateTimeString } from 'utils';
+import { toDateTimeString, bindAll } from 'utils';
 /* components */
 import Table, { TableLink } from 'components/Table';
 import Container from 'components/Container/index';
@@ -16,6 +16,7 @@ import constants from 'components/constants';
 
 import PackageViewer from './PackageViewer';
 import PackageCreateForm from './PackageCreateForm';
+import PackageConfirmPrintedButton from './PackageConfirmPrintedButton';
 
 const tableCardLabelsColumns = that => [{
   displayName: 'ID',
@@ -27,7 +28,7 @@ const tableCardLabelsColumns = that => [{
 }, {
   displayName: strings.th_cards,
   field: 'total_card',
-  sortFn: true,
+  displayFn: (row, col, field) => (<div><b>{row.card_label_id}</b> <small>x{field}</small></div>)
 }, {
   displayName: 'Status',
   field: 'status',
@@ -45,9 +46,7 @@ const tableCardLabelsColumns = that => [{
 }, {
   field: 'id',
   displayName: '',
-  displayFn: () => (<IconButton tooltip={strings.tooltip_print} onClick={that.handleViewPackage}>
-    <IconPrint color={constants.blue500} />
-  </IconButton>),
+  displayFn: (row, col, field) => row.status === 1 ? (<PackageConfirmPrintedButton packageId={field} status={row.status} />) : null,
 }];
 
 const getData = (props) => {
@@ -67,11 +66,14 @@ class PackagesPage extends React.Component {
       createPackageFormData: {},
     };
 
-    this.handleOpenDialog = this.handleOpenDialog.bind(this);
-    this.handleCloseDialog = this.handleCloseDialog.bind(this);
-    this.renderDialog = this.renderDialog.bind(this);
-    this.handleViewPackage = this.handleViewPackage.bind(this);
-    this.handleCreatePackage = this.handleCreatePackage.bind(this);
+    bindAll([
+      'handleOpenDialog',
+      'handleCloseDialog',
+      'renderDialog',
+      'handleViewPackage',
+      'handleCreatePackage',
+      'handleConfirmPrinted'
+    ], this);
   }
 
   componentDidMount() {
@@ -103,6 +105,34 @@ class PackagesPage extends React.Component {
     }, () => {
       this.handleOpenDialog();
     });
+  }
+
+  handleConfirmPrinted() {
+    this.setState({
+      dialogConstruct: {
+        title: 'Do you want to confirm that package is printed?',
+        actions: [
+          <FlatButton
+            label="Confirm"
+            primary
+            keyboardFocused
+            onClick={this.props.confirmPrintedPackage()}
+            // disabled={isEmpty(this.state.createPackageFormData)}
+          />,
+          <FlatButton
+            label="No, thanks."
+            secondary
+            onClick={this.handleCloseDialog}
+          />,
+        ],
+      },
+    }, () => {
+      this.handleOpenDialog();
+    });
+  }
+
+  confirmPrinted() {
+
   }
 
   handleCreatePackage() {
@@ -196,6 +226,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   dispatchPackages: () => dispatch(getCardPackages()),
+  confirmPrintedPackage: packageId => dispatch(confirmPrintedPackage(packageId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PackagesPage);

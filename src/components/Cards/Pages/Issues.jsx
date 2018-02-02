@@ -3,27 +3,26 @@ import PropTypes from 'prop-types';
 import {
   connect,
 } from 'react-redux';
-
+import { Link } from 'react-router-dom';
 /* actions & helpers */
 import { getCardIssues } from 'actions';
+import { subTextStyle, bindAll } from 'utils';
+import strings from 'lang';
 /* components */
 import Table, { TableLink } from 'components/Table';
 import Container from 'components/Container';
 import { FlatButton, Dialog, IconButton } from 'material-ui';
 import IconAdd from 'material-ui/svg-icons/action/note-add';
-import strings from 'lang';
-import { subTextStyle } from 'utils/style';
 
 import IssueCreateForm from './IssueCreateForm';
+import IssueViewer from "./IssueViewer";
 
 
-const tableCardLabelsColumns = browser => [{
+const tableCardLabelsColumns = (that, browser) => [{
   displayName: strings.th_id,
   field: 'id',
   sortFn: true,
-  displayFn: (row, col, field) => (<div>
-    <TableLink to={`/cards/issues/${field}`}>{field}</TableLink>
-  </div>),
+  displayFn: (row, col, field) => (<Link to={`/cards/issues/${field}`}>{field}</Link>),
 }, {
   displayName: 'Requester',
   field: 'user_id',
@@ -48,15 +47,20 @@ const tableCardLabelsColumns = browser => [{
   displayName: 'Price',
   field: 'price',
 }, {
+  displayName: 'Status',
+  field: 'is_closed',
+  displayFn: (row, col, field) => (<div>{field === true ? 'Closed' : 'Not close'}</div>),
+}, {
   displayName: '',
-  displayFn: () => (<div>
-    <span className="subText ellipsis" style={{ display: 'block', marginTop: 1 }}>
-      +Reture card
-    </span>
-    <span className="subText ellipsis" style={{ display: 'block', marginTop: 1 }}>
-      +Close
-    </span>
-  </div>),
+  field: 'id',
+  displayFn: (row, col, field) => (<Link
+    to={'/cards/issues'}
+    onClick={() => that.setState({
+      previewingIssue: row,
+    }, that.previewIssue)}
+  >
+    {'DETAIL'}
+  </Link>),
 }];
 
 
@@ -77,11 +81,7 @@ class IssuesPage extends React.Component {
       createPackageFormData: {},
     };
 
-    this.handleOpenDialog = this.handleOpenDialog.bind(this);
-    this.handleCloseDialog = this.handleCloseDialog.bind(this);
-    this.renderDialog = this.renderDialog.bind(this);
-    this.handleViewPackage = this.handleViewPackage.bind(this);
-    this.handleCreatePackage = this.handleCreatePackage.bind(this);
+    bindAll(['handleOpenDialog', 'handleCloseDialog', 'renderDialog', 'handleViewIssue', 'handleCreatePackage', 'previewIssue'], this);
   }
 
   componentDidMount() {
@@ -96,7 +96,7 @@ class IssuesPage extends React.Component {
     this.setState({ openDialog: false, dialogConstruct: {} });
   }
 
-  handleViewPackage() {
+  handleViewIssue() {
     this.setState({
       dialogConstruct: {
         title: 'Package Details',
@@ -118,10 +118,27 @@ class IssuesPage extends React.Component {
   handleCreatePackage() {
     this.setState({
       dialogConstruct: {
-        title: 'More cards more fun!',
+        title: 'Create new Issue',
         view: <IssueCreateForm
           callback={() => {
-            console.log('callback');
+            console.log('callback create new issue');
+            this.handleCloseDialog();
+          }}
+        />,
+      },
+    }, () => {
+      this.handleOpenDialog();
+    });
+  }
+
+  previewIssue() {
+    this.setState({
+      dialogConstruct: {
+        title: 'Preview Issue',
+        view: <IssueViewer
+          issue={this.state.previewingIssue}
+          callback={() => {
+            console.log('callback close issue previewer');
             this.handleCloseDialog();
           }}
         />,
@@ -166,7 +183,7 @@ class IssuesPage extends React.Component {
       >
         <Table
           paginated
-          columns={tableCardLabelsColumns(this.props.browser)}
+          columns={tableCardLabelsColumns(this, this.props.browser)}
           data={cardIssues.data}
           pageLength={30}
         />

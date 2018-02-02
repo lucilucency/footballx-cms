@@ -187,6 +187,7 @@ class EventSendNotification extends React.Component {
                   userSegment: returnData.selectedElements,
                 });
               }}
+              listStyle={{ maxHeight: 300, overflow: 'auto' }}
             />
             <FormFieldStyled
               name="topic"

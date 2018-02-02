@@ -30,9 +30,9 @@ const tableCardLabelsColumns = browser => [{
   displayName: 'Used',
   field: 'total_card_used',
 }, {
-  displayName: 'Available',
-  // field: 'total_card_available',
-  displayFn: row => (<div>{row.total_card - row.total_card_used}</div>),
+  displayName: 'In Stock',
+  field: 'total_card_in_stock',
+  // displayFn: row => (<div>{row.total_card - row.total_card_used}</div>),
 }, {
   displayName: 'Value',
   field: 'value',
@@ -142,6 +142,7 @@ class CardLabelsPage extends React.Component {
             r.cost = r.cost || a.cost;
             r.prefix = r.prefix || a.prefix;
             r.subscription = r.subscription || a.subscription;
+            r.total_card_in_stock = r.total_card_in_stock || a.total_card_in_stock;
 
             r.total_card = r.total_card || 0;
             r.total_card_used = r.total_card_used || 0;

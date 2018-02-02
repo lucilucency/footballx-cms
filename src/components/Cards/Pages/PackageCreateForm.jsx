@@ -207,8 +207,6 @@ class RegisterView extends React.Component {
 
   render() {
     const __renderCardLabelSelector = () => (<AutoComplete
-      name="card_label_id"
-      ref={(input) => { this.inputCardLabel = input; }}
       floatingLabelText={strings.filter_card_label}
       // searchText={this.state.event.cardLabel && this.state.event.cardLabel.text}
       // value={this.state.event.cardLabel.value}
@@ -219,8 +217,6 @@ class RegisterView extends React.Component {
       maxSearchResults={100}
       fullWidth
       listStyle={{ maxHeight: 300, overflow: 'auto' }}
-      // validators={['required']}
-      // errorMessages={[strings.validate_is_required]}
     />);
 
     const __renderCardNumberInput = () => (<TextField

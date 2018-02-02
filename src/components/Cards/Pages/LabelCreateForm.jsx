@@ -9,6 +9,7 @@ import { ajaxGet, createCardLabel } from 'actions';
 import { Dialog, TextField, FlatButton, List, ListItem } from 'material-ui';
 import IconFail from 'material-ui/svg-icons/content/clear';
 import IconSuccess from 'material-ui/svg-icons/navigation/check';
+import IconProgress from 'material-ui/CircularProgress';
 import styled, { css } from 'styled-components';
 import constants from 'components/constants';
 
@@ -42,7 +43,7 @@ const getCardLabels = (props, context) => ajaxGet('card/labels')
     }
   });
 
-const initialState = props => ({
+const initialState = {
   cardLabelName: {},
   cardLabelValue: {},
   cardLabelCost: {},
@@ -58,7 +59,8 @@ const initialState = props => ({
 
   redirectTo: '/login',
   disabled: true,
-});
+  open: false,
+};
 
 class LabelCreateForm extends React.Component {
   static propTypes = {
@@ -66,7 +68,6 @@ class LabelCreateForm extends React.Component {
     callback: React.PropTypes.func,
     submitFn: React.PropTypes.func,
     cardLabelId: React.PropTypes.number,
-    // cardNumber: React.PropTypes.number,
   };
 
   static defaultProps = {
@@ -77,7 +78,7 @@ class LabelCreateForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      ...initialState(props),
+      ...initialState,
       dataSourceCardLabels: [],
     };
 
@@ -90,9 +91,14 @@ class LabelCreateForm extends React.Component {
   }
 
   getFormData() {
-    const { cardNumber: number_card } = this.state;
-    const card_label_id = this.state.cardLabelId.value;
-    return { card_label_id, number_card };
+    const name = this.state.cardLabelName.value;
+    const value = this.state.cardLabelValue.value;
+    const cost = this.state.cardLabelCost.value;
+    const subscription = this.state.cardLabelXPoint.value;
+    const prefix = this.state.cardLabelPrefix.value;
+    const number_card = this.state.cardLabelAmount.value;
+
+    return { name, value, cost, subscription, prefix, number_card };
   }
 
   changeValue(e, key, transform) {
@@ -143,7 +149,9 @@ class LabelCreateForm extends React.Component {
     e.preventDefault();
 
     const formData = that.getFormData();
-    console.log(formData);
+    const payload = {
+      total_card: formData.number_card,
+    };
 
     this.handleCloseDialog();
 
@@ -152,15 +160,15 @@ class LabelCreateForm extends React.Component {
         show: { $set: true },
         data: {
           $push: [{
-            action: <div>{`Create ${that.state.cardNumber} card(s) with label: `} <code>[{that.state.cardLabelId.text}]</code></div>,
+            action: <div>{`Creating ${that.state.cardLabelAmount.value} card(s) with label: `} <code>[{that.state.cardLabelName.value}]</code></div>,
             submitting: true,
           }],
         },
       }),
       disabled: true,
     }, () => {
-      this.props.submitFn(formData).then((results) => {
-        const action = <div>{`Create ${that.state.cardNumber} card(s) with label: `} <code>[{that.state.cardLabelId.text}]</code></div>;
+      this.props.submitFn(formData, payload).then((results) => {
+        const action = <div>{`Created ${that.state.cardLabelAmount.value} card(s) with label: `} <code>[{that.state.cardLabelName.value}]</code></div>;
         const resultsReport = [];
         if (results.type.indexOf('OK') === 0) {
           resultsReport.push({
@@ -251,27 +259,28 @@ class LabelCreateForm extends React.Component {
       <div onKeyPress={e => this.__handleKeyPressOnForm(e)} role="form">
         <Row>
           {__renderCardLabelName()}
-          {__renderCardLabelAmount()}
+          {__renderCardLabelXPoint()}
         </Row>
         <Row>
           {__renderCardLabelValue()}
           {__renderCardLabelCost()}
         </Row>
         <Row>
-          {__renderCardLabelXPoint()}
           {__renderCardLabelPrefix()}
+          {__renderCardLabelAmount()}
         </Row>
 
         {this.state.submitResults.show && <Row>
           <List fullWidth >
             {this.state.submitResults.data.map(r => (<ListItem
               primaryText={r.action}
-              leftIcon={r.error ?
-                <IconFail color={constants.colorRed} title={strings.form_general_fail} />
-                : <IconSuccess
-                  color={constants.colorSuccess}
-                  title={strings.form_general_success}
-                />}
+              leftIcon={r.submitting ? <IconProgress /> : (r.error ?
+                  <IconFail color={constants.colorRed} title={strings.form_general_fail} />
+                  : <IconSuccess
+                    color={constants.colorSuccess}
+                    title={strings.form_general_success}
+                  />)
+              }
               secondaryText={r.error && r.error}
               secondaryTextLines={1}
             />))}
@@ -317,7 +326,7 @@ class LabelCreateForm extends React.Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-  submitFn: params => dispatch(createCardLabel(params)),
+  submitFn: (params, payload) => dispatch(createCardLabel(params, payload)),
 });
 
 export default connect(null, mapDispatchToProps)(LabelCreateForm);

@@ -456,466 +456,484 @@ class CreateEventForm extends React.Component {
             left: 0;
         `;
 
-    return (
-      <ValidatorForm
-        onSubmit={this.submitCreateEvent}
-        onError={errors => console.log(errors)}
-      >
-        {loading && <Spinner />}
-        {this.state.error && <Error text={this.state.error} />}
-        <FormContainer show={!toggle || showForm}>
+    const __renderHotspotSelector = () => (<SelectValidator
+      name="hotspots"
+      fullWidth
+      multiple
+      hintText={strings.tooltip_select_hotspots}
+      value={this.state.event.hotspots}
+      onChange={(event, index, values) => {
+        this.setState({
+          event: update(this.state.event, {
+            hotspots: { $set: values },
+          }),
+        });
+      }}
+      selectionRenderer={(values) => {
+        const that = this;
+        switch (values.length) {
+          case 0:
+            return '';
+          case 1:
+            return that.state.hotspots.find(o => o.value === values[0]).text;
+          default: {
+            const arrayNames = values.map(value => `[${that.state.hotspots.find(o => o.value === value).textShort}]`);
+            return arrayNames.join(',  ');
+          }
+        }
+      }}
+
+      validators={['required']}
+      errorMessages={[strings.validate_is_required]}
+    >
+      {this.hotspotItems()}
+    </SelectValidator>);
+
+    const __renderGroupSelector = () => (<AutoCompleteValidator
+      name="group"
+      hintText={strings.filter_group}
+      floatingLabelText={strings.filter_group}
+      searchText={this.state.event.group && this.state.event.group.text}
+      value={this.state.event.group.value}
+      dataSource={this.state.groups}
+      onNewRequest={(o) => {
+        this.setState({
+          event: update(this.state.event, {
+            group: { $set: o },
+          }),
+        });
+      }}
+      onUpdateInput={(searchText) => {
+        this.setState({
+          event: update(this.state.event, {
+            group: { $set: { value: searchText } },
+          }),
+        });
+      }}
+      filter={AutoComplete.caseInsensitiveFilter}
+      openOnFocus
+      maxSearchResults={maxSearchResults}
+      fullWidth
+      listStyle={{ maxHeight: 300, overflow: 'auto' }}
+      validators={[]}
+      errorMessages={[]}
+    />);
+
+    const __renderMatchSelector = () => (<div>
+      <AutoCompleteValidator
+        name="match"
+        ref={(input) => {
+          this.inputMatch = input;
+        }}
+        hintText={strings.filter_match}
+        floatingLabelText={strings.filter_match}
+        searchText={this.state.event.match && this.state.event.match.text}
+        value={this.state.event.match.value}
+        dataSource={this.state.matches}
+        onNewRequest={this.handleSelectMatch}
+        // onUpdateInput={this.handleInputMatch}
+        filter={AutoComplete.fuzzyFilter}
+        openOnFocus
+        maxSearchResults={maxSearchResults}
+        fullWidth
+        listStyle={{ maxHeight: 300, overflow: 'auto' }}
+        validators={['required']}
+        errorMessages={[strings.validate_is_required]}
+      />
+    </div>);
+
+    const __renderMatchPreview = () => (<div>
+      {!this.props.matchId && <RaisedButton
+        label={<small>{strings.form_create_event_clear_match}</small>}
+        onClick={this.handleClearMatch}
+        style={{ display: 'flex', margin: 'auto' }}
+      />}
+      <ClubImageContainer>
+        <ClubColorPicker>
+          <img
+            src={Clubs[this.state.event.match.home.club_id] && Clubs[this.state.event.match.home.club_id].icon}
+            alt=""
+            width={100}
+            height={100}
+          />
           <div>
-            {/* {!this.props.hotspotId && this.state.hotspots && <FormField */}
-            {/* name="hotspots" */}
-            {/* label={strings.filter_notification_user} */}
-            {/* dataSource={this.state.hotspots.map(o => ({text: o.text, value: o.value}))} */}
-            {/* fullWidth={true} */}
-            {/* onChange={this.handleSelectHotspot.bind(this)} */}
-            {/* listStyle={{maxHeight: 300, overflow: 'auto'}} */}
-            {/* />} */}
-            {!this.props.hotspotId && this.state.hotspots && <SelectValidator
-              name="hotspots"
-              fullWidth
-              multiple
-              hintText={strings.tooltip_select_hotspots}
-              value={this.state.event.hotspots}
-              onChange={(event, index, values) => {
-                this.setState({
-                  event: update(this.state.event, {
-                    hotspots: { $set: values },
-                  }),
-                });
-              }}
-              selectionRenderer={(values) => {
+            <Swatch onClick={() => {
+              const that = this;
+              that.setState({
+                event: update(that.state.event, {
+                  home_color: {
+                    displayColorPicker: { $set: !that.state.event.home_color.displayColorPicker || false },
+                  },
+                }),
+              });
+            }}
+            >
+              <ColorPreviewBox color={this.state.event.home_color.value} />
+            </Swatch>
+
+            {this.state.event.home_color.displayColorPicker ? <PopOver>
+              <Cover onClick={() => {
                 const that = this;
-                switch (values.length) {
-                  case 0:
-                    return '';
-                  case 1:
-                    return that.state.hotspots.find(o => o.value === values[0]).text;
-                  default: {
-                    const arrayNames = values.map(value => `[${that.state.hotspots.find(o => o.value === value).textShort}]`);
-                    return arrayNames.join(',  ');
-                  }
-                }
-              }}
-
-              validators={['required']}
-              errorMessages={[strings.validate_is_required]}
-            >{this.hotspotItems()}</SelectValidator>}
-
-            {!this.props.groupId && this.state.groups && <AutoCompleteValidator
-              name="group"
-              hintText={strings.filter_group}
-              floatingLabelText={strings.filter_group}
-              searchText={this.state.event.group && this.state.event.group.text}
-              value={this.state.event.group.value}
-              dataSource={this.state.groups}
-              onNewRequest={(o) => {
-                this.setState({
-                  event: update(this.state.event, {
-                    group: { $set: o },
+                that.setState({
+                  event: update(that.state.event, {
+                    home_color: {
+                      displayColorPicker: { $set: false },
+                    },
                   }),
                 });
               }}
-              onUpdateInput={(searchText) => {
-                this.setState({
-                  event: update(this.state.event, {
-                    group: { $set: { value: searchText } },
-                  }),
-                });
-              }}
-              filter={AutoComplete.caseInsensitiveFilter}
-              openOnFocus
-              maxSearchResults={maxSearchResults}
-              fullWidth
-              listStyle={{ maxHeight: 300, overflow: 'auto' }}
-              validators={[]}
-              errorMessages={[]}
-            />}
-
-            {!this.props.matchId && this.state.matches && <div>
-              <AutoCompleteValidator
-                name="match"
-                ref={(input) => {
-                  this.inputMatch = input;
-                }}
-                hintText={strings.filter_match}
-                floatingLabelText={strings.filter_match}
-                searchText={this.state.event.match && this.state.event.match.text}
-                value={this.state.event.match.value}
-                dataSource={this.state.matches}
-                onNewRequest={this.handleSelectMatch}
-                // onUpdateInput={this.handleInputMatch}
-                filter={AutoComplete.fuzzyFilter}
-                openOnFocus
-                maxSearchResults={maxSearchResults}
-                fullWidth
-                listStyle={{ maxHeight: 300, overflow: 'auto' }}
-                validators={['required']}
-                errorMessages={[strings.validate_is_required]}
               />
+              <SketchPicker
+                color={this.state.event.home_color.value}
+                onChange={this.onDragHomeColor}
+              />
+            </PopOver> : null}
+          </div>
+        </ClubColorPicker>
 
-            </div>}
+        <ClubColorPicker>
 
-            {this.state.event.match.home && <div>
-              {!this.props.matchId && <RaisedButton
-                label={<small>{strings.form_create_event_clear_match}</small>}
-                onClick={this.handleClearMatch}
-                style={{ display: 'flex', margin: 'auto' }}
-              />}
-              <ClubImageContainer>
-                <ClubColorPicker>
-                  <img
-                    src={Clubs[this.state.event.match.home.club_id] && Clubs[this.state.event.match.home.club_id].icon}
-                    alt=""
-                    width={100}
-                    height={100}
-                  />
-                  <div>
-                    <Swatch onClick={() => {
-                      const that = this;
-                      that.setState({
-                        event: update(that.state.event, {
-                          home_color: {
-                            displayColorPicker: { $set: !that.state.event.home_color.displayColorPicker || false },
-                          },
-                        }),
-                      });
-                    }}
-                    >
-                      <ColorPreviewBox color={this.state.event.home_color.value} />
-                    </Swatch>
+          <h3 style={{
+            textAlign: 'center',
+            height: 100,
+            margin: 0,
+            lineHeight: '100px',
+          }}
+          >{strings.event_versus}</h3>
+          <div>
+            <Swatch onClick={() => {
+              const that = this;
+              that.setState({
+                event: update(that.state.event, {
+                  free_folk_color: {
+                    displayColorPicker: { $set: !that.state.event.free_folk_color.displayColorPicker || false },
+                  },
+                }),
+              });
+            }}
+            >
+              <ColorPreviewBox color={this.state.event.free_folk_color.value} />
+            </Swatch>
 
-                    {this.state.event.home_color.displayColorPicker ? <PopOver>
-                      <Cover onClick={() => {
-                        const that = this;
-                        that.setState({
-                          event: update(that.state.event, {
-                            home_color: {
-                              displayColorPicker: { $set: false },
-                            },
-                          }),
-                        });
-                      }}
-                      />
-                      <SketchPicker
-                        color={this.state.event.home_color.value}
-                        onChange={this.onDragHomeColor}
-                      />
-                    </PopOver> : null}
-                  </div>
-                </ClubColorPicker>
-
-                <ClubColorPicker>
-
-                  <h3 style={{
-                    textAlign: 'center',
-                    height: 100,
-                    margin: 0,
-                    lineHeight: '100px',
-                  }}
-                  >{strings.event_versus}</h3>
-                  <div>
-                    <Swatch onClick={() => {
-                      const that = this;
-                      that.setState({
-                        event: update(that.state.event, {
-                          free_folk_color: {
-                            displayColorPicker: { $set: !that.state.event.free_folk_color.displayColorPicker || false },
-                          },
-                        }),
-                      });
-                    }}
-                    >
-                      <ColorPreviewBox color={this.state.event.free_folk_color.value} />
-                    </Swatch>
-
-                    {this.state.event.free_folk_color.displayColorPicker ? <PopOver>
-                      <Cover onClick={() => {
-                        const that = this;
-                        that.setState({
-                          event: update(that.state.event, {
-                            free_folk_color: {
-                              displayColorPicker: { $set: false },
-                            },
-                          }),
-                        });
-                      }}
-                      />
-                      <SketchPicker
-                        color={this.state.event.free_folk_color.value}
-                        onChangeComplete={this.onDragFreeFolkColor}
-                      />
-                    </PopOver> : null}
-                  </div>
-                </ClubColorPicker>
-
-                <ClubColorPicker>
-                  <img
-                    src={Clubs[this.state.event.match.away.club_id] && Clubs[this.state.event.match.away.club_id].icon}
-                    alt=""
-                    width={100}
-                    height={100}
-                  />
-                  <div>
-                    <Swatch onClick={() => {
-                      const that = this;
-                      that.setState({
-                        event: update(that.state.event, {
-                          away_color: {
-                            displayColorPicker: { $set: !that.state.event.away_color.displayColorPicker || false },
-                          },
-                        }),
-                      });
-                    }}
-                    >
-                      <ColorPreviewBox color={this.state.event.away_color.value} />
-                    </Swatch>
-
-                    {this.state.event.away_color.displayColorPicker ? <PopOver>
-                      <Cover onClick={() => {
-                        const that = this;
-                        that.setState({
-                          event: update(that.state.event, {
-                            away_color: {
-                              displayColorPicker: { $set: false },
-                            },
-                          }),
-                        });
-                      }}
-                      />
-                      <SketchPicker
-                        color={this.state.event.away_color.value}
-                        onChangeComplete={this.onDragAwayColor}
-                      />
-                    </PopOver> : null}
-                  </div>
-                </ClubColorPicker>
-              </ClubImageContainer>
-            </div>}
-
-            {/* input seats */}
-            <AutoCompleteValidator
-              name="seats"
-              type="number"
-              hintText={strings.filter_number_of_seats}
-              floatingLabelText={strings.filter_number_of_seats}
-              searchText={this.state.event.seats.text}
-              value={this.state.event.seats.value}
-              dataSource={data.seatsArr}
-              onUpdateInput={(text) => {
-                this.setState({
-                  event: update(this.state.event, {
-                    seats: { $set: { value: Number(text), text } },
+            {this.state.event.free_folk_color.displayColorPicker ? <PopOver>
+              <Cover onClick={() => {
+                const that = this;
+                that.setState({
+                  event: update(that.state.event, {
+                    free_folk_color: {
+                      displayColorPicker: { $set: false },
+                    },
                   }),
                 });
               }}
-              onNewRequest={(o) => {
-                this.setState({
-                  event: update(this.state.event, {
-                    seats: { $set: o },
-                  }),
-                });
-              }}
-              // filter={(searchText, key) => (key.indexOf(searchText) !== -1)}
-              filter={AutoComplete.fuzzyFilter}
-              openOnFocus
-              errorText={this.state.event.seats.error}
-              validators={['required', 'minNumber:0']}
-              errorMessages={[strings.validate_is_required, util.format(strings.validate_minimum, 0)]}
-            />
+              />
+              <SketchPicker
+                color={this.state.event.free_folk_color.value}
+                onChangeComplete={this.onDragFreeFolkColor}
+              />
+            </PopOver> : null}
+          </div>
+        </ClubColorPicker>
 
-            {/* select price */}
-            <AutoCompleteValidator
-              name="price"
-              hintText={strings.filter_price}
-              floatingLabelText={strings.filter_price}
-              searchText={this.state.event.price.text}
-              value={this.state.event.price.value}
-              dataSource={data.priceArr}
-              onUpdateInput={(text) => {
-                this.setState({
-                  event: update(this.state.event, {
-                    price: { $set: { value: text, text } },
-                  }),
-                });
-              }}
-              onNewRequest={(o) => {
-                this.setState({
-                  event: update(this.state.event, {
-                    price: { $set: o },
-                  }),
-                });
-              }}
-              filter={(searchText, key) => (key.indexOf(searchText) !== -1)}
-              openOnFocus
-              errorText={this.state.event.price.error}
-              validators={['required']}
-              errorMessages={['this field is required']}
-            />
+        <ClubColorPicker>
+          <img
+            src={Clubs[this.state.event.match.away.club_id] && Clubs[this.state.event.match.away.club_id].icon}
+            alt=""
+            width={100}
+            height={100}
+          />
+          <div>
+            <Swatch onClick={() => {
+              const that = this;
+              that.setState({
+                event: update(that.state.event, {
+                  away_color: {
+                    displayColorPicker: { $set: !that.state.event.away_color.displayColorPicker || false },
+                  },
+                }),
+              });
+            }}
+            >
+              <ColorPreviewBox color={this.state.event.away_color.value} />
+            </Swatch>
 
-            {/* select discount */}
-            <AutoCompleteValidator
-              name="discount"
-              hintText={strings.filter_discount}
-              floatingLabelText={strings.filter_discount}
-              searchText={this.state.event.discount.text}
-              value={this.state.event.discount.value}
-              dataSource={data.discountArr}
-              onUpdateInput={(text) => {
-                this.setState({
-                  event: update(this.state.event, {
-                    discount: { $set: { value: text, text } },
+            {this.state.event.away_color.displayColorPicker ? <PopOver>
+              <Cover onClick={() => {
+                const that = this;
+                that.setState({
+                  event: update(that.state.event, {
+                    away_color: {
+                      displayColorPicker: { $set: false },
+                    },
                   }),
                 });
               }}
-              onNewRequest={(o) => {
-                this.setState({
-                  event: update(this.state.event, {
-                    discount: { $set: o },
-                  }),
-                });
-              }}
-              filter={(searchText, key) => (key.indexOf(searchText) !== -1)}
-              openOnFocus
-              errorText={this.state.event.discount.error}
-              validators={[]}
-              errorMessages={[]}
-            />
+              />
+              <SketchPicker
+                color={this.state.event.away_color.value}
+                onChangeComplete={this.onDragAwayColor}
+              />
+            </PopOver> : null}
+          </div>
+        </ClubColorPicker>
+      </ClubImageContainer>
+    </div>);
 
-            {/* select start_time_register */}
-            <DateTimePicker
-              format="HH:mm, MM/DD/YYYY"
-              hintText={strings.filter_date_start_register}
-              floatingLabelText={strings.filter_date_start_register}
-              onChange={(dateTime) => {
-                this.setState({
+    const __renderSeatsInput = () => (<AutoCompleteValidator
+      name="seats"
+      type="number"
+      hintText={strings.filter_number_of_seats}
+      floatingLabelText={strings.filter_number_of_seats}
+      searchText={this.state.event.seats.text}
+      value={this.state.event.seats.value}
+      dataSource={data.seatsArr}
+      onUpdateInput={(text) => {
+        this.setState({
+          event: update(this.state.event, {
+            seats: { $set: { value: Number(text), text } },
+          }),
+        });
+      }}
+      onNewRequest={(o) => {
+        this.setState({
+          event: update(this.state.event, {
+            seats: { $set: o },
+          }),
+        });
+      }}
+      // filter={(searchText, key) => (key.indexOf(searchText) !== -1)}
+      filter={AutoComplete.fuzzyFilter}
+      openOnFocus
+      errorText={this.state.event.seats.error}
+      validators={['required', 'minNumber:0']}
+      errorMessages={[strings.validate_is_required, util.format(strings.validate_minimum, 0)]}
+    />);
+
+    const __renderPriceInput = () => (<AutoCompleteValidator
+      name="price"
+      hintText={strings.filter_price}
+      floatingLabelText={strings.filter_price}
+      searchText={this.state.event.price.text}
+      value={this.state.event.price.value}
+      dataSource={data.priceArr}
+      onUpdateInput={(text) => {
+        this.setState({
+          event: update(this.state.event, {
+            price: { $set: { value: text, text } },
+          }),
+        });
+      }}
+      onNewRequest={(o) => {
+        this.setState({
+          event: update(this.state.event, {
+            price: { $set: o },
+          }),
+        });
+      }}
+      filter={(searchText, key) => (key.indexOf(searchText) !== -1)}
+      openOnFocus
+      errorText={this.state.event.price.error}
+      validators={['required']}
+      errorMessages={['this field is required']}
+    />);
+
+    const __renderDiscountInput = () => (<AutoCompleteValidator
+      name="discount"
+      hintText={strings.filter_discount}
+      floatingLabelText={strings.filter_discount}
+      searchText={this.state.event.discount.text}
+      value={this.state.event.discount.value}
+      dataSource={data.discountArr}
+      onUpdateInput={(text) => {
+        this.setState({
+          event: update(this.state.event, {
+            discount: { $set: { value: text, text } },
+          }),
+        });
+      }}
+      onNewRequest={(o) => {
+        this.setState({
+          event: update(this.state.event, {
+            discount: { $set: o },
+          }),
+        });
+      }}
+      filter={(searchText, key) => (key.indexOf(searchText) !== -1)}
+      openOnFocus
+      errorText={this.state.event.discount.error}
+      validators={[]}
+      errorMessages={[]}
+    />);
+
+    return (<div onKeyPress={e => this.__handleKeyPressOnForm(e)} role="form">
+        <ValidatorForm
+          onSubmit={this.submitCreateEvent}
+          onError={errors => console.log(errors)}
+        >
+          {loading && <Spinner />}
+          {this.state.error && <Error text={this.state.error} />}
+          <FormContainer show={!toggle || showForm}>
+            <div>
+              {/* {!this.props.hotspotId && this.state.hotspots && <FormField */}
+              {/* name="hotspots" */}
+              {/* label={strings.filter_notification_user} */}
+              {/* dataSource={this.state.hotspots.map(o => ({text: o.text, value: o.value}))} */}
+              {/* fullWidth={true} */}
+              {/* onChange={this.handleSelectHotspot.bind(this)} */}
+              {/* listStyle={{maxHeight: 300, overflow: 'auto'}} */}
+              {/* />} */}
+              {!this.props.hotspotId && this.state.hotspots && __renderHotspotSelector()}
+
+
+              {!this.props.matchId && this.state.matches && __renderMatchSelector()}
+
+              {this.state.event.match.home && __renderMatchPreview()}
+
+              {/* input seats */}
+              {__renderSeatsInput()}
+
+              {/* select price */}
+              {__renderPriceInput()}
+
+
+              {!this.props.groupId && this.state.groups && __renderGroupSelector()}
+
+              {/* select discount */}
+              {__renderDiscountInput()}
+
+              {/* select start_time_register */}
+              <DateTimePicker
+                format="HH:mm, MM/DD/YYYY"
+                hintText={strings.filter_date_start_register}
+                floatingLabelText={strings.filter_date_start_register}
+                onChange={(dateTime) => {
+                  this.setState({
+                    event: update(this.state.event, {
+                      start_time_register: {
+                        $set: {
+                          text: dateTime || '',
+                          value: dateTime ? dateTime.getTime() / 1000 : null,
+                        },
+                      },
+                    }),
+                  });
+                }}
+                DatePicker={DatePickerDialog}
+                TimePicker={TimePickerDialog}
+                value={this.state.event.start_time_register.text}
+              />
+              {/* select end_time_register */}
+              <DateTimePicker
+                format="HH:mm, MM/DD/YYYY"
+                hintText={strings.filter_date_end_register}
+                floatingLabelText={strings.filter_date_end_register}
+                onChange={dateTime => this.setState({
                   event: update(this.state.event, {
-                    start_time_register: {
+                    end_time_register: {
                       $set: {
                         text: dateTime || '',
                         value: dateTime ? dateTime.getTime() / 1000 : null,
                       },
                     },
                   }),
-                });
-              }}
-              DatePicker={DatePickerDialog}
-              TimePicker={TimePickerDialog}
-              value={this.state.event.start_time_register.text}
-            />
-            {/* select end_time_register */}
-            <DateTimePicker
-              format="HH:mm, MM/DD/YYYY"
-              hintText={strings.filter_date_end_register}
-              floatingLabelText={strings.filter_date_end_register}
-              onChange={dateTime => this.setState({
-                event: update(this.state.event, {
-                  end_time_register: {
-                    $set: {
-                      text: dateTime || '',
-                      value: dateTime ? dateTime.getTime() / 1000 : null,
+                })}
+                DatePicker={DatePickerDialog}
+                TimePicker={TimePickerDialog}
+                value={this.state.event.end_time_register.text}
+              />
+              {/* select start_time_check_in */}
+              <DateTimePicker
+                format="HH:mm, MM/DD/YYYY"
+                hintText={strings.filter_date_start_check_in}
+                floatingLabelText={strings.filter_date_start_check_in}
+                onChange={dateTime => this.setState({
+                  event: update(this.state.event, {
+                    start_time_checkin: {
+                      $set: {
+                        text: dateTime || '',
+                        value: dateTime ? dateTime.getTime() / 1000 : null,
+                      },
                     },
-                  },
-                }),
-              })}
-              DatePicker={DatePickerDialog}
-              TimePicker={TimePickerDialog}
-              value={this.state.event.end_time_register.text}
-            />
-            {/* select start_time_check_in */}
-            <DateTimePicker
-              format="HH:mm, MM/DD/YYYY"
-              hintText={strings.filter_date_start_check_in}
-              floatingLabelText={strings.filter_date_start_check_in}
-              onChange={dateTime => this.setState({
-                event: update(this.state.event, {
-                  start_time_checkin: {
-                    $set: {
-                      text: dateTime || '',
-                      value: dateTime ? dateTime.getTime() / 1000 : null,
+                  }),
+                })}
+                DatePicker={DatePickerDialog}
+                TimePicker={TimePickerDialog}
+                value={this.state.event.start_time_checkin.text}
+              />
+              {/* select end_time_check_in */}
+              <DateTimePicker
+                format="HH:mm, MM/DD/YYYY"
+                hintText={strings.filter_date_end_check_in}
+                floatingLabelText={strings.filter_date_end_check_in}
+                onChange={dateTime => this.setState({
+                  event: update(this.state.event, {
+                    end_time_checkin: {
+                      $set: {
+                        text: dateTime || '',
+                        value: dateTime ? dateTime.getTime() / 1000 : null,
+                      },
                     },
-                  },
-                }),
-              })}
-              DatePicker={DatePickerDialog}
-              TimePicker={TimePickerDialog}
-              value={this.state.event.start_time_checkin.text}
+                  }),
+                })}
+                DatePicker={DatePickerDialog}
+                TimePicker={TimePickerDialog}
+                value={this.state.event.end_time_checkin.text}
+              />
+              {/* input notes */}
+              <TextField
+                type="text"
+                hintText={strings.tooltip_note}
+                floatingLabelText={strings.tooltip_note}
+                multiLine
+                rows={1}
+                rowsMax={4}
+                onChange={(event, notes) => this.setState({
+                  event: update(this.state.event, {
+                    notes: { $set: { text: notes, value: notes } },
+                  }),
+                })}
+                fullWidth
+                errorText={this.state.event.notes.error}
+              />
+            </div>
+            <RaisedButton
+              type="submit"
+              label={strings.form_create_event}
             />
-            {/* select end_time_check_in */}
-            <DateTimePicker
-              format="HH:mm, MM/DD/YYYY"
-              hintText={strings.filter_date_end_check_in}
-              floatingLabelText={strings.filter_date_end_check_in}
-              onChange={dateTime => this.setState({
-                event: update(this.state.event, {
-                  end_time_checkin: {
-                    $set: {
-                      text: dateTime || '',
-                      value: dateTime ? dateTime.getTime() / 1000 : null,
-                    },
-                  },
-                }),
-              })}
-              DatePicker={DatePickerDialog}
-              TimePicker={TimePickerDialog}
-              value={this.state.event.end_time_checkin.text}
-            />
-            {/* input notes */}
-            <TextField
-              type="text"
-              hintText={strings.tooltip_note}
-              floatingLabelText={strings.tooltip_note}
-              multiLine
-              rows={1}
-              rowsMax={4}
-              onChange={(event, notes) => this.setState({
-                event: update(this.state.event, {
-                  notes: { $set: { text: notes, value: notes } },
-                }),
-              })}
-              fullWidth
-              errorText={this.state.event.notes.error}
-            />
-          </div>
-          <RaisedButton
-            type="submit"
-            label={strings.form_create_event}
-          />
-        </FormContainer>
+          </FormContainer>
 
-        <Dialog
-          title={strings.form_create_events_dialog_desc}
-          actions={<FlatButton
-            label="Ok"
-            primary
-            keyboardFocused
-            onClick={() => {
-              this.closeDialog();
-              // this.props.history.push('/events');
-              this.props.toggleShowForm(false);
-            }}
-          />}
-          modal={false}
-          open={this.state.submitResults.show}
-          onRequestClose={this.closeDialog}
-        >
-          <List>
-            {this.state.submitResults.data.map(r => (<ListItem
-              primaryText={r.hotspot_name}
-              leftIcon={r.error ?
-                <IconFail color={constants.colorRed} title={strings.form_create_event_fail} />
-                : <IconSuccess
-                  color={constants.colorSuccess}
-                  title={strings.form_create_event_success}
-                />}
-              secondaryText={r.error && r.error}
-              secondaryTextLines={1}
-            />))}
-          </List>
-        </Dialog>
-      </ValidatorForm>
+          <Dialog
+            title={strings.form_create_events_dialog_desc}
+            actions={<FlatButton
+              label="Ok"
+              primary
+              keyboardFocused
+              onClick={() => {
+                this.closeDialog();
+                // this.props.history.push('/events');
+                this.props.toggleShowForm(false);
+              }}
+            />}
+            modal={false}
+            open={this.state.submitResults.show}
+            onRequestClose={this.closeDialog}
+          >
+            <List>
+              {this.state.submitResults.data.map(r => (<ListItem
+                primaryText={r.hotspot_name}
+                leftIcon={r.error ?
+                  <IconFail color={constants.colorRed} title={strings.form_create_event_fail} />
+                  : <IconSuccess
+                    color={constants.colorSuccess}
+                    title={strings.form_create_event_success}
+                  />}
+                secondaryText={r.error && r.error}
+                secondaryTextLines={1}
+              />))}
+            </List>
+          </Dialog>
+        </ValidatorForm>
+      </div>
     );
   }
 }

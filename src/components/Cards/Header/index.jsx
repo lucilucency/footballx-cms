@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import constants from 'components/constants';
 
-import { EventsHeaderStats } from './EventsHeaderStats';
+import { EventsHeaderStats } from './HeaderStats';
 
-const EventHeaderWrapper = styled.div`
+const HeaderWrapper = styled.div`
 .container {
   display: flex;
   flex-direction: column;
@@ -75,7 +75,7 @@ const EventsHeader = (propsVar) => {
     // small,
     // extraSmall,
     events } = propsVar;
-  return (<EventHeaderWrapper>
+  return (<HeaderWrapper>
     <div className={'container'}>
       <div className={'row topContainer'}>
         <div className={'eventInfo'}>
@@ -87,7 +87,7 @@ const EventsHeader = (propsVar) => {
         </div>
       </div>
     </div>
-  </EventHeaderWrapper>);
+  </HeaderWrapper>);
 };
 
 const mapStateToProps = state => ({

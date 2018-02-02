@@ -129,6 +129,7 @@
   "filter_card_label_cost": "Cost",
   "filter_card_label_xpoint": "XPOINT",
   "filter_card_label_prefix": "Prefix",
+  "filter_issue_notes": "Notes",
   "filter_number_of_cards": "Number of cards",
   "filter_with_player_id": "Allied Players",
   "filter_against_player_id": "Opposing Players",
@@ -746,6 +747,7 @@
   "hint_card_label_xpoint": "XPOINT eg: 10",
   "hint_card_label_prefix": "Prefix eg: FOOTBALLX",
   "hint_card_label_number_of_cards": "Number of cards eg: 100 (cards)",
+  "hint_issue_notes": "Note eg: For match...",
 
   "label_number_of_cards_in_package": "Number of cards",
 

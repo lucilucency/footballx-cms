@@ -97,6 +97,7 @@ const tableEventsColumns = browser => [browser.greaterThan.medium && {
       {row.checkin_total} / {row.checkin_total + row.register_total}
     </span>
   </div>),
+  relativeBars: true,
 }];
 
 
