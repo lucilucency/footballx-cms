@@ -10,7 +10,7 @@ export const Row = styled.div`
 `;
 
 export const Col = styled.div`
-  margin: 10px;
+  //margin: 10px;
   ${props => props.flex && css`
     flex: ${props.flex};
   `}

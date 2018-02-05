@@ -185,9 +185,9 @@ class LabelCreateForm extends React.Component {
 
   render() {
     const __renderCardLabelName = () => (<TextField
+      type="text"
       hintText={strings.hint_card_label_name}
       floatingLabelText={strings.filter_card_label_name}
-      type="text"
       errorText={this.state.cardLabelName.errorText}
       onChange={e => this.changeValue(e, 'cardLabelName', toUpperCase)}
       fullWidth
