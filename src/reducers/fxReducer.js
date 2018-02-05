@@ -70,6 +70,29 @@ export default (type, initialData) => (state = {
         error: action.error,
       };
 
+    case `REQUEST/EDIT_ARR/${type}`:
+      return {
+        ...state,
+        loading: true,
+        error: false,
+      };
+    case `OK/EDIT_ARR/${type}`:
+      console.log(type);
+      console.log(state.data);
+      console.log(action);
+      return {
+        ...state,
+        loading: false,
+        data: update(state.data, { $merge: action.payload }),
+        error: false,
+      };
+    case `FAIL/EDIT_ARR/${type}`:
+      return {
+        ...state,
+        loading: false,
+        error: action.error,
+      };
+
       /* query action */
     case `QUERY/${type}`:
       return {

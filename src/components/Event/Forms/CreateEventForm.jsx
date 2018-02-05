@@ -305,15 +305,14 @@ class CreateEventForm extends React.Component {
     });
   }
 
-  handleInputMatch(searchText) {
-    console.log(searchText);
-    // const that = this;
-    // that.setState({
-    //     event: update(that.state.event, {
-    //         match: {text: {$set: searchText}}
-    //     })
-    // })
-  }
+  // handleInputMatch(searchText) {
+  // const that = this;
+  // that.setState({
+  //     event: update(that.state.event, {
+  //         match: {text: {$set: searchText}}
+  //     })
+  // })
+  // }
 
   handleClearMatch() {
     this.setState({
@@ -531,7 +530,6 @@ class CreateEventForm extends React.Component {
         value={this.state.event.match.value}
         dataSource={this.state.matches}
         onNewRequest={this.handleSelectMatch}
-        // onUpdateInput={this.handleInputMatch}
         filter={AutoComplete.fuzzyFilter}
         openOnFocus
         maxSearchResults={maxSearchResults}
@@ -766,174 +764,174 @@ class CreateEventForm extends React.Component {
     />);
 
     return (<div onKeyPress={e => this.__handleKeyPressOnForm(e)} role="form">
-        <ValidatorForm
-          onSubmit={this.submitCreateEvent}
-          onError={errors => console.log(errors)}
-        >
-          {loading && <Spinner />}
-          {this.state.error && <Error text={this.state.error} />}
-          <FormContainer show={!toggle || showForm}>
-            <div>
-              {/* {!this.props.hotspotId && this.state.hotspots && <FormField */}
-              {/* name="hotspots" */}
-              {/* label={strings.filter_notification_user} */}
-              {/* dataSource={this.state.hotspots.map(o => ({text: o.text, value: o.value}))} */}
-              {/* fullWidth={true} */}
-              {/* onChange={this.handleSelectHotspot.bind(this)} */}
-              {/* listStyle={{maxHeight: 300, overflow: 'auto'}} */}
-              {/* />} */}
-              {!this.props.hotspotId && this.state.hotspots && __renderHotspotSelector()}
+      <ValidatorForm
+        onSubmit={this.submitCreateEvent}
+        onError={errors => console.log(errors)}
+      >
+        {loading && <Spinner />}
+        {this.state.error && <Error text={this.state.error} />}
+        <FormContainer show={!toggle || showForm}>
+          <div>
+            {/* {!this.props.hotspotId && this.state.hotspots && <FormField */}
+            {/* name="hotspots" */}
+            {/* label={strings.filter_notification_user} */}
+            {/* dataSource={this.state.hotspots.map(o => ({text: o.text, value: o.value}))} */}
+            {/* fullWidth={true} */}
+            {/* onChange={this.handleSelectHotspot.bind(this)} */}
+            {/* listStyle={{maxHeight: 300, overflow: 'auto'}} */}
+            {/* />} */}
+            {!this.props.hotspotId && this.state.hotspots && __renderHotspotSelector()}
 
 
-              {!this.props.matchId && this.state.matches && __renderMatchSelector()}
+            {!this.props.matchId && this.state.matches && __renderMatchSelector()}
 
-              {this.state.event.match.home && __renderMatchPreview()}
+            {this.state.event.match.home && __renderMatchPreview()}
 
-              {/* input seats */}
-              {__renderSeatsInput()}
+            {/* input seats */}
+            {__renderSeatsInput()}
 
-              {/* select price */}
-              {__renderPriceInput()}
+            {/* select price */}
+            {__renderPriceInput()}
 
 
-              {!this.props.groupId && this.state.groups && __renderGroupSelector()}
+            {!this.props.groupId && this.state.groups && __renderGroupSelector()}
 
-              {/* select discount */}
-              {__renderDiscountInput()}
+            {/* select discount */}
+            {__renderDiscountInput()}
 
-              {/* select start_time_register */}
-              <DateTimePicker
-                format="HH:mm, MM/DD/YYYY"
-                hintText={strings.filter_date_start_register}
-                floatingLabelText={strings.filter_date_start_register}
-                onChange={(dateTime) => {
-                  this.setState({
-                    event: update(this.state.event, {
-                      start_time_register: {
-                        $set: {
-                          text: dateTime || '',
-                          value: dateTime ? dateTime.getTime() / 1000 : null,
-                        },
-                      },
-                    }),
-                  });
-                }}
-                DatePicker={DatePickerDialog}
-                TimePicker={TimePickerDialog}
-                value={this.state.event.start_time_register.text}
-              />
-              {/* select end_time_register */}
-              <DateTimePicker
-                format="HH:mm, MM/DD/YYYY"
-                hintText={strings.filter_date_end_register}
-                floatingLabelText={strings.filter_date_end_register}
-                onChange={dateTime => this.setState({
+            {/* select start_time_register */}
+            <DateTimePicker
+              format="HH:mm, MM/DD/YYYY"
+              hintText={strings.filter_date_start_register}
+              floatingLabelText={strings.filter_date_start_register}
+              onChange={(dateTime) => {
+                this.setState({
                   event: update(this.state.event, {
-                    end_time_register: {
+                    start_time_register: {
                       $set: {
                         text: dateTime || '',
                         value: dateTime ? dateTime.getTime() / 1000 : null,
                       },
                     },
                   }),
-                })}
-                DatePicker={DatePickerDialog}
-                TimePicker={TimePickerDialog}
-                value={this.state.event.end_time_register.text}
-              />
-              {/* select start_time_check_in */}
-              <DateTimePicker
-                format="HH:mm, MM/DD/YYYY"
-                hintText={strings.filter_date_start_check_in}
-                floatingLabelText={strings.filter_date_start_check_in}
-                onChange={dateTime => this.setState({
-                  event: update(this.state.event, {
-                    start_time_checkin: {
-                      $set: {
-                        text: dateTime || '',
-                        value: dateTime ? dateTime.getTime() / 1000 : null,
-                      },
-                    },
-                  }),
-                })}
-                DatePicker={DatePickerDialog}
-                TimePicker={TimePickerDialog}
-                value={this.state.event.start_time_checkin.text}
-              />
-              {/* select end_time_check_in */}
-              <DateTimePicker
-                format="HH:mm, MM/DD/YYYY"
-                hintText={strings.filter_date_end_check_in}
-                floatingLabelText={strings.filter_date_end_check_in}
-                onChange={dateTime => this.setState({
-                  event: update(this.state.event, {
-                    end_time_checkin: {
-                      $set: {
-                        text: dateTime || '',
-                        value: dateTime ? dateTime.getTime() / 1000 : null,
-                      },
-                    },
-                  }),
-                })}
-                DatePicker={DatePickerDialog}
-                TimePicker={TimePickerDialog}
-                value={this.state.event.end_time_checkin.text}
-              />
-              {/* input notes */}
-              <TextField
-                type="text"
-                hintText={strings.tooltip_note}
-                floatingLabelText={strings.tooltip_note}
-                multiLine
-                rows={1}
-                rowsMax={4}
-                onChange={(event, notes) => this.setState({
-                  event: update(this.state.event, {
-                    notes: { $set: { text: notes, value: notes } },
-                  }),
-                })}
-                fullWidth
-                errorText={this.state.event.notes.error}
-              />
-            </div>
-            <RaisedButton
-              type="submit"
-              label={strings.form_create_event}
-            />
-          </FormContainer>
-
-          <Dialog
-            title={strings.form_create_events_dialog_desc}
-            actions={<FlatButton
-              label="Ok"
-              primary
-              keyboardFocused
-              onClick={() => {
-                this.closeDialog();
-                // this.props.history.push('/events');
-                this.props.toggleShowForm(false);
+                });
               }}
-            />}
-            modal={false}
-            open={this.state.submitResults.show}
-            onRequestClose={this.closeDialog}
-          >
-            <List>
-              {this.state.submitResults.data.map(r => (<ListItem
-                primaryText={r.hotspot_name}
-                leftIcon={r.error ?
-                  <IconFail color={constants.colorRed} title={strings.form_create_event_fail} />
-                  : <IconSuccess
-                    color={constants.colorSuccess}
-                    title={strings.form_create_event_success}
-                  />}
-                secondaryText={r.error && r.error}
-                secondaryTextLines={1}
-              />))}
-            </List>
-          </Dialog>
-        </ValidatorForm>
-      </div>
+              DatePicker={DatePickerDialog}
+              TimePicker={TimePickerDialog}
+              value={this.state.event.start_time_register.text}
+            />
+            {/* select end_time_register */}
+            <DateTimePicker
+              format="HH:mm, MM/DD/YYYY"
+              hintText={strings.filter_date_end_register}
+              floatingLabelText={strings.filter_date_end_register}
+              onChange={dateTime => this.setState({
+                event: update(this.state.event, {
+                  end_time_register: {
+                    $set: {
+                      text: dateTime || '',
+                      value: dateTime ? dateTime.getTime() / 1000 : null,
+                    },
+                  },
+                }),
+              })}
+              DatePicker={DatePickerDialog}
+              TimePicker={TimePickerDialog}
+              value={this.state.event.end_time_register.text}
+            />
+            {/* select start_time_check_in */}
+            <DateTimePicker
+              format="HH:mm, MM/DD/YYYY"
+              hintText={strings.filter_date_start_check_in}
+              floatingLabelText={strings.filter_date_start_check_in}
+              onChange={dateTime => this.setState({
+                event: update(this.state.event, {
+                  start_time_checkin: {
+                    $set: {
+                      text: dateTime || '',
+                      value: dateTime ? dateTime.getTime() / 1000 : null,
+                    },
+                  },
+                }),
+              })}
+              DatePicker={DatePickerDialog}
+              TimePicker={TimePickerDialog}
+              value={this.state.event.start_time_checkin.text}
+            />
+            {/* select end_time_check_in */}
+            <DateTimePicker
+              format="HH:mm, MM/DD/YYYY"
+              hintText={strings.filter_date_end_check_in}
+              floatingLabelText={strings.filter_date_end_check_in}
+              onChange={dateTime => this.setState({
+                event: update(this.state.event, {
+                  end_time_checkin: {
+                    $set: {
+                      text: dateTime || '',
+                      value: dateTime ? dateTime.getTime() / 1000 : null,
+                    },
+                  },
+                }),
+              })}
+              DatePicker={DatePickerDialog}
+              TimePicker={TimePickerDialog}
+              value={this.state.event.end_time_checkin.text}
+            />
+            {/* input notes */}
+            <TextField
+              type="text"
+              hintText={strings.tooltip_note}
+              floatingLabelText={strings.tooltip_note}
+              multiLine
+              rows={1}
+              rowsMax={4}
+              onChange={(event, notes) => this.setState({
+                event: update(this.state.event, {
+                  notes: { $set: { text: notes, value: notes } },
+                }),
+              })}
+              fullWidth
+              errorText={this.state.event.notes.error}
+            />
+          </div>
+          <RaisedButton
+            type="submit"
+            label={strings.form_create_event}
+          />
+        </FormContainer>
+
+        <Dialog
+          title={strings.form_create_events_dialog_desc}
+          actions={<FlatButton
+            label="Ok"
+            primary
+            keyboardFocused
+            onClick={() => {
+              this.closeDialog();
+              // this.props.history.push('/events');
+              this.props.toggleShowForm(false);
+            }}
+          />}
+          modal={false}
+          open={this.state.submitResults.show}
+          onRequestClose={this.closeDialog}
+        >
+          <List>
+            {this.state.submitResults.data.map(r => (<ListItem
+              primaryText={r.hotspot_name}
+              leftIcon={r.error ?
+                <IconFail color={constants.colorRed} title={strings.form_create_event_fail} />
+                : <IconSuccess
+                  color={constants.colorSuccess}
+                  title={strings.form_create_event_success}
+                />}
+              secondaryText={r.error && r.error}
+              secondaryTextLines={1}
+            />))}
+          </List>
+        </Dialog>
+      </ValidatorForm>
+    </div>
     );
   }
 }

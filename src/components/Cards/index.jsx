@@ -8,7 +8,7 @@ import { isEmpty } from 'lodash';
 import queryString from 'querystring';
 /* components */
 import TabBar from 'components/TabBar';
-import Header from './Header';
+// import Header from './Header';
 import FilterForm from './Forms/FilterForm';
 
 import PackagesPage from './Pages/Packages';
@@ -87,7 +87,7 @@ class RequestLayer extends React.Component {
       <Helmet title={strings.title_events} />
 
       {route !== 'add' && <div>
-        {/*<Header location={location} events={events} />*/}
+        {/* <Header location={location} events={events} /> */}
         <FilterForm />
       </div>}
       <div>

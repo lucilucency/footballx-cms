@@ -1,9 +1,9 @@
 import * as transform from 'actions/transforms';
-import { action, fxActionPost, fxActionGet, fxActionPut, fxActionDelete } from 'actions/dispatchAction';
+import { action, fxActionPost, fxActionGet, fxActionPut, fxActionDelete, fxActionAuth } from 'actions/dispatchAction';
 import queryString from 'querystring';
 
 
-export { ajaxGet } from 'actions/ajax';
+export * from 'actions/ajax';
 
 export const getUserMetadata = (params = {}) => (dispatch) => {
   const getDataStart = payload => ({
@@ -23,8 +23,8 @@ export const getUserMetadata = (params = {}) => (dispatch) => {
 };
 
 // auth
-export const huserLogin = (username, password) => fxActionPost('auth', 'huser/login', { username, password });
-export const cuserLogin = (username, password) => fxActionPost('auth', 'cuser/login', { username, password });
+export const huserLogin = (username, password) => fxActionAuth('auth', 'huser/login', { username, password });
+export const cuserLogin = (username, password) => fxActionAuth('auth', 'cuser/login', { username, password });
 /* huser */
 export const getHUserHotspot = accountId => fxActionGet('hotspot', `huser/${accountId}/hotspot`);
 /* matches */
@@ -67,11 +67,11 @@ export const createCards = (params, payload) => fxActionPost('ADD/cardLabels', '
 export const getCardIssues = () => fxActionGet('cardIssues', 'issues');
 export const createCardIssue = (params, payload) => fxActionPost('ADD/cardIssues', 'issue', params, null, payload);
 export const closeCardIssue = issueId => fxActionPut('EDIT/cardIssue', `issue/${issueId}/close`);
-export const returnCardToStockFromCardIssue = (issueId, number) => fxActionPut('EDIT/cardIssue', `issue/${issueId}/return-cards`, { issue_id: issueId, number_card: number });
+export const returnCardToStockFromCardIssue = (issueId, number) => fxActionPut('EDIT_ARR/cardIssues', `issue/${issueId}/return-cards`, { issue_id: issueId, number_card: number });
 
 export const getCardPackages = () => fxActionGet('cardPackages', 'packes');
 export const createCardPackage = params => fxActionPost('ADD/cardPackages', 'pack', params);
-export const confirmPrintedPackage = packageId => fxActionPut('EDIT/cardPackage', `pack/${packageId}/print-complete`, {pack_id: packageId});
+export const confirmPrintedPackage = packageId => fxActionPut('EDIT/cardPackage', `pack/${packageId}/print-complete`, { pack_id: packageId });
 
 /* notification */
 export const sendNotificationTopic = (params = { topic: '', message: '' }) => fxActionPost('sendNotification', 'notification/topic', params);

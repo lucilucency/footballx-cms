@@ -3,31 +3,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import update from 'react-addons-update';
 import strings from 'lang';
-import { toNumber, toUpperCase } from 'utils';
+import { toNumber, toUpperCase, Row } from 'utils';
 import { ajaxGet, createCardLabel } from 'actions';
 
 import { Dialog, TextField, FlatButton, List, ListItem } from 'material-ui';
 import IconFail from 'material-ui/svg-icons/content/clear';
 import IconSuccess from 'material-ui/svg-icons/navigation/check';
 import IconProgress from 'material-ui/CircularProgress';
-import styled, { css } from 'styled-components';
 import constants from 'components/constants';
-
-const Row = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  ${props => props.right && css`
-    flex-direction: row-reverse;
-  `}
-`;
-const Col = styled.div`
-  margin: 10px;
-  text-align: center;
-  ${props => props.flex && css`
-    flex: ${props.flex};
-  `}
-`;
 
 const getCardLabels = (props, context) => ajaxGet('card/labels')
   .then((res, err) => {
@@ -275,11 +258,11 @@ class LabelCreateForm extends React.Component {
             {this.state.submitResults.data.map(r => (<ListItem
               primaryText={r.action}
               leftIcon={r.submitting ? <IconProgress /> : (r.error ?
-                  <IconFail color={constants.colorRed} title={strings.form_general_fail} />
-                  : <IconSuccess
-                    color={constants.colorSuccess}
-                    title={strings.form_general_success}
-                  />)
+                <IconFail color={constants.colorRed} title={strings.form_general_fail} />
+                : <IconSuccess
+                  color={constants.colorSuccess}
+                  title={strings.form_general_success}
+                />)
               }
               secondaryText={r.error && r.error}
               secondaryTextLines={1}

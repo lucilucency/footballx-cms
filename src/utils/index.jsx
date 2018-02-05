@@ -14,6 +14,8 @@ import * as styleHelper from './style';
 export * from './time';
 export * from './style';
 export * from './sort';
+export * from './styledComponent';
+export * from './misc';
 
 export function toNumber(input) {
   return Number(input);

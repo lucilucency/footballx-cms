@@ -5,8 +5,7 @@ import Heading from 'components/Heading';
 import Spinner from 'components/Spinner';
 import Error from 'components/Error';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import AddIcon from 'material-ui/svg-icons/content/add';
-import { IconMenu, MenuItem, IconButton, FontIcon } from 'material-ui';
+import { IconMenu, MenuItem, IconButton } from 'material-ui';
 
 export const AsyncContainer = ({ loading, error, children }) => {
   if (error) {

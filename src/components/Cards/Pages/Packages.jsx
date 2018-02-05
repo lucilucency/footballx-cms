@@ -10,15 +10,14 @@ import { toDateTimeString, bindAll } from 'utils';
 /* components */
 import Table, { TableLink } from 'components/Table';
 import Container from 'components/Container/index';
-import { FlatButton, Dialog, IconButton } from 'material-ui';
+import { FlatButton, Dialog } from 'material-ui';
 import IconPrint from 'material-ui/svg-icons/action/print';
-import constants from 'components/constants';
 
 import PackageViewer from './PackageViewer';
 import PackageCreateForm from './PackageCreateForm';
 import PackageConfirmPrintedButton from './PackageConfirmPrintedButton';
 
-const tableCardLabelsColumns = that => [{
+const tableCardLabelsColumns = [{
   displayName: 'ID',
   field: 'id',
   sortFn: true,
@@ -28,7 +27,7 @@ const tableCardLabelsColumns = that => [{
 }, {
   displayName: strings.th_cards,
   field: 'total_card',
-  displayFn: (row, col, field) => (<div><b>{row.card_label_id}</b> <small>x{field}</small></div>)
+  displayFn: (row, col, field) => (<div><b>{row.card_label_id}</b> <small>x{field}</small></div>),
 }, {
   displayName: 'Status',
   field: 'status',
@@ -46,7 +45,7 @@ const tableCardLabelsColumns = that => [{
 }, {
   field: 'id',
   displayName: '',
-  displayFn: (row, col, field) => row.status === 1 ? (<PackageConfirmPrintedButton packageId={field} status={row.status} />) : null,
+  displayFn: (row, col, field) => (row.status === 1 ? (<PackageConfirmPrintedButton packageId={field} status={row.status} />) : null),
 }];
 
 const getData = (props) => {
@@ -57,6 +56,7 @@ class PackagesPage extends React.Component {
   static propTypes = {
     // browser: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     cardPackages: PropTypes.shape([]),
+    confirmPrintedPackage: React.PropTypes.func,
   };
 
   constructor(props) {
@@ -72,7 +72,7 @@ class PackagesPage extends React.Component {
       'renderDialog',
       'handleViewPackage',
       'handleCreatePackage',
-      'handleConfirmPrinted'
+      'handleConfirmPrinted',
     ], this);
   }
 
@@ -116,7 +116,7 @@ class PackagesPage extends React.Component {
             label="Confirm"
             primary
             keyboardFocused
-            onClick={this.props.confirmPrintedPackage()}
+            onClick={this.props.confirmPrintedPackage}
             // disabled={isEmpty(this.state.createPackageFormData)}
           />,
           <FlatButton
@@ -129,10 +129,6 @@ class PackagesPage extends React.Component {
     }, () => {
       this.handleOpenDialog();
     });
-  }
-
-  confirmPrinted() {
-
   }
 
   handleCreatePackage() {
@@ -209,7 +205,7 @@ class PackagesPage extends React.Component {
       >
         <Table
           paginated
-          columns={tableCardLabelsColumns(this)}
+          columns={tableCardLabelsColumns}
           data={cardPackages.data}
           pageLength={30}
         />

@@ -9,20 +9,9 @@ import IconSuccess from 'material-ui/svg-icons/navigation/check';
 /* data */
 import strings from 'lang';
 import { createCards } from 'actions';
+import { Row } from 'utils';
 /* css */
 import constants from 'components/constants';
-import styled from 'styled-components';
-
-const Row = styled.div`
-  //display: flex;
-  //flex-direction: row;
-  //width: 100%;
-  transition: height 500ms 0ms, opacity 500ms 500ms;
-  
-  ${props => props.right && css`
-    flex-direction: row-reverse;
-  `}
-`;
 
 const initialState = props => ({
   cardNumber: props.cardNumber && props.cardNumber,
@@ -39,7 +28,7 @@ class CardLabelAddQuantity extends React.Component {
     cardLabelId: React.PropTypes.number,
     cardLabelName: React.PropTypes.string,
     submitFn: React.PropTypes.func,
-    callback: React.PropTypes.func,
+    // callback: React.PropTypes.func,
   };
 
   constructor(props) {

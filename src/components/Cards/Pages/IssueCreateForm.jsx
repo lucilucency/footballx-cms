@@ -1,33 +1,17 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint camelcase: 0, no-underscore-dangle: 0 */
 import React from 'react';
 import { connect } from 'react-redux';
 import update from 'react-addons-update';
 import strings from 'lang';
-import { toNumber, toUpperCase } from 'utils';
+import { toNumber, Row } from 'utils';
 import { ajaxGet, createCardIssue } from 'actions';
 
 import { Dialog, TextField, FlatButton, List, ListItem, AutoComplete } from 'material-ui';
 import IconFail from 'material-ui/svg-icons/content/clear';
 import IconSuccess from 'material-ui/svg-icons/navigation/check';
 import IconProgress from 'material-ui/CircularProgress';
-import styled, { css } from 'styled-components';
 import constants from 'components/constants';
-
-const Row = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  ${props => props.right && css`
-    flex-direction: row-reverse;
-  `}
-`;
-const Col = styled.div`
-  margin: 10px;
-  text-align: center;
-  ${props => props.flex && css`
-    flex: ${props.flex};
-  `}
-`;
 
 const getCardLabels = (props, context) => ajaxGet('card/labels')
   .then((res, err) => {
@@ -66,6 +50,11 @@ class IssueCreateForm extends React.Component {
     onChange: React.PropTypes.func,
     callback: React.PropTypes.func,
     submitFn: React.PropTypes.func,
+    // eslint-disable-next-line no-trailing-spaces
+    user: React.PropTypes.shape({
+      id: React.PropTypes.number,
+    }),
+    cardLabelId: React.PropTypes.number,
   };
 
   static defaultProps = {
@@ -108,8 +97,9 @@ class IssueCreateForm extends React.Component {
 
   handleOnNewRequest(o, type) {
     const next_state = {};
+
     next_state[type] = {
-      text: o.textShort,
+      text: o.textShort || o.text,
       value: o.value,
     };
     this.setState(next_state, () => {
@@ -129,7 +119,11 @@ class IssueCreateForm extends React.Component {
     if (!this.state.cardLabelId.value) {
       this.setState({ cardLabelId: { value: null, errorText: null } });
     } else {
-      this.setState({ cardLabelId: { value: this.state.cardLabelId.value, isValid: true } });
+      this.setState({
+        cardLabelId: update(this.state.cardLabelId, {
+          isValid: { $set: true },
+        }),
+      });
     }
 
     if (this.state.cardLabelId.isValid) {
@@ -234,7 +228,7 @@ class IssueCreateForm extends React.Component {
       floatingLabelText={strings.filter_issue_notes}
       type="text"
       errorText={this.state.notes.errorText}
-      onChange={e => this.changeValue(e, 'notes', input => input.toUpperCase())}
+      onChange={e => this.changeValue(e, 'notes')}
       fullWidth
     />);
 
@@ -245,10 +239,10 @@ class IssueCreateForm extends React.Component {
         </Row>
         <Row>
           {__renderPrice()}
+          {__renderCardLabelAmount()}
         </Row>
         <Row>
           {__renderNotes()}
-          {__renderCardLabelAmount()}
         </Row>
 
         {this.state.submitResults.show && <Row>
@@ -283,6 +277,7 @@ class IssueCreateForm extends React.Component {
         </Row>
 
         <Dialog
+          title={strings.form_confirm_general}
           actions={[
             <FlatButton
               label="Cancel"
@@ -299,7 +294,7 @@ class IssueCreateForm extends React.Component {
           open={this.state.open || false}
           onRequestClose={this.handleCloseDialog}
         >
-          Do you want to create a Package {this.state.cardNumber} card(s) with label <code>{this.state.cardLabelId && this.state.cardLabelId.text}</code>
+          Do you want to create an issue: <code>{this.state.cardLabelId && this.state.cardLabelId.text}</code> <small>x{this.state.amount.value}</small>
         </Dialog>
       </div>
     );

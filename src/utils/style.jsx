@@ -21,4 +21,3 @@ export const subTextStyle = {
 
   maxWidth: 200,
 };
-

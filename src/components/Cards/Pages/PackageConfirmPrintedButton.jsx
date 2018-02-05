@@ -6,25 +6,14 @@ import { IconButton, FlatButton, Dialog, ListItem, List } from 'material-ui';
 import IconPrint from 'material-ui/svg-icons/action/print';
 import IconFail from 'material-ui/svg-icons/content/clear';
 import IconSuccess from 'material-ui/svg-icons/navigation/check';
-import IconProgress from 'material-ui/CircularProgress';
 /* data */
 import strings from 'lang';
 import { confirmPrintedPackage } from 'actions';
+import { Row } from 'utils';
 /* css */
 import constants from 'components/constants';
-import styled from 'styled-components';
 
-const Row = styled.div`
-  //display: flex;
-  //flex-direction: row;
-  //width: 100%;
-  transition: height 500ms 0ms, opacity 500ms 500ms;
-  
-  ${props => props.right && css`
-    flex-direction: row-reverse;
-  `}
-`;
-
+// eslint-disable-next-line no-unused-vars
 const initialState = props => ({
   submitResults: {
     data: [],
@@ -36,7 +25,7 @@ class PackageConfirmPrintedButton extends React.Component {
   static propTypes = {
     packageId: React.PropTypes.number,
     submitFn: React.PropTypes.func,
-    callback: React.PropTypes.func,
+    // callback: React.PropTypes.func,
   };
 
   constructor(props) {
@@ -101,7 +90,7 @@ class PackageConfirmPrintedButton extends React.Component {
       }),
     }, () => {
       this.props.submitFn(this.props.packageId).then((results) => {
-        const actionName = <div>{`Confirmed`}</div>;
+        const actionName = <div>{'Confirmed'}</div>;
         const resultsReport = [];
         if (results.type.indexOf('OK') === 0) {
           resultsReport.push({

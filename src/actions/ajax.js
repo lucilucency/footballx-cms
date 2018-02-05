@@ -6,7 +6,7 @@ import queryString from 'querystring';
 const request = require('superagent');
 
 // eslint-disable-next-line import/prefer-default-export
-export function ajaxGet(path, params = {}, host = `${FX_API}/${FX_VERSION}`) {
+export const ajaxGet = (path, params = {}, host = `${FX_API}/${FX_VERSION}`) => {
   const url = `${host}/${path}?${typeof params === 'string' ? params.substring(1) : queryString.stringify(params)}`;
   const accessToken = localStorage.getItem('access_token');
 
@@ -29,6 +29,5 @@ export function ajaxGet(path, params = {}, host = `${FX_API}/${FX_VERSION}`) {
   };
 
   return fetchDataWithRetry(3000, 3);
-}
-
+};
 

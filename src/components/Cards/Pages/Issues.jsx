@@ -11,11 +11,11 @@ import strings from 'lang';
 /* components */
 import Table, { TableLink } from 'components/Table';
 import Container from 'components/Container';
-import { FlatButton, Dialog, IconButton } from 'material-ui';
+import { FlatButton, Dialog } from 'material-ui';
 import IconAdd from 'material-ui/svg-icons/action/note-add';
 
 import IssueCreateForm from './IssueCreateForm';
-import IssueViewer from "./IssueViewer";
+import IssueViewer from './IssueViewer';
 
 
 const tableCardLabelsColumns = (that, browser) => [{
@@ -53,7 +53,7 @@ const tableCardLabelsColumns = (that, browser) => [{
 }, {
   displayName: '',
   field: 'id',
-  displayFn: (row, col, field) => (<Link
+  displayFn: row => (<Link
     to={'/cards/issues'}
     onClick={() => that.setState({
       previewingIssue: row,
