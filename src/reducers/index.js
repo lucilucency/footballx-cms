@@ -6,7 +6,7 @@ import form from 'reducers/form';
 export default combineReducers({
   metadata: fxReducer('metadata'),
   auth: fxReducer('auth', {}),
-  matchesLeague: fxReducer('matchesLeague'),
+  matchesLeague: fxReducer('matchesLeague', { matches: [] }),
   matchesNation: fxReducer('matchesNation'),
 
   groups: fxReducer('groups', []),

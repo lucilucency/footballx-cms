@@ -1,19 +1,17 @@
-/* global FX_API, FX_VERSION */
+/* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import queryString from 'querystring';
 import update from 'immutability-helper';
 import PropTypes from 'prop-types';
 /* actions & helpers */
-import { toDateTimeString } from 'utils/time';
-import transformMatches from 'actions/transforms/matches/transformMatches';
-import { createEvent as defaultCreateEvent, toggleShowForm } from 'actions';
+import { toDateTimeString, Row, Col, bindAll } from 'utils';
+import { createEvent as defaultCreateEvent, getHotspots, getGroups, getMatchesLeague } from 'actions';
+import util from 'util';
 /* data */
 import strings from 'lang';
 import * as data from 'components/Event/Event.config';
 import Clubs from 'fxconstants/build/clubsObj.json';
-import util from 'util';
 /* components */
 import {
   AutoComplete,
@@ -24,110 +22,26 @@ import {
   MenuItem,
   RaisedButton,
   TextField,
+  SelectField,
 } from 'material-ui';
 import IconFail from 'material-ui/svg-icons/content/clear';
 import IconSuccess from 'material-ui/svg-icons/navigation/check';
 import DateTimePicker from 'material-ui-datetimepicker';
 import DatePickerDialog from 'material-ui/DatePicker/DatePickerDialog';
 import TimePickerDialog from 'material-ui/TimePicker/TimePickerDialog';
-import Error from 'components/Error/index';
-import Spinner from 'components/Spinner/index';
+import Error from 'components/Error';
+import Spinner from 'components/Spinner';
 import { SketchPicker } from 'react-color';
-import { ValidatorForm } from 'react-form-validator-core';
-import {
-  AutoCompleteValidator,
-  SelectValidator,
-  TextValidator,
-} from 'react-material-ui-form-validator';
 import FormField from 'components/Form/FormField';
+import { AutoCompleteValidator, SelectValidator } from 'react-material-ui-form-validator';
+import { ValidatorForm } from 'react-form-validator-core';
 /* css */
 import styled, { css } from 'styled-components';
-import constants from '../../constants';
+import constants from 'components/constants';
 
-const request = require('superagent');
 const moment = require('moment');
 
-const getMatches = (props, context) => {
-  const now = Date.now();
-  const params = {
-    start_time: parseInt(now / 1000),
-    end_time: parseInt(now / 1000) + 2592000,
-  };
-  const accessToken = localStorage.getItem('access_token');
-
-  return request
-    .get(`${FX_API}/${FX_VERSION}/matches?${queryString.stringify(params)}`)
-    .set('Content-Type', 'application/x-www-form-urlencoded')
-    .set('Authorization', `Bearer ${accessToken}`)
-    .query({}) // query string
-    .then((res, err) => {
-      if (!err) {
-        const data = transformMatches(res.body.data);
-        const matches = data.matches.filter(o => o.home && o.away).map((o) => {
-          const matchTime = toDateTimeString(o.date * 1000);
-          return {
-            text: `${Clubs[o.home.club_id] && Clubs[o.home.club_id].name} vs ${Clubs[o.away.club_id] && Clubs[o.away.club_id].name} - ${matchTime}`,
-            value: `${o.id}`,
-            date: o.date,
-            home: o.home,
-            away: o.away,
-          };
-        });
-        context.setState({ matches });
-      } else {
-        console.error(err);
-      }
-    });
-};
-
-const getHotspots = (props, context) => {
-  const accessToken = localStorage.getItem('access_token');
-  return request
-    .get(`${FX_API}/${FX_VERSION}/hotspots`)
-    .set('Content-Type', 'application/x-www-form-urlencoded')
-    .set('Authorization', `Bearer ${accessToken}`)
-    .query({}) // query string
-    .then((res, err) => {
-      if (!err) {
-        const data = transformMatches(res.body.data);
-        const hotspots = data.map(o => ({
-          text: `${o.name} - ${o.address}`,
-          value: o.id,
-          textShort: o.name,
-        }));
-        context.setState({ hotspots });
-      } else {
-        console.error(err);
-      }
-    });
-};
-
-const getGroups = (props, context) => {
-  const accessToken = localStorage.getItem('access_token');
-  return request
-    .get(`${FX_API}/${FX_VERSION}/groups`)
-    .set('Content-Type', 'application/x-www-form-urlencoded')
-    .set('Authorization', `Bearer ${accessToken}`)
-    .query({}) // query string
-    .then((res, err) => {
-      if (!err) {
-        const data = transformMatches(res.body.data);
-        const groups = data.map(o => ({
-          text: `${o.name}`,
-          value: o.id,
-          textShort: `${o.short_name}`,
-        }));
-        context.setState({ groups });
-      } else {
-        console.error(err);
-      }
-    });
-};
-
 const initialState = props => ({
-  // hotspots: [],
-  // matches: [],
-  // groups: [],
   event: {
     hotspots: props.hotspotId ? [props.hotspotId] : [],
     group: props.groupId ? { value: props.groupId } : {},
@@ -141,6 +55,7 @@ const initialState = props => ({
     end_time_checkin: {},
     notes: {},
   },
+  disabled: true,
   cardLabelName: {},
   payload: {},
   submitResults: {
@@ -152,14 +67,24 @@ const initialState = props => ({
 class CreateEventForm extends React.Component {
   static propTypes = {
     showForm: PropTypes.bool,
+    loading: PropTypes.bool,
+    callback: PropTypes.func,
+    // history: PropTypes.shape({
+    //   push: PropTypes.func,
+    // }),
+
     hotspotId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    // hotspotIds: PropTypes.arrayOf(PropTypes.number()),
     groupId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     matchId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    dataSourceGroups: PropTypes.array,
+    dataSourceHotspots: PropTypes.array,
+    dataSourceMatches: PropTypes.array,
+
+    dispatchLeagueMatches: PropTypes.func,
+    dispatchHotspots: PropTypes.func,
+    dispatchGroups: PropTypes.func,
+
     toggle: PropTypes.bool,
-    toggleShowForm: PropTypes.func,
-    maxSearchResults: PropTypes.number,
-    loading: PropTypes.bool,
   };
 
   constructor(props) {
@@ -167,25 +92,38 @@ class CreateEventForm extends React.Component {
 
     this.state = {
       ...initialState(props),
-      matches: [],
-      hotspots: [],
-      groups: [],
+      dataSourceMatches: [],
+      dataSourceHotspots: [],
+      dataSourceGroups: [],
     };
-    this.bindAll([
-      'submitCreateEvent',
+    bindAll([
+      'getFormData',
+      'isDisabled',
+      'submit',
       'closeDialog',
       'onDragHomeColor',
       'onDragAwayColor',
       'onDragFreeFolkColor',
       'handleSelectMatch',
-      'handleClearMatch',
-    ]);
+    ], this);
   }
 
   componentDidMount() {
-    if (!this.props.matchId) getMatches(this.props, this);
-    if (!this.props.hotspotId) getHotspots(this.props, this);
-    if (!this.props.groupId) getGroups(this.props, this);
+    // if (!this.props.matchId) getMatches(this.props, this);
+    // if (!this.props.hotspotId) getHotspots(this.props, this);
+    // if (!this.props.groupId) getGroups(this.props, this);
+
+    if (!this.props.matchId) {
+      const now = Date.now();
+      const params = {
+        start_time: parseInt(now / 1000),
+        end_time: parseInt(now / 1000) + 2592000,
+      };
+      this.props.dispatchLeagueMatches(params);
+    }
+
+    if (!this.props.hotspotId) this.props.dispatchHotspots();
+    if (!this.props.groupId) this.props.dispatchGroups();
   }
 
   componentWillUpdate(nextProps) {
@@ -218,9 +156,33 @@ class CreateEventForm extends React.Component {
     });
   }
 
-  hotspotItems() {
+  getFormData() {
+    const event = this.state.event;
+
+    return {
+      match_id: event.match.value,
+      group_id: event.group.value,
+      price: event.price.value,
+      discount: event.discount.value,
+      seats: event.seats.value,
+      start_time_register: event.start_time_register.value,
+      end_time_register: event.end_time_register.value,
+      start_time_checkin: event.start_time_checkin.value,
+      end_time_checkin: event.end_time_checkin.value,
+      notes: event.notes.value || '',
+      home_color: event.home_color && event.home_color.value,
+      away_color: event.away_color && event.away_color.value,
+      free_folk_color: event.free_folk_color && event.free_folk_color.value,
+    };
+  }
+
+  clearState() {
+    this.setState(initialState(this.props));
+  }
+
+  __renderHotspotSelectorItems() {
     const ids = this.state.event.hotspots;
-    return this.state.hotspots && this.state.hotspots.map(o => (<MenuItem
+    return this.props.dataSourceHotspots && this.props.dataSourceHotspots.map(o => (<MenuItem
       key={o.value}
       insetChildren
       checked={ids && ids.indexOf(o.value) > -1}
@@ -229,12 +191,7 @@ class CreateEventForm extends React.Component {
     />));
   }
 
-  clearState() {
-    this.setState(initialState(this.props));
-  }
-
-
-  submitCreateEvent() {
+  submit() {
     const that = this;
     const event = that.state.event;
 
@@ -253,33 +210,20 @@ class CreateEventForm extends React.Component {
           submitResults: update(that.state.submitResults, {
             data: {
               $push: [{
-                hotspot_name: !that.props.hotspotId ? that.state.hotspots.find(h => h.value === o).textShort : event.match.text,
+                hotspot_name: !that.props.hotspotId ? that.props.dataSourceHotspots.find(h => h.value === o).textShort : event.match.text,
                 submitting: true,
               }],
             },
           }),
         });
-        const eventData = {
-          match_id: event.match.value,
-          hotspot_id: o,
-          group_id: event.group.value,
-          price: event.price.value,
-          discount: event.discount.value,
-          seats: event.seats.value,
-          start_time_register: event.start_time_register.value,
-          end_time_register: event.end_time_register.value,
-          start_time_checkin: event.start_time_checkin.value,
-          end_time_checkin: event.end_time_checkin.value,
-          notes: event.notes.value || '',
-          home_color: event.home_color && event.home_color.value,
-          away_color: event.away_color && event.away_color.value,
-          free_folk_color: event.free_folk_color && event.free_folk_color.value,
-        };
+        const eventData = this.getFormData();
+        eventData.hotspot_id = o;
+        console.log(eventData);
 
-        return doCreateEvent(eventData, that.state.payload);
+        return doCreateEvent(eventData, this.state.payload);
       })).then((results) => {
         const resultsReport = event.hotspots.map((hotspotId, index) => {
-          const hotspotName = !that.props.hotspotId ? that.state.hotspots.find(o => o.value === hotspotId).textShort : event.match.text;
+          const hotspotName = !that.props.hotspotId ? that.props.dataSourceHotspots.find(o => o.value === hotspotId).textShort : event.match.text;
           if (results[index].type.indexOf('OK') === 0) {
             return {
               hotspot_name: hotspotName,
@@ -302,28 +246,9 @@ class CreateEventForm extends React.Component {
   }
 
   closeDialog() {
-    const that = this;
-
-    that.setState({
-      submitResults: update(that.state.submitResults, {
-        show: { $set: false },
-      }),
-    });
-  }
-
-  // handleInputMatch(searchText) {
-  // const that = this;
-  // that.setState({
-  //     event: update(that.state.event, {
-  //         match: {text: {$set: searchText}}
-  //     })
-  // })
-  // }
-
-  handleClearMatch() {
     this.setState({
-      event: update(this.state.event, {
-        match: { $set: {} },
+      submitResults: update(this.state.submitResults, {
+        show: { $set: false },
       }),
     });
   }
@@ -385,50 +310,38 @@ class CreateEventForm extends React.Component {
     });
   }
 
-  changeValue(e, key, transform) {
-    const value = e.target.value;
-    const next_state = {};
-    next_state[key] = {
-      value: transform ? transform(value) : value,
-    };
-    this.setState(next_state, () => {
-      // this.isDisabled();
-    });
-  }
-
-  __handleKeyPressOnForm(e) {
-    if (e.key === 'Enter') {
-      if (!this.state.disabled) {
-        this.handleOpenDialog();
-      }
+  isDisabled() {
+    let _cardLabelName = {};
+    if (!this.state.cardLabelName.value) {
+      _cardLabelName = {
+        value: null,
+        errorText: null,
+      };
+    } else {
+      _cardLabelName = {
+        value: this.state.cardLabelName.value,
+        isValid: true,
+      };
     }
-  }
 
-  bindAll(methods) {
-    methods.forEach((item) => {
-      this[item] = this[item].bind(this);
+    this.setState({
+      cardLabelName: _cardLabelName,
+    }, function () {
+      if (this.state.cardLabelName.isValid) {
+        this.setState({
+          disabled: false,
+        });
+      }
     });
   }
 
   render() {
     const {
       toggle = true,
-      maxSearchResults = 100,
       loading = false,
       showForm,
     } = this.props;
 
-    const FormContainer = styled.div`
-            transition: max-height 1s;
-            padding: 15px;
-            box-sizing: border-box;
-            overflow: hidden;
-            ${props => (props.show ? css`
-                max-height: 2000px;
-            ` : css`
-                max-height: 0;
-            `)}
-        `;
     const ClubImageContainer = styled.div`
             position: relative;
             display: flex;
@@ -469,7 +382,7 @@ class CreateEventForm extends React.Component {
             bottom: 0;
             left: 0;
         `;
-    
+
     const __renderHotspotSelector = () => (<SelectValidator
       name="hotspots"
       fullWidth
@@ -489,34 +402,34 @@ class CreateEventForm extends React.Component {
           case 0:
             return '';
           case 1:
-            return that.state.hotspots.find(o => o.value === values[0]).text;
+            return that.props.dataSourceHotspots.find(o => o.value === values[0]).text;
           default: {
-            const arrayNames = values.map(value => `[${that.state.hotspots.find(o => o.value === value).textShort}]`);
+            const arrayNames = values.map(value => `[${that.props.dataSourceHotspots.find(o => o.value === value).textShort}]`);
             return arrayNames.join(',  ');
           }
         }
       }}
-
       validators={['required']}
       errorMessages={[strings.validate_is_required]}
     >
-      {this.hotspotItems()}
+      {this.__renderHotspotSelectorItems()}
     </SelectValidator>);
+    // eslint-disable-next-line no-unused-vars
     const __renderHotspotSelect2 = () => (<FormField
       name="hotspots"
       label={strings.filter_notification_user}
-      dataSource={this.state.hotspots.map(o => ({ text: o.text, value: o.value }))}
+      dataSource={this.props.dataSourceHotspots.map(o => ({ text: o.text, value: o.value }))}
       fullWidth
       // onChange={this.handleSelectHotspot.bind(this)}
       listStyle={{ maxHeight: 300, overflow: 'auto' }}
     />);
-    const __renderGroupSelector = () => (<AutoCompleteValidator
+    const __renderGroupSelector = () => (<AutoComplete
       name="group"
       hintText={strings.filter_group}
       floatingLabelText={strings.filter_group}
-      searchText={this.state.event.group && this.state.event.group.text}
+      searchText={this.state.event.group.text}
       value={this.state.event.group.value}
-      dataSource={this.state.groups}
+      dataSource={this.props.dataSourceGroups}
       onNewRequest={(o) => {
         this.setState({
           event: update(this.state.event, {
@@ -533,39 +446,27 @@ class CreateEventForm extends React.Component {
       }}
       filter={AutoComplete.caseInsensitiveFilter}
       openOnFocus
-      maxSearchResults={maxSearchResults}
+      maxSearchResults={100}
       fullWidth
       listStyle={{ maxHeight: 300, overflow: 'auto' }}
-      validators={[]}
-      errorMessages={[]}
     />);
-    const __renderMatchSelector = () => (<div>
-      <AutoCompleteValidator
-        name="match"
-        ref={(input) => {
-          this.inputMatch = input;
-        }}
-        hintText={strings.filter_match}
-        floatingLabelText={strings.filter_match}
-        searchText={this.state.event.match && this.state.event.match.text}
-        value={this.state.event.match.value}
-        dataSource={this.state.matches}
-        onNewRequest={this.handleSelectMatch}
-        filter={AutoComplete.fuzzyFilter}
-        openOnFocus
-        maxSearchResults={maxSearchResults}
-        fullWidth
-        listStyle={{ maxHeight: 300, overflow: 'auto' }}
-        validators={['required']}
-        errorMessages={[strings.validate_is_required]}
-      />
-    </div>);
+    const __renderMatchSelector = () => (<AutoComplete
+      name="match"
+      hintText={strings.filter_match}
+      floatingLabelText={strings.filter_match}
+      // searchText={this.state.event.match && this.state.event.match.text}
+      // value={this.state.event.match.value}
+      dataSource={this.props.dataSourceMatches}
+      onNewRequest={this.handleSelectMatch}
+      filter={AutoComplete.fuzzyFilter}
+      openOnFocus
+      maxSearchResults={100}
+      fullWidth
+      listStyle={{ maxHeight: 300, overflow: 'auto' }}
+      validators={['required']}
+      errorMessages={[strings.validate_is_required]}
+    />);
     const __renderMatchPreview = () => (<div>
-      {!this.props.matchId && <RaisedButton
-        label={<small>{strings.form_create_event_clear_match}</small>}
-        onClick={this.handleClearMatch}
-        style={{ display: 'flex', margin: 'auto' }}
-      />}
       <ClubImageContainer>
         <ClubColorPicker>
           <img
@@ -610,7 +511,6 @@ class CreateEventForm extends React.Component {
         </ClubColorPicker>
 
         <ClubColorPicker>
-
           <h3 style={{
             textAlign: 'center',
             height: 100,
@@ -718,10 +618,10 @@ class CreateEventForm extends React.Component {
           }),
         });
       }}
-      // filter={(searchText, key) => (key.indexOf(searchText) !== -1)}
-      filter={AutoComplete.fuzzyFilter}
+      filter={(searchText, key) => (key.indexOf(searchText) !== -1)}
       openOnFocus
       errorText={this.state.event.seats.error}
+      fullWidth
       validators={['required', 'minNumber:0']}
       errorMessages={[strings.validate_is_required, util.format(strings.validate_minimum, 0)]}
     />);
@@ -749,8 +649,9 @@ class CreateEventForm extends React.Component {
       filter={(searchText, key) => (key.indexOf(searchText) !== -1)}
       openOnFocus
       errorText={this.state.event.price.error}
+      fullWidth
       validators={['required']}
-      errorMessages={['this field is required']}
+      errorMessages={[strings.validate_is_required]}
     />);
     const __renderDiscountInput = () => (<AutoCompleteValidator
       name="discount"
@@ -776,8 +677,7 @@ class CreateEventForm extends React.Component {
       filter={(searchText, key) => (key.indexOf(searchText) !== -1)}
       openOnFocus
       errorText={this.state.event.discount.error}
-      validators={[]}
-      errorMessages={[]}
+      fullWidth
     />);
     const __renderStartTimeRegisterPicker = () => (<DateTimePicker
       format="HH:mm, MM/DD/YYYY"
@@ -798,6 +698,7 @@ class CreateEventForm extends React.Component {
       DatePicker={DatePickerDialog}
       TimePicker={TimePickerDialog}
       value={this.state.event.start_time_register.text}
+      fullWidth
     />);
     const __renderEndTimeRegisterPicker = () => (<DateTimePicker
       format="HH:mm, MM/DD/YYYY"
@@ -816,6 +717,7 @@ class CreateEventForm extends React.Component {
       DatePicker={DatePickerDialog}
       TimePicker={TimePickerDialog}
       value={this.state.event.end_time_register.text}
+      fullWidth
     />);
     const __renderStartTimeCheckinPicker = () => (<DateTimePicker
       format="HH:mm, MM/DD/YYYY"
@@ -834,6 +736,7 @@ class CreateEventForm extends React.Component {
       DatePicker={DatePickerDialog}
       TimePicker={TimePickerDialog}
       value={this.state.event.start_time_checkin.text}
+      fullWidth
     />);
     const __renderEndTimeCheckinPicker = () => (<DateTimePicker
       format="HH:mm, MM/DD/YYYY"
@@ -852,6 +755,7 @@ class CreateEventForm extends React.Component {
       DatePicker={DatePickerDialog}
       TimePicker={TimePickerDialog}
       value={this.state.event.end_time_checkin.text}
+      fullWidth
     />);
     const __renderNotesInput = () => (<TextField
       type="text"
@@ -869,65 +773,60 @@ class CreateEventForm extends React.Component {
       errorText={this.state.event.notes.error}
     />);
 
-    return (<div onKeyPress={e => this.__handleKeyPressOnForm(e)} role="form">
+    return (<div style={{ display: (!toggle || showForm) ? 'inline' : 'none' }}>
       <ValidatorForm
-        onSubmit={this.submitCreateEvent}
-        onError={errors => console.log(errors)}
+        onSubmit={this.submit}
+        // onError={errors => console.log(errors)}
       >
         {loading && <Spinner />}
         {this.state.error && <Error text={this.state.error} />}
-        <FormContainer show={!toggle || showForm}>
-          <div>
-            {!this.props.hotspotId && this.state.hotspots && __renderHotspotSelector()}
-            {!this.props.matchId && this.state.matches && __renderMatchSelector()}
-            {this.state.event.match.home && __renderMatchPreview()}
-            {/* input seats */}
-            {__renderSeatsInput()}
-            {/* select price */}
-            {__renderPriceInput()}
-            {!this.props.groupId && this.state.groups && __renderGroupSelector()}
-            {/* select discount */}
-            {__renderDiscountInput()}
-            {/* select start_time_register */}
-            {__renderStartTimeRegisterPicker()}
-            {/* select end_time_register */}
-            {__renderEndTimeRegisterPicker()}
-            {/* select start_time_check_in */}
-            {__renderStartTimeCheckinPicker()}
-            {/* select end_time_check_in */}
-            {__renderEndTimeCheckinPicker()}
-            {/* input notes */}
-            {__renderNotesInput()}
 
-            <TextValidator
-              name="cardLabelName"
-              type="text"
-              hintText={strings.hint_card_label_name}
-              floatingLabelText={strings.filter_card_label_name}
-              errorText={this.state.cardLabelName.errorText}
-              onChange={e => this.changeValue(e, 'cardLabelName')}
-              fullWidth
-              validators={['required']}
-              errorMessages={['this field is required']}
-            />
-          </div>
-          <RaisedButton
-            type="submit"
-            label={strings.form_create_event}
-          />
-        </FormContainer>
+        <div>
+          {!this.props.hotspotId && this.props.dataSourceHotspots && __renderHotspotSelector()}
+          {!this.props.matchId && this.props.dataSourceMatches && __renderMatchSelector()}
+          {this.state.event.match.home && __renderMatchPreview()}
+          <Row>
+            <Col flex={6}>{__renderSeatsInput()}</Col>
+            <Col flex={6}>{__renderPriceInput()}</Col>
+          </Row>
+          <Row>
+            <Col flex={6}>{!this.props.groupId && this.props.dataSourceGroups && __renderGroupSelector()}</Col>
+            <Col flex={6}>{__renderDiscountInput()}</Col>
+          </Row>
+          <Row>
+            <Col flex={3}>{__renderStartTimeRegisterPicker()}</Col>
+            <Col flex={3}>{__renderEndTimeRegisterPicker()}</Col>
+          </Row>
+          <Row>
+            <Col flex={3}>{__renderStartTimeCheckinPicker()}</Col>
+            <Col flex={3}>{__renderEndTimeCheckinPicker()}</Col>
+          </Row>
+
+          {__renderNotesInput()}
+        </div>
+        <RaisedButton
+          type="submit"
+          label={strings.form_create_event}
+        />
       </ValidatorForm>
 
       <Dialog
         title={strings.form_create_events_dialog_desc}
         actions={<FlatButton
-          label="Ok"
+          label="Close"
           primary
           keyboardFocused
           onClick={() => {
             this.closeDialog();
-            // this.props.history.push('/events');
-            this.props.toggleShowForm(false);
+            if (this.props.callback) {
+              return this.props.callback();
+            }
+            return true;
+            // if (toggle) {
+            //   this.props.toggleShowForm(false);
+            // } else {
+            //   this.props.history.push('/events');
+            // }
           }}
         />}
         modal={false}
@@ -956,11 +855,34 @@ class CreateEventForm extends React.Component {
 const mapStateToProps = state => ({
   currentQueryString: window.location.search,
   showForm: state.app.formCreateEvent.show,
+  dataSourceHotspots: state.app.hotspots.data.map(o => ({
+    text: `${o.name} - ${o.address}`,
+    value: o.id,
+    textShort: o.name,
+  })),
+  dataSourceGroups: state.app.groups.data.map(o => ({
+    text: `${o.name}`,
+    value: o.id,
+    textShort: `${o.short_name}`,
+  })),
+  dataSourceMatches: state.app.matchesLeague.data.matches.map((o) => {
+    const matchTime = toDateTimeString(o.date * 1000);
+    return {
+      text: `${Clubs[o.home.club_id] && Clubs[o.home.club_id].name} vs ${Clubs[o.away.club_id] && Clubs[o.away.club_id].name} - ${matchTime}`,
+      value: `${o.id}`,
+      date: o.date,
+      home: o.home,
+      away: o.away,
+    };
+  }),
 });
 
 const mapDispatchToProps = dispatch => ({
   defaultSubmitFunction: params => dispatch(defaultCreateEvent(params)),
-  toggleShowForm: state => dispatch(toggleShowForm('createEvent', state)),
+
+  dispatchHotspots: () => dispatch(getHotspots()),
+  dispatchGroups: () => dispatch(getGroups()),
+  dispatchLeagueMatches: params => dispatch(getMatchesLeague(params)),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CreateEventForm));
