@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactFileReader from 'react-file-reader';
+import { RaisedButton } from 'material-ui';
 
 /* list of supported file types */
 const SheetJSFT = [
@@ -15,6 +16,7 @@ class DataInput extends React.Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
+    this.handleFiles = this.handleFiles.bind(this);
   }
 
   handleChange(e) {
@@ -23,20 +25,25 @@ class DataInput extends React.Component {
   }
 
   handleFiles(files) {
-    console.log(files);
+    if (files && files[0]) this.props.handleFile(files[0]);
   }
 
   render() {
     return (<div>
-      {false && <ReactFileReader handleFiles={this.handleFiles} multipleFiles>
-        <button className="btn">Upload</button>
+      {<ReactFileReader
+        fileTypes={SheetJSFT}
+        handleFiles={this.handleFiles}
+      >
+        <RaisedButton
+          label={'Open XLSX file'}
+        />
       </ReactFileReader>}
 
-      <input
+      {false && <input
         type="file"
         accept={SheetJSFT}
         onChange={this.handleChange}
-      />
+      />}
     </div>
     );
   }

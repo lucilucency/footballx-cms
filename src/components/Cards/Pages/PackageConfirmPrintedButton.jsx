@@ -117,7 +117,7 @@ class PackageConfirmPrintedButton extends React.Component {
   render() {
     return (
       <div onKeyPress={e => this.__handleKeyPressOnForm(e)} role="form" style={{ textAlign: 'right' }}>
-        {!this.state.submitResults.show && <IconButton tooltip={strings.tooltip_print} onClick={this.handleOpenDialog}>
+        {!this.state.submitResults.show && <IconButton tooltip={strings.tooltip_confirm_printed} onClick={this.handleOpenDialog}>
           <IconPrint color={constants.blue500} />
         </IconButton>}
 

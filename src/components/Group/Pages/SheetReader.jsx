@@ -3,6 +3,8 @@ import XLSX from 'xlsx';
 import FileInput from './FileInput';
 import Table from 'components/Table';
 import { Row } from 'utils';
+import strings from 'lang';
+import { FlatButton } from 'material-ui';
 
 /* generate an array of column objects */
 const makeCols = (refstr) => {
@@ -12,18 +14,51 @@ const makeCols = (refstr) => {
   return o;
 };
 
+const fileHeader = {
+  name: strings.th_name,
+  email: strings.th_email,
+  phone: strings.th_phone,
+  city: strings.th_city,
+  address: strings.th_address,
+  dob: strings.th_dob,
+  gender: strings.th_gender,
+  membership_code: strings.th_membership_code,
+};
+
+const isValidHeader = (header) => {
+  return header.indexOf(fileHeader.name) !== -1 &&
+    header.indexOf(fileHeader.email) !== -1 &&
+    header.indexOf(fileHeader.phone) !== -1 &&
+    header.indexOf(fileHeader.city) !== -1 &&
+    header.indexOf(fileHeader.address) !== -1 &&
+    header.indexOf(fileHeader.membership_code) !== -1;
+};
+
+const downloadExampleFile = () => {
+  const data = [
+    [fileHeader.name, fileHeader.email, fileHeader.phone, fileHeader.city, fileHeader.address, fileHeader.dob, fileHeader.gender, fileHeader.membership_code],
+    ['Lê Thuý Ngọc','ngocle@gmaill.com', '1633456789', 'Đà Nẵng', 'Liên Chiểu', '26/5/1996', 'Nữ', 'DNA17001'],
+    ['Lê Thuý Ngọc','ngocle@gmaill.com', '1633456789', 'Đà Nẵng', 'Liên Chiểu', '26/5/1996', 'Nữ', 'DNA17001'],
+    ['Lê Thuý Ngọc','ngocle@gmaill.com', '1633456789', 'Đà Nẵng', 'Liên Chiểu', '26/5/1996', 'Nữ', 'DNA17001'],
+  ];
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'SheetJS');
+  XLSX.writeFile(wb, 'example.xlsx');
+};
+
 class SheetReader extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       data: [],
-      dataRaw: [],
       cols: [],
     };
     this.handleFile = this.handleFile.bind(this);
-    this.exportFile = this.exportFile.bind(this);
+    this.uploadFile = this.uploadFile.bind(this);
   }
   handleFile(file) {
+    this.setState({ errorText: null });
     const reader = new FileReader();
     const rABS = !!reader.readAsBinaryString;
     reader.onload = (e) => {
@@ -35,73 +70,70 @@ class SheetReader extends React.Component {
       const ws = wb.Sheets[wsname];
       /* Convert array of arrays */
       let data = XLSX.utils.sheet_to_json(ws, { header: 1 });
-      const dataRaw = Object.assign([], data);
       /* remove 1st row */
-      data.shift();
-      data = data.map(row => ({
-        name: row[0],
-        email: row[1],
-        phone: row[2],
-        city: row[3],
-        address: row[4],
-        membership_code: row[7],
-      }));
-      this.setState({ data, cols: makeCols(ws['!ref']), dataRaw });
+      const header = data.shift();
+      if (isValidHeader(header)) {
+        data = data.filter(o => o[0]).map(row => ({
+          name: row[0],
+          email: row[1],
+          phone: row[2],
+          city: row[3],
+          address: row[4],
+          membership_code: row[7],
+        }));
+        this.setState({ data, cols: makeCols(ws['!ref']) });
+      } else {
+        this.setState({ errorText: 'Invalid format!' });
+      }
     };
     if (rABS) reader.readAsBinaryString(file); else reader.readAsArrayBuffer(file);
   }
-  exportFile() {
-    const ws = XLSX.utils.aoa_to_sheet(this.state.dataRaw);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'SheetJS');
-    XLSX.writeFile(wb, 'output-file.xlsx');
+
+  uploadFile() {
+    console.log(this.state.data);
   }
 
   render() {
     return (<div>
+      {this.state.errorText && <div>
+        {this.state.errorText} - <button onClick={downloadExampleFile}>Download template file</button>
+      </div>}
+
       <DragDropFile handleFile={this.handleFile}>
-        <Row>
-          <FileInput handleFile={this.handleFile} />
-        </Row>
+        <FileInput handleFile={this.handleFile} />
       </DragDropFile>
 
       {this.state.data.length ? <Table
         paginated
         columns={[{
-          displayName: 'Name',
+          displayName: fileHeader.name,
           field: 'name',
         }, {
-          displayName: 'Email',
+          displayName: fileHeader.email,
           field: 'email',
         }, {
-          displayName: 'Phone',
+          displayName: fileHeader.phone,
           field: 'phone',
         }, {
-          displayName: 'City',
+          displayName: fileHeader.city,
           field: 'city',
         }, {
-          displayName: 'Address',
+          displayName: fileHeader.address,
           field: 'address',
         }, {
-          displayName: 'Membership Code',
+          displayName: fileHeader.membership_code,
           field: 'membership_code',
         }]}
         data={this.state.data}
       /> : null}
-      {false ? <Row>
-        <button onClick={this.exportFile}>Export</button>
-      </Row> : null}
+
+      <Row>
+        {this.state.data.length !== 0 && <FlatButton onClick={this.uploadFile}>Upload</FlatButton>}
+      </Row>
     </div>);
   }
 }
 
-/* -------------------------------------------------------------------------- */
-
-/*
-  Simple HTML5 file drag-and-drop wrapper
-  usage: <DragDropFile handleFile={handleFile}>...</DragDropFile>
-    handleFile(file:File):void;
-*/
 class DragDropFile extends React.Component {
   constructor(props) {
     super(props);
