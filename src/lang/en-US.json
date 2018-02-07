@@ -412,6 +412,7 @@
   "tab_groups_add": "+ Group",
   "tab_group_events": "Events",
   "tab_group_husers": "Managers",
+  "tab_group_xusers": "XUsers",
   "tab_group_overview": "Overview",
 
   "tab_events_all": "All",
@@ -620,6 +621,7 @@
   "title_events_all": "All Events",
   "title_groups": "Groups",
   "title_group_husers": "Managers",
+  "title_group_xusers": "Memberships",
 
   "tooltip_select_hotspots": "Select hotspots",
   "tooltip_level": "Level achieved by hero",
