@@ -7,7 +7,7 @@ import IconSuccess from 'material-ui/svg-icons/navigation/check';
 import IconProgress from 'material-ui/CircularProgress';
 import Checkbox from 'material-ui/Checkbox';
 import strings from 'lang';
-import { toNumber, Row, Col, Ul, bindAll } from 'utils';
+import { toNumber, Row, Col, Ul, bindAll, toDateTimeString } from 'utils';
 import { closeCardIssue, returnCardToStockFromCardIssue } from 'actions';
 import constants from 'components/constants';
 
@@ -159,7 +159,7 @@ class IssueViewer extends React.Component {
     return (
       <div style={{ textAlign: 'left' }}>
         <Ul>
-          <li>Created at: {issue.created_at}</li>
+          <li>Created at: {toDateTimeString(issue.created_at)}</li>
           <li>Requester: {issue.user_id} - {issue.user_type}</li>
           <li>Requested cards: <b><code>{issue.card_label_id}</code></b> <small>x{issue.total_card}</small></li>
         </Ul>

@@ -188,10 +188,9 @@
   "form_create_group_huser": "Create Manager",
   "form_create_group_huser_cancel": "Cancel Create Manager",
 
-  "form_generate_qr_open": "Generate QR",
-  "form_generate_qr_close": "Close Generate QR",
-  "form_generate_qr_generate": "Generate",
-  "form_generate_qr_re_generate": "Re-Random",
+  "form_mini_game": "Mini Game",
+  "form_mini_game_close": "Close mini game",
+  "form_mini_game_lucky_guy": "Who's lucky guy",
 
   "form_filter_close": "Close Filter",
   "form_send_notification": "Send Notification",
@@ -756,6 +755,7 @@
   "hint_issue_notes": "Note eg: For match...",
 
   "label_number_of_cards_in_package": "Number of cards",
+  "label_mini_game": "Mini Game",
 
   "region_0": "Automatic",
   "region_1": "US West",

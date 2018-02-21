@@ -1,10 +1,10 @@
 import React from 'react';
 import XLSX from 'xlsx';
-import FileInput from './FileInput';
 import Table from 'components/Table';
 import { Row } from 'utils';
 import strings from 'lang';
 import { FlatButton } from 'material-ui';
+import FileInput from './FileInput';
 
 /* generate an array of column objects */
 const makeCols = (refstr) => {
@@ -37,9 +37,9 @@ const isValidHeader = (header) => {
 const downloadExampleFile = () => {
   const data = [
     [fileHeader.name, fileHeader.email, fileHeader.phone, fileHeader.city, fileHeader.address, fileHeader.dob, fileHeader.gender, fileHeader.membership_code],
-    ['Lê Thuý Ngọc','ngocle@gmaill.com', '1633456789', 'Đà Nẵng', 'Liên Chiểu', '26/5/1996', 'Nữ', 'DNA17001'],
-    ['Lê Thuý Ngọc','ngocle@gmaill.com', '1633456789', 'Đà Nẵng', 'Liên Chiểu', '26/5/1996', 'Nữ', 'DNA17001'],
-    ['Lê Thuý Ngọc','ngocle@gmaill.com', '1633456789', 'Đà Nẵng', 'Liên Chiểu', '26/5/1996', 'Nữ', 'DNA17001'],
+    ['Lê Thuý Ngọc', 'ngocle@gmaill.com', '1633456789', 'Đà Nẵng', 'Liên Chiểu', '26/5/1996', 'Nữ', 'DNA17001'],
+    ['Lê Thuý Ngọc', 'ngocle@gmaill.com', '1633456789', 'Đà Nẵng', 'Liên Chiểu', '26/5/1996', 'Nữ', 'DNA17001'],
+    ['Lê Thuý Ngọc', 'ngocle@gmaill.com', '1633456789', 'Đà Nẵng', 'Liên Chiểu', '26/5/1996', 'Nữ', 'DNA17001'],
   ];
   const ws = XLSX.utils.aoa_to_sheet(data);
   const wb = XLSX.utils.book_new();
@@ -48,6 +48,10 @@ const downloadExampleFile = () => {
 };
 
 class SheetReader extends React.Component {
+  static propTypes = {
+    onUpload: React.PropTypes.func,
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -90,7 +94,7 @@ class SheetReader extends React.Component {
   }
 
   uploadFile() {
-    console.log(this.state.data);
+    this.props.onUpload(this.state.data);
   }
 
   render() {
@@ -99,9 +103,7 @@ class SheetReader extends React.Component {
         {this.state.errorText} - <button onClick={downloadExampleFile}>Download template file</button>
       </div>}
 
-      <DragDropFile handleFile={this.handleFile}>
-        <FileInput handleFile={this.handleFile} />
-      </DragDropFile>
+      <FileInput handleFile={this.handleFile} />
 
       {this.state.data.length ? <Table
         paginated
@@ -133,26 +135,5 @@ class SheetReader extends React.Component {
     </div>);
   }
 }
-
-class DragDropFile extends React.Component {
-  constructor(props) {
-    super(props);
-    this.onDrop = this.onDrop.bind(this);
-  }
-  suppress(evt) { evt.stopPropagation(); evt.preventDefault(); }
-  onDrop(evt) {
-    evt.stopPropagation(); evt.preventDefault();
-    const files = evt.dataTransfer.files;
-    if (files && files[0]) this.props.handleFile(files[0]);
-  }
-  render() {
-    return (
-      <div onDrop={this.onDrop} onDragEnter={this.suppress} onDragOver={this.suppress}>
-        {this.props.children}
-      </div>
-    );
-  }
-}
-
 
 export default SheetReader;

@@ -290,8 +290,8 @@ class EventHeader extends React.Component {
               show={showFormGenerateQR}
               onClick={toggleShowFormGenerateQR}
               icon={<IconFingerprint />}
-              text={<span><small>{strings.event_generate}</small> <b>{strings.event_qr_code}</b></span>}
-              textToggle={strings.form_generate_qr_close}
+              text={strings.form_mini_game}
+              textToggle={strings.form_mini_game_close}
             />
             {user && (userData.user_type === 1 || isOwner) &&
             <ShowFormToggle

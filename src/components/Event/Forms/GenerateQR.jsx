@@ -141,7 +141,7 @@ class GenerateQR extends React.Component {
 
         <RaisedButton
           style={{ margin: 'auto', marginBottom: '50px' }}
-          label={strings.form_generate_qr_generate}
+          label={strings.form_mini_game_lucky_guy}
           primary
           onClick={event => this.doRandomXUser(event)}
         />

@@ -8,7 +8,7 @@ import IconFail from 'material-ui/svg-icons/content/clear';
 import IconSuccess from 'material-ui/svg-icons/navigation/check';
 /* data & component */
 import strings from 'lang';
-import { createCards } from 'actions';
+import { importXUsers } from 'actions';
 import { Row } from 'utils';
 import constants from 'components/constants';
 import SheetReader from './SheetReader';
@@ -23,7 +23,7 @@ const initialState = props => ({
   },
 });
 
-class CardLabelAddQuantity extends React.Component {
+class XUsersImportForm extends React.Component {
   static propTypes = {
     cardLabelId: React.PropTypes.number,
     cardLabelName: React.PropTypes.string,
@@ -81,15 +81,13 @@ class CardLabelAddQuantity extends React.Component {
     }
   }
 
-  submit(e) {
+  submit(data) {
     const that = this;
-    e.preventDefault();
 
     this.handleCloseDialog();
-    const formData = that.getFormData();
-    const payload = {
-      total_card: formData.number_card,
-    };
+    // const payload = {
+    //   total_card: formData.number_card,
+    // };
 
     this.setState({
       submitResults: update(that.state.submitResults, {
@@ -102,7 +100,7 @@ class CardLabelAddQuantity extends React.Component {
         },
       }),
     }, () => {
-      this.props.submitFn(formData, payload).then((results) => {
+      this.props.submitFn(this.props.groupId, { data: JSON.stringify(data), expire_date: parseInt(Date.now() / 1000) }).then((results) => {
         const actionName = <div>{`Create ${that.state.cardNumber} card(s) with label: `} <code>[{that.props.cardLabelName}]</code></div>;
         const resultsReport = [];
         if (results.type.indexOf('OK') === 0) {
@@ -132,7 +130,7 @@ class CardLabelAddQuantity extends React.Component {
       <div onKeyPress={e => this.__handleKeyPressOnForm(e)} role="form" style={{ textAlign: 'right' }}>
         {!this.state.submitResults.show && <div>
           <Row>
-            <SheetReader />
+            <SheetReader onUpload={this.submit} />
           </Row>
         </div>}
 
@@ -177,7 +175,7 @@ class CardLabelAddQuantity extends React.Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-  submitFn: (params, payload) => dispatch(createCards(params, payload)),
+  submitFn: (groupId, params) => dispatch(importXUsers(groupId, params)),
 });
 
-export default connect(null, mapDispatchToProps)(CardLabelAddQuantity);
+export default connect(null, mapDispatchToProps)(XUsersImportForm);

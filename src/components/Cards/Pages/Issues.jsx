@@ -6,9 +6,8 @@ import {
 import { Link } from 'react-router-dom';
 /* actions & helpers */
 import { getCardIssues } from 'actions';
-import { subTextStyle, bindAll } from 'utils';
+import { subTextStyle, bindAll, toDateTimeString } from 'utils';
 import strings from 'lang';
-/* components */
 import Table, { TableLink } from 'components/Table';
 import Container from 'components/Container';
 import { FlatButton, Dialog } from 'material-ui';
@@ -28,6 +27,9 @@ const tableCardLabelsColumns = (that, browser) => [{
   field: 'user_id',
   displayFn: (row, col, field) => (<div>
     User_id: {field} - {row.user_type}
+    <span style={{ ...subTextStyle, maxWidth: browser.greaterThan.medium ? 300 : 150 }} >
+      {toDateTimeString(row.created_at)}
+    </span>
   </div>),
 }, browser.greaterThan.medium && {
   displayName: 'Notes',

@@ -51,6 +51,8 @@ export const editGroup = (groupId, params) => fxActionPut('EDIT/group', `group/$
 export const getGroupEvents = groupId => fxActionGet('groupEvents', `group/${groupId}/events`, {}, transform.transformEvents);
 export const createGroupEvent = (params, payload) => fxActionPost('ADD/groupEvents', 'event', params, transform.transformCreateEvent, payload);
 export const getGroupHUsers = groupId => fxActionGet('groupHUsers', `group/${groupId}/husers`);
+export const importXUsers = (groupId, params) => fxActionPost('groupXUsers', `group/${groupId}/membership`, params);
+
 // export const createGroup = (params) => fxActionPost('ADD/events', 'event', params, transform.transformCreateGroup);
 /* event */
 export const getEvents = params => fxActionGet('events', 'events', { ...queryString.parse(params.substring(1)) }, transform.transformEvents);

@@ -71,8 +71,6 @@ RequestLayer.propTypes = {
 };
 
 const mapStateToProps = state => ({
-  clubData: state.app.clubs.data,
-  loading: state.app.clubs.loading,
 });
 
 export default connect(mapStateToProps, null)(RequestLayer);

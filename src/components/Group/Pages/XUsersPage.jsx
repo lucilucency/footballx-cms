@@ -69,7 +69,7 @@ class RequestLayer extends React.Component {
         {/*<Table paginated columns={HUsersColumns} data={this.props.groupHUsers.data} error={false} loading={this.props.groupHUsers.loading} />*/}
       {/*</Container>*/}
       <Container>
-        <XUsersImportForm />
+        <XUsersImportForm groupId={this.props.groupId} />
       </Container>
     </div>);
   }
