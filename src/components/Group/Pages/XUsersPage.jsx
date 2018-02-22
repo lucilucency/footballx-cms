@@ -2,14 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { getGroupHUsers } from 'actions';
-import { transformations } from 'utils';
+import { transformations, Row, Col } from 'utils';
 import strings from 'lang';
 import Table from 'components/Table';
 import Container from 'components/Container';
-import CreateGroupHUserForm from 'components/Group/Forms/CreateGroupHUser';
 import XUsersImportForm from './XUsersImportForm';
 
-const HUsersColumns = [{
+const Memberships = [{
   displayName: strings.th_account,
   field: 'username',
   displayFn: transformations.th_huser_link,
@@ -24,19 +23,6 @@ const HUsersColumns = [{
   field: 'email',
 }];
 
-const Husers = (propsVar) => {
-  const {
-    data,
-    error = false,
-    loading = false,
-  } = propsVar;
-  return (
-    <Container title={strings.title_group_xusers} error={error} loading={loading}>
-      <Table paginated columns={HUsersColumns} data={data} error={false} loading={loading} />
-    </Container>
-  );
-};
-
 const getData = (props) => {
   props.getGroupHUsers(props.groupId);
 };
@@ -46,7 +32,7 @@ class RequestLayer extends React.Component {
     routeParams: PropTypes.shape({}),
     location: PropTypes.shape({ key: PropTypes.string }),
     groupId: PropTypes.number,
-    groupHUsers: PropTypes.shape([]),
+    groupMembers: PropTypes.shape([]),
   };
 
   componentDidMount() {
@@ -64,19 +50,29 @@ class RequestLayer extends React.Component {
     const subInfo = routeParams.subInfo;
 
     return (<div>
-      {subInfo && subInfo === 'add' && <CreateGroupHUserForm groupId={this.props.groupId} />}
-      {/*<Container title={strings.title_group_xusers} error={this.props.groupHUsers.error} loading={this.props.groupHUsers.loading}>*/}
-        {/*<Table paginated columns={HUsersColumns} data={this.props.groupHUsers.data} error={false} loading={this.props.groupHUsers.loading} />*/}
-      {/*</Container>*/}
-      <Container>
-        <XUsersImportForm groupId={this.props.groupId} />
-      </Container>
+
+      <Row>
+        {/* memberships list area */}
+        {/*<Col flex={6}>*/}
+          {/*<Container title={strings.title_group_memberships} error={this.props.groupMembers.error} loading={this.props.groupMembers.loading}>*/}
+            {/*<Table paginated columns={Memberships} data={this.props.groupMembers.data} error={false} loading={this.props.groupMembers.loading} />*/}
+          {/*</Container>*/}
+        {/*</Col>*/}
+
+        {/* import memberships area */}
+        <Col flex={6}>
+          <Container title={strings.title_group_import_membership}>
+            <XUsersImportForm groupId={this.props.groupId} />
+          </Container>
+        </Col>
+      </Row>
+
     </div>);
   }
 }
 
 const mapStateToProps = state => ({
-  groupHUsers: state.app.groupHUsers,
+  // groupMembers: state.app.groupMembers,
 });
 
 const mapDispatchToProps = dispatch => ({

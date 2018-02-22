@@ -52,6 +52,7 @@ export const getGroupEvents = groupId => fxActionGet('groupEvents', `group/${gro
 export const createGroupEvent = (params, payload) => fxActionPost('ADD/groupEvents', 'event', params, transform.transformCreateEvent, payload);
 export const getGroupHUsers = groupId => fxActionGet('groupHUsers', `group/${groupId}/husers`);
 export const importXUsers = (groupId, params) => fxActionPost('groupXUsers', `group/${groupId}/membership`, params);
+// export const getGroupMembers = ()
 
 // export const createGroup = (params) => fxActionPost('ADD/events', 'event', params, transform.transformCreateGroup);
 /* event */

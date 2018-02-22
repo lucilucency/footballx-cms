@@ -624,7 +624,8 @@
   "title_events_all": "All Events",
   "title_groups": "Groups",
   "title_group_husers": "Managers",
-  "title_group_xusers": "Memberships",
+  "title_group_memberships": "Memberships",
+  "title_group_import_membership": "Import members",
 
   "tooltip_select_hotspots": "Select hotspots",
   "tooltip_level": "Level achieved by hero",

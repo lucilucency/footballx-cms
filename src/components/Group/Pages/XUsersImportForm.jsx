@@ -100,7 +100,7 @@ class XUsersImportForm extends React.Component {
         },
       }),
     }, () => {
-      this.props.submitFn(this.props.groupId, { data: JSON.stringify(data), expire_date: parseInt(Date.now() / 1000) }).then((results) => {
+      this.props.submitFn(this.props.groupId, { data: JSON.stringify(data), expire_date: 1538352000 }).then((results) => {
         const actionName = <div>{`Create ${that.state.cardNumber} card(s) with label: `} <code>[{that.props.cardLabelName}]</code></div>;
         const resultsReport = [];
         if (results.type.indexOf('OK') === 0) {
@@ -134,21 +134,23 @@ class XUsersImportForm extends React.Component {
           </Row>
         </div>}
 
-        {this.state.submitResults.show && <Row onClick={this.handleCloseForm}>
-          <List>
-            {this.state.submitResults.data.map(r => (<ListItem
-              primaryText={r.actionName}
-              leftIcon={r.error ?
-                <IconFail color={constants.colorRed} title={strings.form_general_fail} />
-                : <IconSuccess
-                  color={constants.colorSuccess}
-                  title={strings.form_general_success}
-                />}
-              secondaryText={r.error && r.error}
-              secondaryTextLines={1}
-            />))}
-          </List>
-        </Row>}
+        {this.state.submitResults.show && <div>
+          <Row onClick={this.handleCloseForm}>
+            <List>
+              {this.state.submitResults.data.map(r => (<ListItem
+                primaryText={r.actionName}
+                leftIcon={r.error ?
+                  <IconFail color={constants.colorRed} title={strings.form_general_fail} />
+                  : <IconSuccess
+                    color={constants.colorSuccess}
+                    title={strings.form_general_success}
+                  />}
+                secondaryText={r.error && r.error}
+                secondaryTextLines={1}
+              />))}
+            </List>
+          </Row>
+        </div>}
 
         <Dialog
           actions={[

@@ -3,7 +3,7 @@ import XLSX from 'xlsx';
 import Table from 'components/Table';
 import { Row } from 'utils';
 import strings from 'lang';
-import { FlatButton } from 'material-ui';
+import { RaisedButton } from 'material-ui';
 import FileInput from './FileInput';
 
 /* generate an array of column objects */
@@ -76,14 +76,19 @@ class SheetReader extends React.Component {
       let data = XLSX.utils.sheet_to_json(ws, { header: 1 });
       /* remove 1st row */
       const header = data.shift();
-      if (isValidHeader(header)) {
+      if (true || isValidHeader(header)) {
         data = data.filter(o => o[0]).map(row => ({
-          name: row[0],
-          email: row[1],
-          phone: row[2],
-          city: row[3],
-          address: row[4],
-          membership_code: row[7],
+          name: row[1],
+          email: row[2],
+          phone: row[3],
+          dob: row[4],
+          city: row[5],
+          address: row[6],
+          gender: row[7],
+          size: row[8],
+          joined_year: row[9],
+          is_purchase: row[10],
+          membership_code: row[11],
         }));
         this.setState({ data, cols: makeCols(ws['!ref']) });
       } else {
@@ -99,11 +104,13 @@ class SheetReader extends React.Component {
 
   render() {
     return (<div>
-      {this.state.errorText && <div>
+      {this.state.errorText && <Row>
         {this.state.errorText} - <button onClick={downloadExampleFile}>Download template file</button>
-      </div>}
+      </Row>}
 
-      <FileInput handleFile={this.handleFile} />
+      <Row>
+        <FileInput handleFile={this.handleFile} />
+      </Row>
 
       {this.state.data.length ? <Table
         paginated
@@ -129,8 +136,8 @@ class SheetReader extends React.Component {
         data={this.state.data}
       /> : null}
 
-      <Row>
-        {this.state.data.length !== 0 && <FlatButton onClick={this.uploadFile}>Upload</FlatButton>}
+      <Row style={{flexDirection: 'flex-reverse'}}>
+        {this.state.data.length !== 0 && <RaisedButton onClick={this.uploadFile} label={'Upload'} style={{float: 'left'}}/>}
       </Row>
     </div>);
   }
