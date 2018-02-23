@@ -21,7 +21,7 @@ const pages = [{
   content: (groupId, routeParams, location) => (
     <HUsersPage groupId={groupId} routeParams={routeParams} location={location} />),
 }, {
-  name: strings.tab_group_xusers,
+  name: strings.tab_group_members,
   key: 'xusers',
   content: (groupId, routeParams, location) => (
     <XUsersPage groupId={groupId} routeParams={routeParams} location={location} />),

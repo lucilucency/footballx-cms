@@ -110,6 +110,9 @@ export function formatHoursSeconds(input) {
 }
 
 export function toDateTimeString(input) {
+  if (!input) {
+    return '';
+  }
   const inputParse = isNaN(input) ? input : Number(input);
   return new Date(inputParse).toLocaleDateString(window.localStorage.getItem('localization') || 'en-US', {
     minute: 'numeric',
@@ -122,6 +125,10 @@ export function toDateTimeString(input) {
 }
 
 export function toDateString(input) {
+  if (!input) {
+    return '';
+  }
+
   const inputParse = isNaN(input) ? input : Number(input);
   return new Date(inputParse).toLocaleDateString(window.localStorage.getItem('localization') || 'en-US', {
     day: 'numeric',

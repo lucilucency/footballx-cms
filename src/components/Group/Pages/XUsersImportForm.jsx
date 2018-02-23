@@ -83,6 +83,7 @@ class XUsersImportForm extends React.Component {
 
   submit(data) {
     const that = this;
+    const props = this.props;
 
     this.handleCloseDialog();
     // const payload = {
@@ -94,14 +95,15 @@ class XUsersImportForm extends React.Component {
         show: { $set: true },
         data: {
           $push: [{
-            actionName: <div>{`Create ${that.state.cardNumber} card(s) with label: `} <code>[{that.props.cardLabelName}]</code></div>,
+            actionName: <div>{`Importing ${data.length} new members`}</div>,
             submitting: true,
           }],
         },
       }),
     }, () => {
-      this.props.submitFn(this.props.groupId, { data: JSON.stringify(data), expire_date: 1538352000 }).then((results) => {
-        const actionName = <div>{`Create ${that.state.cardNumber} card(s) with label: `} <code>[{that.props.cardLabelName}]</code></div>;
+      window.abc = data;
+      this.props.submitFn(props.groupId, { data: JSON.stringify(data), expire_date: 1538352000 }, data).then((results) => {
+        const actionName = <div>{`Imported ${data.length} new members`}</div>;
         const resultsReport = [];
         if (results.type.indexOf('OK') === 0) {
           resultsReport.push({
@@ -177,7 +179,7 @@ class XUsersImportForm extends React.Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-  submitFn: (groupId, params) => dispatch(importXUsers(groupId, params)),
+  submitFn: (groupId, params, payload) => dispatch(importXUsers(groupId, params, payload)),
 });
 
 export default connect(null, mapDispatchToProps)(XUsersImportForm);

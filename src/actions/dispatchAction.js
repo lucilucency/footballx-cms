@@ -133,9 +133,13 @@ export function fxActionPost(type, path, params = {}, transform, payload) {
             let dispatchData = res.body.data;
             dispatchData = transform ? transform(res.body.data) : dispatchData;
             if (payload) {
-              dispatchData = update(dispatchData, {
-                $merge: payload,
-              });
+              if (Array.isArray(payload)) {
+                dispatchData = payload;
+              } else {
+                dispatchData = update(dispatchData, {
+                  $merge: payload,
+                });
+              }
             }
 
             return dispatch(dispatchOK(dispatchData));
@@ -143,8 +147,7 @@ export function fxActionPost(type, path, params = {}, transform, payload) {
           return setTimeout(() => fetchDataWithRetry(delay + 2000, tries - 1, err), delay);
         })
         .catch((err) => {
-          console.log(`Error in ${type}`);
-          console.error(err);
+          console.error(`Error in ${type}`);
           return dispatch(dispatchFail(err.response.body.message));
         });
     };

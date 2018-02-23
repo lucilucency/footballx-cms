@@ -1,7 +1,7 @@
 import React from 'react';
 import XLSX from 'xlsx';
 import Table from 'components/Table';
-import { Row } from 'utils';
+import { Row, toDateString } from 'utils';
 import strings from 'lang';
 import { RaisedButton } from 'material-ui';
 import FileInput from './FileInput';
@@ -18,10 +18,13 @@ const fileHeader = {
   name: strings.th_name,
   email: strings.th_email,
   phone: strings.th_phone,
+  dob: strings.th_dob,
   city: strings.th_city,
   address: strings.th_address,
-  dob: strings.th_dob,
   gender: strings.th_gender,
+  size: strings.th_membership_t_shirt_size,
+  joined_year: strings.th_membership_joined_year,
+  is_purchase: strings.th_membership_is_purchase,
   membership_code: strings.th_membership_code,
 };
 
@@ -81,13 +84,13 @@ class SheetReader extends React.Component {
           name: row[1],
           email: row[2],
           phone: row[3],
-          dob: row[4],
+          dob: toDateString(row[4]),
           city: row[5],
           address: row[6],
           gender: row[7],
           size: row[8],
           joined_year: row[9],
-          is_purchase: row[10],
+          is_purchase: Boolean(row[10].trim()),
           membership_code: row[11],
         }));
         this.setState({ data, cols: makeCols(ws['!ref']) });
@@ -124,11 +127,26 @@ class SheetReader extends React.Component {
           displayName: fileHeader.phone,
           field: 'phone',
         }, {
+          displayName: fileHeader.dob,
+          field: 'dob',
+        }, {
           displayName: fileHeader.city,
           field: 'city',
         }, {
           displayName: fileHeader.address,
           field: 'address',
+        }, {
+          displayName: fileHeader.gender,
+          field: 'gender',
+        }, {
+          displayName: fileHeader.size,
+          field: 'size',
+        }, {
+          displayName: fileHeader.joined_year,
+          field: 'joined_year',
+        }, {
+          displayName: fileHeader.is_purchase,
+          field: 'is_purchase',
         }, {
           displayName: fileHeader.membership_code,
           field: 'membership_code',

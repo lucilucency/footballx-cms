@@ -411,8 +411,8 @@
   "tab_groups_add": "+ Group",
   "tab_group_events": "Events",
   "tab_group_husers": "Managers",
-  "tab_group_xusers": "XUsers",
   "tab_group_overview": "Overview",
+  "tab_group_members": "Members",
 
   "tab_events_all": "All",
   "tab_events_add": "+ Event",
@@ -436,7 +436,6 @@
   "tab_story": "Story",
   "tab_fantasy": "Fantasy",
 
-
   "td_win": "Win",
   "td_loss": "Loss",
   "td_draw": "Draw",
@@ -454,14 +453,19 @@
   "th_groups": "Groups",
   "th_group": "Group",
   "th_match_id": "Match ID",
+  "th_membership_code": "Membership Code",
+  "th_membership_expired_date": "Expired date",
+  "th_membership_t_shirt_size": "T-shirt Size",
+  "th_membership_joined_year": "Joined Year",
+  "th_membership_is_purchase": "Purchase",
   "th_no": "No.",
   "th_result": "Result",
-  "th_skill": "Skill",
   "th_win": "Win %",
   "th_with_games": "With",
   "th_with_win": "Win with %",
   "th_xuser": "User",
   "th_record": "Record",
+  "th_skill": "Skill",
   "th_title": "Title",
   "th_time_register": "Time register",
   "th_time_check_in": "Time check in",
@@ -593,7 +597,7 @@
   "th_city": "City",
   "th_dob": "DoB",
   "th_gender": "Gender",
-  "th_membership_code": "Membership Code",
+
 
   "time_next": "Will be in %s",
   "time_past": "%s ago",

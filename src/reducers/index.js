@@ -13,6 +13,7 @@ export default combineReducers({
   group: fxReducer('group', []),
   groupEvents: fxReducer('groupEvents', []),
   groupHUsers: fxReducer('groupHUsers', []),
+  groupMembers: fxReducer('groupMembers', []),
 
   hotspots: fxReducer('hotspots', []),
   hotspot: fxReducer('hotspot', {}),

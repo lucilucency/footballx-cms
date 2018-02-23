@@ -2,6 +2,7 @@ import * as transform from 'actions/transforms';
 import { action, fxActionPost, fxActionGet, fxActionPut, fxActionDelete, fxActionAuth } from 'actions/dispatchAction';
 import queryString from 'querystring';
 
+const __blankTransforms = () => ([]);
 
 export * from 'actions/ajax';
 
@@ -51,8 +52,8 @@ export const editGroup = (groupId, params) => fxActionPut('EDIT/group', `group/$
 export const getGroupEvents = groupId => fxActionGet('groupEvents', `group/${groupId}/events`, {}, transform.transformEvents);
 export const createGroupEvent = (params, payload) => fxActionPost('ADD/groupEvents', 'event', params, transform.transformCreateEvent, payload);
 export const getGroupHUsers = groupId => fxActionGet('groupHUsers', `group/${groupId}/husers`);
-export const importXUsers = (groupId, params) => fxActionPost('groupXUsers', `group/${groupId}/membership`, params);
-// export const getGroupMembers = ()
+export const importXUsers = (groupId, params, payload) => fxActionPost('ADD/groupMembers', `group/${groupId}/membership`, params, __blankTransforms, payload);
+export const getGroupMembers = groupId => fxActionGet('groupMembers', `group/${groupId}/memberships`, {}, transform.transformGroupMembers);
 
 // export const createGroup = (params) => fxActionPost('ADD/events', 'event', params, transform.transformCreateGroup);
 /* event */
