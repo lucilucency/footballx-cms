@@ -28,13 +28,22 @@ const FormGroup = styled.div`
   text-align: center;
   overflow: hidden;
   transition: max-height 0.4s;
+  height: 100vh;
   
   ${props => (props.show ? css`
-      max-height: 1000px;
+      max-height: 100vh;
   ` : css`
       max-height: 0;
   `)}
 `;
+
+const initialState = {
+  winner: [],
+  duration: 10000,
+  step: 1000,
+  margin: 25,
+  isFlipped: false,
+};
 
 class GenerateQR extends React.Component {
   static propTypes = {
@@ -43,10 +52,7 @@ class GenerateQR extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      winner: null,
-      back: null,
-      front: null,
-      isFlipped: false,
+      ...initialState,
     };
     this.doRandomXUser = this.doRandomXUser.bind(this);
   }
@@ -59,26 +65,28 @@ class GenerateQR extends React.Component {
     const that = this;
 
     if (that.props.xusers.length) {
-      const bound = that.props.xusers.length;
-      const duration = 3000;
-      let step = 300;
-      const started = new Date().getTime();
-      const timerRandom = () => {
-        setTimeout(() => {
-          if (new Date().getTime() - started < duration) {
-            const winner = that.props.xusers[Math.floor(Math.random() * bound)];
-            that.setState({ winner });
-            step -= 30;
-            timerRandom();
-          } else {
-            that.setState({ isFlipped: false });
-          }
-        }, step);
-      };
+      this.setState({...initialState}, () => {
+        const bound = that.props.xusers.length;
+        const duration = that.state.duration;
+        const started = new Date().getTime();
+        const timerRandom = () => {
+          setTimeout(() => {
+            const onGameTime = new Date().getTime() - started;
+            if (onGameTime < duration) {
+              const winner = that.props.xusers[Math.floor(Math.random() * bound)];
+              that.setState({ winner, step: onGameTime < 0.9 * duration ? Math.max(that.state.step - that.state.margin, 20) : Math.max(that.state.step + 2 * that.state.margin, 20) });
 
-      that.setState({ isFlipped: true });
+              timerRandom();
+            } else {
+              that.setState({ isFlipped: false });
+            }
+          }, that.state.step);
+        };
 
-      timerRandom();
+        that.setState({ isFlipped: true });
+        const winner = that.props.xusers[Math.floor(Math.random() * bound)];
+        that.setState({ winner }, timerRandom())
+      });
     }
   }
 
@@ -86,6 +94,9 @@ class GenerateQR extends React.Component {
     const {
       showForm,
     } = this.props;
+    let { step } = this.state;
+    step = step / 1000;
+
     // let winner = xusers.find(o => o.id === this.state.winner);
     const winner = this.state.winner;
 
@@ -94,12 +105,12 @@ class GenerateQR extends React.Component {
         -webkit-animation-name: spinner; 
         -webkit-animation-timing-function: linear; 
         -webkit-animation-iteration-count: infinite; 
-        -webkit-animation-duration: 0.5s; 
+        -webkit-animation-duration: ${step}s; 
         animation-name: spinner; 
         animation-timing-function: linear; 
         animation-iteration-count: infinite; 
-        animation-duration: 0.5s; 
-        -webkit-transform-style: preserve-3d; 
+        animation-duration: ${step}s; 
+        -webkit-transform-style: preserve-3d;
         -moz-transform-style: preserve-3d; 
         -ms-transform-style: preserve-3d; 
         transform-style: preserve-3d;
@@ -107,23 +118,23 @@ class GenerateQR extends React.Component {
         @-webkit-keyframes spinner { 
           from 
           { 
-              -webkit-transform: rotateY(0deg); 
+              -webkit-transform: rotateY(90deg); 
           } 
           to { 
-              -webkit-transform: rotateY(-360deg); 
+              -webkit-transform: rotateY(-270deg); 
           } 
         } 
         @keyframes spinner { 
           from { 
-              -moz-transform: rotateY(0deg); 
-              -ms-transform: rotateY(0deg); 
-              transform: rotateY(0deg); 
+              -moz-transform: rotateY(90deg); 
+              -ms-transform: rotateY(90deg); 
+              transform: rotateY(90deg); 
           } 
           to 
           { 
-              -moz-transform: rotateY(-360deg); 
-              -ms-transform: rotateY(-360deg); 
-              transform: rotateY(-360deg); 
+              -moz-transform: rotateY(-270deg); 
+              -ms-transform: rotateY(-270deg); 
+              transform: rotateY(-270deg); 
           } 
         }
       `}
@@ -133,18 +144,18 @@ class GenerateQR extends React.Component {
       <FormGroup show={showForm}>
         <div style={{ margin: 'auto', paddingTop: '20px' }}>
           {/* {winner && <QRCode size={512} value={winner.toString()}/>} */}
-          {winner && <ImageRotation src={winner.avatar} alt="" width={512} height={512} isFlipped={this.state.isFlipped} />}
+          {winner && <ImageRotation src={winner.avatar || '/assets/images/paid-rectangle-stamp-300.png'} alt="" width={512} height={512} isFlipped={this.state.isFlipped} />}
           {winner && !this.state.isFlipped && <h1 style={{ textAlign: 'center' }}>
             <a href={`https://www.facebook.com/${winner.facebook_id}`} target="_blank">{winner.nickname}</a>
           </h1>}
         </div>
 
-        <RaisedButton
+        {!this.state.isFlipped && <RaisedButton
           style={{ margin: 'auto', marginBottom: '50px' }}
           label={strings.form_mini_game_lucky_guy}
           primary
           onClick={event => this.doRandomXUser(event)}
-        />
+        />}
       </FormGroup>
     );
   }
