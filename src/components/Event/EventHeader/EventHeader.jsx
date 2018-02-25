@@ -3,17 +3,19 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 /* actions - helpers */
 import { toggleShowForm } from 'actions';
-import { toDateTimeString } from 'utils/time';
+import { toDateTimeString, renderDialog } from 'utils';
 import strings from 'lang';
+import Clubs from 'fxconstants/build/clubsObj.json';
 /* components */
-import Spinner from 'components/Spinner';
-import { IconTrophy } from 'components/Icons';
-import ShowFormToggle from 'components/Form/ShowFormToggle';
+import { FlatButton } from 'material-ui';
 import IconFingerprint from 'material-ui/svg-icons/action/fingerprint';
 import IconEdit from 'material-ui/svg-icons/editor/mode-edit';
 import IconSendNotification from 'material-ui/svg-icons/alert/add-alert';
-/* data */
-import Clubs from 'fxconstants/build/clubsObj.json';
+
+import Spinner from 'components/Spinner';
+import { IconTrophy } from 'components/Icons';
+import ShowFormToggle from 'components/Form/ShowFormToggle';
+import PackageCreateForm from 'components/Event/Forms/GenerateQR';
 /* css */
 import styled from 'styled-components';
 import constants from 'components/constants';
@@ -58,7 +60,7 @@ const Team = styled.div`
     }
 `;
 
-const MatchInfo = styled.div`
+const Match = styled.div`
     box-sizing: border-box;
     flex-basis: 33.33%;
     max-width: 33.33%;
@@ -69,6 +71,37 @@ const MatchInfo = styled.div`
     @media only screen and (max-width: 1023px) {
         flex-basis: 100%;
         max-width: 100%;
+    }
+    
+    .matchInfo {
+      margin: 0 20px;
+    
+      @media only screen and (max-width: 400px) {
+        margin: 0 10px;
+      }
+    
+      & span {
+        text-transform: uppercase;
+        display: block;
+      }
+    
+      & .duration {
+        font-size: 28px;
+    
+        @media only screen and (max-width: 400px) {
+          font-size: 24px;
+        }
+      }
+    
+      & .ended {
+        font-size: ${constants.fontSizeSmall};
+        color: ${constants.colorMutedLight};
+        margin-top: 3px;
+    
+        & > div {
+          display: inline-block;
+        }
+      }
     }
 `;
 
@@ -113,38 +146,6 @@ const EventInfo = styled.div`
         }
     }
 `;
-
-const Styled = styled.header`
-.gmde {
-  margin: 0 20px;
-
-  @media only screen and (max-width: 400px) {
-    margin: 0 10px;
-  }
-
-  & span {
-    text-transform: uppercase;
-    display: block;
-  }
-
-  & .duration {
-    font-size: 28px;
-
-    @media only screen and (max-width: 400px) {
-      font-size: 24px;
-    }
-  }
-
-  & .ended {
-    font-size: ${constants.fontSizeSmall};
-    color: ${constants.colorMutedLight};
-    margin-top: 3px;
-
-    & > div {
-      display: inline-block;
-    }
-  }
-}`;
 
 // const Score = styled.div`
 //     font-size: 48px;
@@ -194,8 +195,54 @@ class EventHeader extends React.Component {
     toggleShowFormSendNotification: PropTypes.func,
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      openDialog: false,
+    };
+
+    this.openRandomForm = this.openRandomForm.bind(this);
+    this.handleOpenDialog = this.handleOpenDialog.bind(this);
+    this.handleCloseDialog = this.handleCloseDialog.bind(this);
+  }
+
   componentDidMount() {
 
+  }
+
+  handleOpenDialog() {
+    this.setState({ openDialog: true });
+  }
+
+  handleCloseDialog() {
+    this.setState({ openDialog: false, dialogConstruct: {} });
+  }
+
+  openRandomForm() {
+    this.setState({
+      dialogConstruct: {
+        view: <PackageCreateForm
+          toggle={false}
+        />,
+        onRequestClose: this.handleCloseDialog,
+        modal: true,
+        contentStyle: {
+          width: '100%',
+          maxWidth: 'none',
+          overflow: 'hidden',
+        },
+        actions: [
+          <FlatButton
+            label="OK"
+            primary
+            keyboardFocused
+            onClick={this.handleCloseDialog}
+          />,
+        ],
+      },
+    }, () => {
+      this.handleOpenDialog();
+    });
   }
 
   render() {
@@ -235,17 +282,17 @@ class EventHeader extends React.Component {
       };
 
       return (
-        <Styled>
+        <div>
           <MatchWrapper>
             <Team>
               <VictorySection />
             </Team>
-            <MatchInfo>
+            <Match>
               <div>
                 <p><img src={Clubs[event.data.home] && Clubs[event.data.home].icon} alt="" width={128} height={128} /></p>
                 {/* <span className={"scoreHome"} style={{color: event.data.home_color}}>{"|||||||"}</span> */}
               </div>
-              <div className={'gmde'}>
+              <div className={'matchInfo'}>
                 <span style={{ fontSize: constants.fontSizeMedium }}>
                   {event.data.end_time_checkin * 1000 < Date.now() ? strings.match_ended : strings.match_ongoing}
                 </span>
@@ -260,7 +307,7 @@ class EventHeader extends React.Component {
                 <p><img src={Clubs[event.data.away] && Clubs[event.data.away].icon} alt="" width={128} height={128} /></p>
                 {/* <span className={"scoreAway"} style={{color: event.data.away_color}}>{"|||||||"}</span> */}
               </div>
-            </MatchInfo>
+            </Match>
             <EventInfo>
               <ul>
                 <li>
@@ -288,11 +335,19 @@ class EventHeader extends React.Component {
             <ShowFormToggle
               name={'generateQR'}
               show={showFormGenerateQR}
-              onClick={toggleShowFormGenerateQR}
+              onClick={this.openRandomForm}
               icon={<IconFingerprint />}
               text={strings.form_mini_game}
               textToggle={strings.form_mini_game_close}
             />
+            {/*<ShowFormToggle*/}
+              {/*name={'generateQR'}*/}
+              {/*show={showFormGenerateQR}*/}
+              {/*onClick={toggleShowFormGenerateQR}*/}
+              {/*icon={<IconFingerprint />}*/}
+              {/*text={strings.form_mini_game}*/}
+              {/*textToggle={strings.form_mini_game_close}*/}
+            {/*/>*/}
             {user && (userData.user_type === 1 || isOwner) &&
             <ShowFormToggle
               name={'editEvent'}
@@ -311,7 +366,9 @@ class EventHeader extends React.Component {
               textToggle={strings.form_send_notification_close}
             />}
           </ButtonWrapper>
-        </Styled>
+
+          {renderDialog(this.state.dialogConstruct, this.state.openDialog)}
+        </div>
       );
     }
     return <Spinner />;

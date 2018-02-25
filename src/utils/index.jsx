@@ -206,21 +206,25 @@ export const transformations = {
 
 export function renderDialog(dialogConstruct = {}, trigger) {
   const defaultDialogCons = {
-    title: 'Example Dialog',
+    title: null,
     actions: [],
     view: <h1>Welcome!</h1>,
     onRequestClose: () => { console.log('Do close dialog'); },
+    contentStyle: {},
+    modal: false,
   };
-  const { title, actions, view, onRequestClose } = Object.assign(defaultDialogCons, dialogConstruct);
+  const { title, actions, view, onRequestClose, modal, contentStyle } = Object.assign(defaultDialogCons, dialogConstruct);
+  // const { title, actions, view, onRequestClose, modal, contentStyle } = dialogConstruct;
 
   return (
     <Dialog
       title={title}
       actions={actions}
-      modal={false}
       open={trigger}
       onRequestClose={onRequestClose}
-      autoScrollBodyContent
+      // autoScrollBodyContent
+      modal={modal}
+      contentStyle={contentStyle}
     >
       {view}
     </Dialog>

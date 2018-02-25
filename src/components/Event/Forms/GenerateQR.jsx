@@ -4,21 +4,21 @@ import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 /* actions - helpers */
 import { toggleShowForm } from 'actions/dispatchForm';
+import strings from 'lang';
+import { Row, Col } from 'utils';
 /* components */
 import { RaisedButton } from 'material-ui';
-/* data */
-import strings from 'lang';
+import ReactCardFlip from 'react-card-flip';
 /* css */
-import {} from 'components/palette.css';
 import styled, { css } from 'styled-components';
-/* export */
-export const FORM_NAME_GENERATE_QR = 'generateQR';
+
+const FORM_NAME = 'generateQR';
 
 /* support functions */
 const setShowFormState = (props) => {
   if (Boolean(props.currentQueryString.substring(1)) !== props.showForm) {
     // If query string state has a filter, turn on the form
-    props.toggleShowForm(FORM_NAME_GENERATE_QR);
+    props.toggleShowForm(FORM_NAME);
   }
 };
 
@@ -30,29 +30,52 @@ const FormGroup = styled.div`
   transition: max-height 0.4s;
   height: 100vh;
   
-  ${props => (props.show ? css`
-      max-height: 100vh;
+  ${props => ((!props.toggle || props.show) ? css`
+      display: flex;
+      flex-direction: column;
   ` : css`
-      max-height: 0;
+      display: none;
   `)}
 `;
 
+const ListWinner = styled.div`
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  bottom: 50px;
+  height: 180px;
+  justify-content: flex-start;
+`;
+
+const Winner = styled(Col)`
+  text-align: center;
+  display: flex;
+  flex-direction: column-reverse;
+`;
+
 const initialState = {
-  winner: [],
-  duration: 10000,
-  step: 1000,
-  margin: 25,
+  winners: [],
+  winner: null,
+  prevWinner: null,
+  nextWinner: null,
+  duration: 4000,
+  step: 300,
+  margin: 60,
   isFlipped: false,
 };
 
 class GenerateQR extends React.Component {
   static propTypes = {
     showForm: PropTypes.bool,
+    callback: PropTypes.func,
+    toggle: PropTypes.bool,
   };
   constructor(props) {
     super(props);
     this.state = {
+      tries: 10,
       ...initialState,
+      isFlipping: false,
     };
     this.doRandomXUser = this.doRandomXUser.bind(this);
   }
@@ -64,8 +87,8 @@ class GenerateQR extends React.Component {
   doRandomXUser() {
     const that = this;
 
-    if (that.props.xusers.length) {
-      this.setState({...initialState}, () => {
+    if (that.props.xusers.length && that.state.tries > 0) {
+      this.setState({ ...initialState, isFlipping: true, tries: that.state.tries - 1 }, () => {
         const bound = that.props.xusers.length;
         const duration = that.state.duration;
         const started = new Date().getTime();
@@ -74,88 +97,92 @@ class GenerateQR extends React.Component {
             const onGameTime = new Date().getTime() - started;
             if (onGameTime < duration) {
               const winner = that.props.xusers[Math.floor(Math.random() * bound)];
-              that.setState({ winner, step: onGameTime < 0.9 * duration ? Math.max(that.state.step - that.state.margin, 20) : Math.max(that.state.step + 2 * that.state.margin, 20) });
-
-              timerRandom();
+              const nextState = {
+                isFlipped: !that.state.isFlipped,
+                step: onGameTime < 0.9 * duration ? Math.max(that.state.step - that.state.margin, 100) : Math.max(that.state.step + (that.state.margin * 2), 100),
+              };
+              if (that.state.isFlipped) {
+                nextState.nextWinner = winner;
+              } else {
+                nextState.prevWinner = winner;
+              }
+              that.setState(nextState, timerRandom());
             } else {
-              that.setState({ isFlipped: false });
+              const winners = this.state.winners;
+              winners.push(this.state.nextWinner);
+              that.setState({ isFlipping: false });
             }
           }, that.state.step);
         };
 
         that.setState({ isFlipped: true });
         const winner = that.props.xusers[Math.floor(Math.random() * bound)];
-        that.setState({ winner }, timerRandom())
+        that.setState({ prevWinner: winner }, timerRandom());
       });
     }
   }
 
   render() {
     const {
+      toggle = true,
       showForm,
+      browser,
     } = this.props;
+
+    const largeSize = browser.height / 3;
+    const smallSize = ((browser.width - 80) / 10) - 20;
+
     let { step } = this.state;
-    step = step / 1000;
+    step /= 500;
 
     // let winner = xusers.find(o => o.id === this.state.winner);
-    const winner = this.state.winner;
-
-    const ImageRotation = styled.img`
-      ${props => props.isFlipped && css`
-        -webkit-animation-name: spinner; 
-        -webkit-animation-timing-function: linear; 
-        -webkit-animation-iteration-count: infinite; 
-        -webkit-animation-duration: ${step}s; 
-        animation-name: spinner; 
-        animation-timing-function: linear; 
-        animation-iteration-count: infinite; 
-        animation-duration: ${step}s; 
-        -webkit-transform-style: preserve-3d;
-        -moz-transform-style: preserve-3d; 
-        -ms-transform-style: preserve-3d; 
-        transform-style: preserve-3d;
-        
-        @-webkit-keyframes spinner { 
-          from 
-          { 
-              -webkit-transform: rotateY(90deg); 
-          } 
-          to { 
-              -webkit-transform: rotateY(-270deg); 
-          } 
-        } 
-        @keyframes spinner { 
-          from { 
-              -moz-transform: rotateY(90deg); 
-              -ms-transform: rotateY(90deg); 
-              transform: rotateY(90deg); 
-          } 
-          to 
-          { 
-              -moz-transform: rotateY(-270deg); 
-              -ms-transform: rotateY(-270deg); 
-              transform: rotateY(-270deg); 
-          } 
-        }
-      `}
-  `;
+    const { prevWinner, nextWinner } = this.state;
 
     return (
-      <FormGroup show={showForm}>
-        <div style={{ margin: 'auto', paddingTop: '20px' }}>
+      <FormGroup toggle={toggle} showForm={showForm}>
+        <div style={{ height: largeSize, marginTop: 20 }}>
+          <ReactCardFlip
+            flipSpeedBackToFront={step}
+            flipSpeedFrontToBack={step}
+            isFlipped={this.state.isFlipped}
+            infinite
+          >
+            <div key="back">
+              <img src={prevWinner && prevWinner.avatar} alt="" width={largeSize} height={largeSize} />
+            </div>
+            <div key="front">
+              <img src={nextWinner && nextWinner.avatar} alt="" width={largeSize} height={largeSize} />
+            </div>
+          </ReactCardFlip>
+        </div>
+
+        <div>
           {/* {winner && <QRCode size={512} value={winner.toString()}/>} */}
-          {winner && <ImageRotation src={winner.avatar || '/assets/images/paid-rectangle-stamp-300.png'} alt="" width={512} height={512} isFlipped={this.state.isFlipped} />}
-          {winner && !this.state.isFlipped && <h1 style={{ textAlign: 'center' }}>
-            <a href={`https://www.facebook.com/${winner.facebook_id}`} target="_blank">{winner.nickname}</a>
+          {nextWinner && !this.state.isFlipping && <h1 style={{ textAlign: 'center' }}>
+            <a href={`https://www.facebook.com/${nextWinner.facebook_id}`} target="_blank">{nextWinner.nickname}</a>
           </h1>}
         </div>
 
-        {!this.state.isFlipped && <RaisedButton
-          style={{ margin: 'auto', marginBottom: '50px' }}
-          label={strings.form_mini_game_lucky_guy}
-          primary
-          onClick={event => this.doRandomXUser(event)}
-        />}
+        <Row>
+          {!this.state.isFlipping && <RaisedButton
+            style={{ margin: 'auto', marginBottom: 20, marginTop: 20 }}
+            label={strings.form_mini_game_lucky_guy}
+            primary
+            onClick={event => this.doRandomXUser(event)}
+            disabled={Boolean(this.state.tries <= 0)}
+          />}
+        </Row>
+
+        <ListWinner>
+          {this.state.winners.map(o => (
+            <Winner flex={1} >
+              <div style={{ textAlign: 'center', margin: 10 }}>
+                {browser.greaterThan.medium && <h4 style={{ textAlign: 'center' }}>{o.nickname}</h4>}
+                <img src={o.avatar} alt="" width={smallSize} height={smallSize} />
+              </div>
+            </Winner>
+          ))}
+        </ListWinner>
       </FormGroup>
     );
   }
@@ -166,6 +193,7 @@ const mapStateToProps = state => ({
   currentQueryString: window.location.search,
   loading: state.app.event.loading,
   xusers: state.app.eventXUsers.data.filter(o => o.event_status === 'checkin'),
+  browser: state.browser,
 });
 
 const mapDispatchToProps = dispatch => ({

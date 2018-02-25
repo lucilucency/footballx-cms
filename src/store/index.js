@@ -17,6 +17,7 @@ const reducer = combineReducers({
   browser: createResponsiveStateReducer(null, {
     extraFields: () => ({
       width: window.innerWidth,
+      height: window.innerHeight,
     }),
   }),
 });
