@@ -148,10 +148,10 @@ class GenerateQR extends React.Component {
             infinite
           >
             <div key="back">
-              <img src={prevWinner && prevWinner.avatar} alt="" width={largeSize} height={largeSize} />
+              <img src={nextWinner && nextWinner.avatar} alt="" width={largeSize} height={largeSize} />
             </div>
             <div key="front">
-              <img src={nextWinner && nextWinner.avatar} alt="" width={largeSize} height={largeSize} />
+              <img src={prevWinner && prevWinner.avatar} alt="" width={largeSize} height={largeSize} />
             </div>
           </ReactCardFlip>
         </div>
