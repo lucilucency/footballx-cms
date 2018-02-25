@@ -55,12 +55,11 @@ const Winner = styled(Col)`
 
 const initialState = {
   winners: [],
-  winner: null,
   prevWinner: null,
   nextWinner: null,
-  duration: 4000,
+  duration: 5000,
   step: 300,
-  margin: 60,
+  margin: 50,
   isFlipped: false,
 };
 
@@ -84,11 +83,21 @@ class GenerateQR extends React.Component {
     setShowFormState(this.props);
   }
 
+  componentWillUpdate(nextProps) {
+    if (this.props.event_id !== nextProps.event_id) {
+      this.clearState();
+    }
+  }
+
+  clearState() {
+    this.setState(initialState);
+  }
+
   doRandomXUser() {
     const that = this;
 
     if (that.props.xusers.length && that.state.tries > 0) {
-      this.setState({ ...initialState, isFlipping: true, tries: that.state.tries - 1 }, () => {
+      this.setState({ ...initialState, isFlipping: true }, () => {
         const bound = that.props.xusers.length;
         const duration = that.state.duration;
         const started = new Date().getTime();
@@ -99,7 +108,7 @@ class GenerateQR extends React.Component {
               const winner = that.props.xusers[Math.floor(Math.random() * bound)];
               const nextState = {
                 isFlipped: !that.state.isFlipped,
-                step: onGameTime < 0.9 * duration ? Math.max(that.state.step - that.state.margin, 100) : Math.max(that.state.step + (that.state.margin * 2), 100),
+                step: onGameTime < 0.85 * duration ? Math.max(that.state.step - that.state.margin, 80) : Math.max(that.state.step + (that.state.margin * 2), 80),
               };
               if (that.state.isFlipped) {
                 nextState.nextWinner = winner;
@@ -108,9 +117,19 @@ class GenerateQR extends React.Component {
               }
               that.setState(nextState, timerRandom());
             } else {
-              const winners = this.state.winners;
-              winners.push(this.state.nextWinner);
-              that.setState({ isFlipping: false });
+              that.setState({ isFlipping: false }, () => {
+                const winners = this.state.winners;
+                if (winners.map(o => o.facebook_id).indexOf(this.state.nextWinner.facebook_id) === -1) {
+                  winners.push(this.state.nextWinner);
+                  this.setState({ winners, tries: that.state.tries - 1 });
+                }
+              });
+
+              // if (this.state.winners.map(o => o.facebook_id).indexOf(this.state.nextWinner.facebook_id) === -1) {
+              //
+              // } else {
+              //   timerRandom();
+              // }
             }
           }, that.state.step);
         };
@@ -148,10 +167,10 @@ class GenerateQR extends React.Component {
             infinite
           >
             <div key="back">
-              <img src={nextWinner && nextWinner.avatar} alt="" width={largeSize} height={largeSize} />
+              <img src={prevWinner && prevWinner.avatar} alt="" width={largeSize} height={largeSize} />
             </div>
             <div key="front">
-              <img src={prevWinner && prevWinner.avatar} alt="" width={largeSize} height={largeSize} />
+              <img src={nextWinner && nextWinner.avatar} alt="" width={largeSize} height={largeSize} />
             </div>
           </ReactCardFlip>
         </div>

@@ -15,7 +15,7 @@ import IconSendNotification from 'material-ui/svg-icons/alert/add-alert';
 import Spinner from 'components/Spinner';
 import { IconTrophy } from 'components/Icons';
 import ShowFormToggle from 'components/Form/ShowFormToggle';
-import PackageCreateForm from 'components/Event/Forms/GenerateQR';
+import GenerateQRForm from 'components/Event/Forms/GenerateQR';
 /* css */
 import styled from 'styled-components';
 import constants from 'components/constants';
@@ -221,8 +221,9 @@ class EventHeader extends React.Component {
   openRandomForm() {
     this.setState({
       dialogConstruct: {
-        view: <PackageCreateForm
+        view: <GenerateQRForm
           toggle={false}
+          eventId={this.props.event.event_id}
         />,
         onRequestClose: this.handleCloseDialog,
         modal: true,
