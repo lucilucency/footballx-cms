@@ -117,7 +117,7 @@ class GenerateQR extends React.Component {
               }
               that.setState(nextState, timerRandom());
             } else {
-              that.setState({ isFlipping: false }, () => {
+              that.setState({ isFlipping: false, isFlipped: !this.state.isFlipped }, () => {
                 const winners = this.state.winners;
                 if (winners.map(o => o.facebook_id).indexOf(this.state.nextWinner.facebook_id) === -1) {
                   winners.push(this.state.nextWinner);
@@ -177,9 +177,9 @@ class GenerateQR extends React.Component {
 
         <div>
           {/* {winner && <QRCode size={512} value={winner.toString()}/>} */}
-          {nextWinner && !this.state.isFlipping && <h1 style={{ textAlign: 'center' }}>
+          {nextWinner && !this.state.isFlipping && <h2 style={{ textAlign: 'center' }}>
             <a href={`https://www.facebook.com/${nextWinner.facebook_id}`} target="_blank">{nextWinner.nickname}</a>
-          </h1>}
+          </h2>}
         </div>
 
         <Row>
