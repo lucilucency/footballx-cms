@@ -38,6 +38,20 @@ const FormGroup = styled.div`
   `)}
 `;
 
+const H2 = styled.h1`
+  text-align: center;
+  
+  ${props => (props.show ? css`
+    opacity: 1;
+    transform: scale(1);
+    transition: all 0.3s ease-in-out 0.1s;
+` : css`
+    opacity: 0;
+    transform: scale(10);
+    transition: all 0.3s ease-in-out 0.2s;
+`)}
+`;
+
 const ListWinner = styled.div`
   display: flex;
   flex-direction: row;
@@ -75,7 +89,9 @@ class GenerateQR extends React.Component {
       tries: 10,
       ...initialState,
       isFlipping: false,
+      play: false,
     };
+
     this.doRandomXUser = this.doRandomXUser.bind(this);
   }
 
@@ -84,10 +100,12 @@ class GenerateQR extends React.Component {
   }
 
   componentWillUpdate(nextProps) {
-    if (this.props.event_id !== nextProps.event_id) {
+    if (this.props.eventId !== nextProps.eventId) {
       this.clearState();
     }
   }
+
+
 
   clearState() {
     this.setState(initialState);
@@ -108,7 +126,7 @@ class GenerateQR extends React.Component {
               const winner = that.props.xusers[Math.floor(Math.random() * bound)];
               const nextState = {
                 isFlipped: !that.state.isFlipped,
-                step: onGameTime < 0.85 * duration ? Math.max(that.state.step - that.state.margin, 80) : Math.max(that.state.step + (that.state.margin * 2), 80),
+                step: onGameTime < 0.8 * duration ? Math.max(that.state.step - that.state.margin, 100) : Math.max(that.state.step + (that.state.margin * 2), 100),
               };
               if (that.state.isFlipped) {
                 nextState.nextWinner = winner;
@@ -117,19 +135,17 @@ class GenerateQR extends React.Component {
               }
               that.setState(nextState, timerRandom());
             } else {
-              that.setState({ isFlipping: false, isFlipped: !this.state.isFlipped }, () => {
-                const winners = this.state.winners;
-                if (winners.map(o => o.facebook_id).indexOf(this.state.nextWinner.facebook_id) === -1) {
-                  winners.push(this.state.nextWinner);
-                  this.setState({ winners, tries: that.state.tries - 1 });
-                }
-              });
-
-              // if (this.state.winners.map(o => o.facebook_id).indexOf(this.state.nextWinner.facebook_id) === -1) {
-              //
-              // } else {
-              //   timerRandom();
-              // }
+              this.setState({ isFlipped: !this.state.isFlipped }, setTimeout(() => {
+                that.setState({ isFlipping: false }, () => {
+                  const winners = this.state.winners;
+                  if (winners.map(o => o.facebook_id).indexOf(this.state.nextWinner.facebook_id) === -1) {
+                    setTimeout(() => {
+                      winners.push(this.state.nextWinner);
+                      this.setState({ winners, tries: that.state.tries - 1 });
+                    }, 1000);
+                  }
+                });
+              }, 1000));
             }
           }, that.state.step);
         };
@@ -177,9 +193,9 @@ class GenerateQR extends React.Component {
 
         <div>
           {/* {winner && <QRCode size={512} value={winner.toString()}/>} */}
-          {nextWinner && !this.state.isFlipping && <h2 style={{ textAlign: 'center' }}>
+          {nextWinner && <H2 show={!this.state.isFlipping}>
             <a href={`https://www.facebook.com/${nextWinner.facebook_id}`} target="_blank">{nextWinner.nickname}</a>
-          </h2>}
+          </H2>}
         </div>
 
         <Row>

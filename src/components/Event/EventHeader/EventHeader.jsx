@@ -204,10 +204,31 @@ class EventHeader extends React.Component {
     this.openRandomForm = this.openRandomForm.bind(this);
     this.handleOpenDialog = this.handleOpenDialog.bind(this);
     this.handleCloseDialog = this.handleCloseDialog.bind(this);
+
+    this.url = 'http://streaming.tdiradio.com:8000/house.mp3';
+    // this.url = '/assets/audio/XoSoMienBacNhacChuong-VA-4937390.mp3';
+    this.audio = new Audio(this.url);
+    this.togglePlay = this.togglePlay.bind(this);
   }
 
   componentDidMount() {
 
+  }
+
+  togglePlay() {
+    this.setState({ play: !this.state.play }, () => {
+      if (this.state.play) {
+        const playPromise = this.audio.play();
+        if (playPromise !== null) {
+          playPromise.catch(() => { this.audio.play(); });
+        }
+      } else {
+        const playPromise = this.audio.pause();
+        if (playPromise !== null) {
+          playPromise.catch(() => { this.audio.pause(); });
+        }
+      }
+    });
   }
 
   handleOpenDialog() {
@@ -215,10 +236,13 @@ class EventHeader extends React.Component {
   }
 
   handleCloseDialog() {
+    // this.togglePlay();
     this.setState({ openDialog: false, dialogConstruct: {} });
   }
 
   openRandomForm() {
+    this.togglePlay();
+
     this.setState({
       dialogConstruct: {
         view: <GenerateQRForm
