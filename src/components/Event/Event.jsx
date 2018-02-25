@@ -9,7 +9,6 @@ import {
 import EventHeader from './EventHeader';
 import pages from './Pages/EventPages';
 import EditEventForm from './Forms/EditEvent';
-import GenerateQRForm from './Forms/GenerateQR';
 import SendNotificationForm from './Forms/SendNotification';
 
 class RequestLayer extends React.Component {
@@ -55,7 +54,6 @@ class RequestLayer extends React.Component {
         <EventHeader
           event={this.props.event}
         />
-        <GenerateQRForm />
         <EditEventForm event={this.props.event.data} />
         <SendNotificationForm event={this.props.event.data} />
         <TabBar

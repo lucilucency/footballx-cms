@@ -105,25 +105,25 @@ class GenerateQR extends React.Component {
     }
   }
 
-
-
   clearState() {
     this.setState(initialState);
   }
 
   doRandomXUser() {
     const that = this;
+    const winnerIds = this.state.winners.length ? this.state.winners.map(o => o.id) : [];
+    const dataSource = that.props.xusers.filter(o => winnerIds.indexOf(o.id) === -1);
 
-    if (that.props.xusers.length && that.state.tries > 0) {
+    if (dataSource.length && that.state.tries > 0) {
       this.setState({ ...initialState, isFlipping: true }, () => {
-        const bound = that.props.xusers.length;
+        const bound = dataSource.length;
         const duration = that.state.duration;
         const started = new Date().getTime();
         const timerRandom = () => {
           setTimeout(() => {
             const onGameTime = new Date().getTime() - started;
             if (onGameTime < duration) {
-              const winner = that.props.xusers[Math.floor(Math.random() * bound)];
+              const winner = dataSource[Math.floor(Math.random() * bound)];
               const nextState = {
                 isFlipped: !that.state.isFlipped,
                 step: onGameTime < 0.8 * duration ? Math.max(that.state.step - that.state.margin, 100) : Math.max(that.state.step + (that.state.margin * 2), 100),
@@ -209,7 +209,7 @@ class GenerateQR extends React.Component {
         </Row>
 
         <ListWinner>
-          {this.state.winners.map(o => (
+          {this.state.winners.filter(o => o).map(o => (
             <Winner flex={1} >
               <div style={{ textAlign: 'center', margin: 10 }}>
                 {browser.greaterThan.medium && <h4 style={{ textAlign: 'center' }}>{o.nickname}</h4>}

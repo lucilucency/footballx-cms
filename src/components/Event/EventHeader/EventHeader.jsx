@@ -241,7 +241,7 @@ class EventHeader extends React.Component {
   }
 
   openRandomForm() {
-    this.togglePlay();
+    // this.togglePlay();
 
     this.setState({
       dialogConstruct: {
@@ -278,7 +278,6 @@ class EventHeader extends React.Component {
       showFormEditEvent,
       toggleShowFormEditEvent,
       showFormGenerateQR,
-      toggleShowFormGenerateQR,
       showFormSendNotification,
       toggleShowFormSendNotification,
     } = this.props;
@@ -365,14 +364,6 @@ class EventHeader extends React.Component {
               text={strings.form_mini_game}
               textToggle={strings.form_mini_game_close}
             />
-            {/*<ShowFormToggle*/}
-              {/*name={'generateQR'}*/}
-              {/*show={showFormGenerateQR}*/}
-              {/*onClick={toggleShowFormGenerateQR}*/}
-              {/*icon={<IconFingerprint />}*/}
-              {/*text={strings.form_mini_game}*/}
-              {/*textToggle={strings.form_mini_game_close}*/}
-            {/*/>*/}
             {user && (userData.user_type === 1 || isOwner) &&
             <ShowFormToggle
               name={'editEvent'}
