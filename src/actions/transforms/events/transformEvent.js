@@ -5,6 +5,7 @@ function transformEvent(o) {
 
   const eventObj = event ? {
     event_id: event.id,
+    group_id: event.group_id,
     start_time_register: event.start_time_register,
     end_time_register: event.end_time_register,
     start_time_checkin: event.start_time_checkin,

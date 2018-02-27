@@ -4,6 +4,7 @@ import Table from 'components/Table';
 import { Row, toDateString } from 'utils';
 import strings from 'lang';
 import { RaisedButton } from 'material-ui';
+import Container from 'components/Container';
 import FileInput from './FileInput';
 
 /* generate an array of column objects */
@@ -90,9 +91,10 @@ class SheetReader extends React.Component {
           gender: row[7],
           size: row[8],
           joined_year: row[9],
-          is_purchase: Boolean(row[10].trim()),
+          is_purchase: Boolean(row[10]),
           membership_code: row[11],
         }));
+        console.log(data);
         this.setState({ data, cols: makeCols(ws['!ref']) });
       } else {
         this.setState({ errorText: 'Invalid format!' });
@@ -117,6 +119,7 @@ class SheetReader extends React.Component {
 
       {this.state.data.length ? <Table
         paginated
+        pageLength={30}
         columns={[{
           displayName: fileHeader.name,
           field: 'name',
@@ -147,6 +150,9 @@ class SheetReader extends React.Component {
         }, {
           displayName: fileHeader.is_purchase,
           field: 'is_purchase',
+          displayFn: (row, col, field) => (<div>
+            {field && <img src="/assets/images/paid-rectangle-stamp-300.png" alt="" width={50} />}
+          </div>),
         }, {
           displayName: fileHeader.membership_code,
           field: 'membership_code',
@@ -154,8 +160,8 @@ class SheetReader extends React.Component {
         data={this.state.data}
       /> : null}
 
-      <Row style={{flexDirection: 'flex-reverse'}}>
-        {this.state.data.length !== 0 && <RaisedButton onClick={this.uploadFile} label={'Upload'} style={{float: 'left'}}/>}
+      <Row style={{ flexDirection: 'flex-reverse' }}>
+        {this.state.data.length !== 0 && <RaisedButton onClick={this.uploadFile} label={'Upload'} style={{ float: 'left' }}/>}
       </Row>
     </div>);
   }

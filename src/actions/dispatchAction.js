@@ -197,6 +197,16 @@ export function fxActionGet(type, path, params = {}, transform) {
         })
         .catch((err) => {
           console.log(`Error in ${type}`);
+          console.log(err);
+          
+          if (err.message === 'Unauthorized') {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('account_user');
+            localStorage.removeItem('account_hotspot');
+            window.location.href = '/login';
+            return null;
+          }
+
           return dispatch(dispatchFail(err.response ? err.response.body.message : err));
         });
     };

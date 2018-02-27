@@ -45,6 +45,9 @@ export const StyledBody = styled.div`
     & td {
       padding-left: 8px !important;
       padding-right: 8px !important;
+      max-width: 20vh;
+      text-overflow: ellipsis;
+      white-space: normal !important;
 
       &:first-child {
         padding-left: 24px !important;

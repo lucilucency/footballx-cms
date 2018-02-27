@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -27,12 +28,11 @@ const eventXUsersColumns = (user, event) => [{
   field: 'nickname',
   displayFn: transformations.th_xuser_image,
   sortFn: true,
-}, user.user_type === 1 && {
+}, false && user.user_type === 1 && {
   displayName: '',
   field: 'facebook_id',
   displayFn: (row, col, field) => (<div>
     <a href={`https://www.facebook.com/${field}`} target="_blank"><IconFacebook width={24} height={24} /></a>
-
   </div>),
 }, {
   displayName: strings.th_status,
@@ -46,14 +46,13 @@ const eventXUsersColumns = (user, event) => [{
     }
 
     const Status = styled.div`
-            ${props => props.status === 'checkin' && css`
-                filter: drop-shadow(0 0 5px ${color});
-            `}
-            ${props => props.status === 'registered' && css`
-                color: ${constants.colorMuted}
-            `}
-            
-        `;
+      ${props => props.status === 'checkin' && css`
+          filter: drop-shadow(0 0 5px ${color});
+      `}
+      ${props => props.status === 'registered' && css`
+          color: ${constants.colorMuted}
+      `}
+    `;
     Status.propTypes = { status: PropTypes.string };
 
     return (<div>
@@ -67,6 +66,9 @@ const eventXUsersColumns = (user, event) => [{
 const OverviewContainer = styled.div`
     display: flex;
     flex-wrap: wrap;
+    @media only screen and (max-width: 1080px) {
+      flex-direction: column-reverse;
+    }
 `;
 
 const XUsersContainer = styled.div`
@@ -129,11 +131,11 @@ class AllEvents extends React.Component {
             error={false}
           >
             <Table
-              paginated
               columns={eventXUsersColumns(user, event.data)}
               data={xusers}
               loading={eventXUsers.loading}
               error={false}
+              paginated={false}
               pageLength={30}
             />
           </Container>

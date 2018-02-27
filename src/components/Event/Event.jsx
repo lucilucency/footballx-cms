@@ -7,7 +7,7 @@ import {
   getEvent, getEventXUsers,
 } from 'actions';
 import EventHeader from './EventHeader';
-import pages from './Pages/EventPages';
+import pages from './Pages/index';
 import EditEventForm from './Forms/EditEvent';
 import SendNotificationForm from './Forms/SendNotification';
 
@@ -35,15 +35,14 @@ class RequestLayer extends React.Component {
   }
 
   render() {
-    if (!this.props.user) {
+    const { event, user, match } = this.props;
+    const userData = user.user;
+    if (!userData) {
       this.props.history.push('/login');
       return false;
     }
 
-    const { match, event } = this.props;
-
     const eventId = match.params.eventId || event.data.event_id;
-
     const info = match.params.info || 'overview';
     const page = pages(eventId).find(el => el.key.toLowerCase() === info);
     const pageTitle = page ? `${eventId} - ${page.name}` : eventId;
@@ -65,7 +64,8 @@ class RequestLayer extends React.Component {
       </div>);
     }
 
-    return false;
+    this.props.history.push('/');
+    return <span>NOT PERMISSION</span>;
   }
 }
 

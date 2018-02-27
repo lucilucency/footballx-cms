@@ -92,22 +92,12 @@ class RequestLayer extends React.Component {
     // const subInfo = routeParams.subInfo;
 
     return (<div>
-      <Row>
-        {/* memberships list area */}
-        <Col flex={6}>
-          <Container title={strings.title_group_memberships} error={props.groupMembers.error} loading={this.props.groupMembers.loading}>
-            <Table paginated columns={MembershipsTableCols(props.browser)} data={this.props.groupMembers.data} error={false} loading={this.props.groupMembers.loading} />
-          </Container>
-        </Col>
-      </Row>
-      <Row>
-        {/* import memberships area */}
-        <Col flex={6}>
-          <Container title={strings.title_group_import_membership}>
-            <XUsersImportForm groupId={this.props.groupId} />
-          </Container>
-        </Col>
-      </Row>
+      <Container title={strings.title_group_memberships} error={props.groupMembers.error} loading={this.props.groupMembers.loading}>
+        <Table paginated columns={MembershipsTableCols(props.browser)} data={this.props.groupMembers.data} error={false} loading={this.props.groupMembers.loading} />
+      </Container>
+      <Container title={strings.title_group_import_membership}>
+        <XUsersImportForm groupId={this.props.groupId} />
+      </Container>
     </div>);
   }
 }

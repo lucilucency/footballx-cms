@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 /* data */
 import strings from 'lang';
 import Clubs from 'fxconstants/build/clubsObj.json';
+import ClubsShortname from 'fxconstants/build/clubsObjShortName.json';
 /* components */
 import { Dialog } from 'material-ui';
 import { TableLink } from 'components/Table';
@@ -167,23 +168,22 @@ export const transformations = {
   th_event_club_vs_club_image: row => (
     <div>
       <Link to={`/event/${row.event_id}`}>
-        <span style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
           <TableClubImage
             image={Clubs[row.home] && Clubs[row.home].icon}
-            title={<span>{Clubs[row.home] && Clubs[row.home].name}</span>}
+            title={<span>{Clubs[row.home] && Clubs[row.home].short_name}</span>}
             // subtitle={Clubs[row.home] && Clubs[row.home].name}
-            clubName={Clubs[row.home] && Clubs[row.home].name}
+            clubName={Clubs[row.home] && Clubs[row.home].short_name}
           />
-          <span style={{ marginTop: 5 }}>vs</span>
+          {/*<span style={{ margin: 5 }}>vs</span>*/}
           <TableClubImage
             image={Clubs[row.away] && Clubs[row.away].icon}
-            title={<span>{Clubs[row.away] && Clubs[row.away].name}</span>}
+            title={<span>{Clubs[row.away] && Clubs[row.away].short_name}</span>}
             // subtitle={Clubs[row.away] && Clubs[row.away].name}
-            clubName={Clubs[row.away] && Clubs[row.away].name}
+            clubName={Clubs[row.away] && Clubs[row.away].short_name}
           />
-        </span>
+        </div>
       </Link>
-
     </div>
   ),
   th_xuser_image: (row, col, field) => (

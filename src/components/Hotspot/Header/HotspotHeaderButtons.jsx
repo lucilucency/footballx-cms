@@ -32,33 +32,33 @@ class HotspotHeaderButtons extends React.Component {
     } = this.props;
 
     const ButtonContainer = styled.div`
-            display: flex;
-            flex-direction: row;
-            flex-wrap: nowrap;
-            font-size: 14px;
-        
-            @media only screen and (max-width: 660px) {
-                justify-content: center;
-        
-                & a {
-                    min-width: 50px !important;
-                }
-        
-                & button {
-                    min-width: 50px !important;
-                }
-        
-                & * {
-                    font-size: 0 !important;
-                    padding: 0 !important;
-                    margin: auto !important;
-                }
-        
-                & span {
-                    margin: 0 !important;
-                }
-            }
-        `;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      font-size: 14px;
+  
+      @media only screen and (max-width: 660px) {
+        justify-content: center;
+
+        & a {
+          min-width: 50px !important;
+        }
+
+        & button {
+          min-width: 50px !important;
+        }
+
+        & * {
+          font-size: 0 !important;
+          padding: 0 !important;
+          margin: auto !important;
+        }
+
+        & span {
+          margin: 0 !important;
+        }
+      }
+    `;
 
     return (<ButtonContainer>
       <FlatButton

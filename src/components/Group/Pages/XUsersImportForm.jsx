@@ -101,7 +101,6 @@ class XUsersImportForm extends React.Component {
         },
       }),
     }, () => {
-      window.abc = data;
       this.props.submitFn(props.groupId, { data: JSON.stringify(data), expire_date: 1538352000 }, data).then((results) => {
         const actionName = <div>{`Imported ${data.length} new members`}</div>;
         const resultsReport = [];

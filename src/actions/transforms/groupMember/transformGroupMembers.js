@@ -1,7 +1,7 @@
 import transformGroupMember from './transformGroupMember';
 
-function transformGroupMembers(data) {
-  return data.map(o => transformGroupMember(o));
+function transformGroupMembers(dataSource) {
+  return dataSource.filter(o => o.data).map(o => transformGroupMember(o));
 }
 
 export default transformGroupMembers;
