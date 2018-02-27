@@ -200,7 +200,7 @@ class CreateEventForm extends React.Component {
       seats: event.seats.value,
       price: event.price.value,
       discount: event.discount.value,
-      deposit: event.deposit.value,
+      deposit: event.deposit.value || 0,
       is_charged: true,
       notes: event.notes.value || '',
 
@@ -852,6 +852,7 @@ class CreateEventForm extends React.Component {
       multiLine
       rows={1}
       rowsMax={4}
+      value={this.state.event.notes.value}
       onChange={(event, notes) => this.setState({
         event: update(this.state.event, {
           notes: { $set: { text: notes, value: notes } },
