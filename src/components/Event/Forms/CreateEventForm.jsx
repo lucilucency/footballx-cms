@@ -22,8 +22,8 @@ import {
   MenuItem,
   RaisedButton,
   TextField,
-  SelectField,
 } from 'material-ui';
+import Checkbox from 'material-ui/Checkbox';
 import IconFail from 'material-ui/svg-icons/content/clear';
 import IconSuccess from 'material-ui/svg-icons/navigation/check';
 import DateTimePicker from 'material-ui-datetimepicker';
@@ -48,6 +48,8 @@ const initialState = props => ({
     match: props.matchId ? { value: props.matchId } : {},
     price: {},
     discount: {},
+    deposit: {},
+    is_charged: { value: true },
     seats: {},
     start_time_register: {},
     end_time_register: {},
@@ -164,6 +166,8 @@ class CreateEventForm extends React.Component {
       group_id: event.group.value,
       price: event.price.value,
       discount: event.discount.value,
+      deposit: event.deposit.value,
+      is_charged: true,
       seats: event.seats.value,
       start_time_register: event.start_time_register.value,
       end_time_register: event.end_time_register.value,
@@ -218,8 +222,6 @@ class CreateEventForm extends React.Component {
         });
         const eventData = this.getFormData();
         eventData.hotspot_id = o;
-        console.log(eventData);
-
         return doCreateEvent(eventData, this.state.payload);
       })).then((results) => {
         const resultsReport = event.hotspots.map((hotspotId, index) => {
@@ -263,12 +265,12 @@ class CreateEventForm extends React.Component {
         match: { $set: o },
         home_color: {
           $set: {
-            value: Clubs[o.home.club_id] && Clubs[o.home.club_id].home_color,
+            value: (Clubs[o.home.club_id] && Clubs[o.home.club_id].home_color) || '#ffffff',
           },
         },
         away_color: {
           $set: {
-            value: Clubs[o.away.club_id] && Clubs[o.away.club_id].away_color,
+            value: (Clubs[o.away.club_id] && Clubs[o.away.club_id].away_color) || '#000000',
           },
         },
         free_folk_color: {
@@ -278,25 +280,25 @@ class CreateEventForm extends React.Component {
         },
         start_time_register: {
           $set: {
-            text: moment(matchStartTime * 1000),
+            text: toDateTimeString(moment(matchStartTime * 1000)),
             value: matchStartTime,
           },
         },
         end_time_register: {
           $set: {
-            text: moment(matchEndTime * 1000),
+            text: toDateTimeString(moment(matchEndTime * 1000)),
             value: matchEndTime,
           },
         },
         start_time_checkin: {
           $set: {
-            text: moment(matchStartTime * 1000),
+            text: toDateTimeString(moment(matchStartTime * 1000)),
             value: matchStartTime,
           },
         },
         end_time_checkin: {
           $set: {
-            text: moment(matchEndTime * 1000),
+            text: toDateTimeString(moment(matchEndTime * 1000)),
             value: matchEndTime,
           },
         },
@@ -679,6 +681,50 @@ class CreateEventForm extends React.Component {
       errorText={this.state.event.discount.error}
       fullWidth
     />);
+    const __renderDepositInput = () => (<AutoCompleteValidator
+      name="deposit"
+      hintText={strings.filter_deposit}
+      floatingLabelText={strings.filter_deposit}
+      searchText={this.state.event.deposit.text}
+      value={this.state.event.deposit.value}
+      dataSource={data.depositArr}
+      onUpdateInput={(text) => {
+        this.setState({
+          event: update(this.state.event, {
+            deposit: { $set: { value: text, text } },
+          }),
+        });
+      }}
+      onNewRequest={(o) => {
+        this.setState({
+          event: update(this.state.event, {
+            deposit: { $set: o },
+          }),
+        });
+      }}
+      filter={(searchText, key) => (key.indexOf(searchText) !== -1)}
+      openOnFocus
+      errorText={this.state.event.deposit.error}
+      fullWidth
+      validators={['required', 'minNumber:0']}
+      errorMessages={[strings.validate_is_required, util.format(strings.validate_minimum, 0)]}
+    />);
+    const __renderIsChargedCheckbox = () => (<Checkbox
+      label={strings.event_is_charged}
+      checked={this.state.event.is_charged.value}
+      // disabled={this.state.isClosed}
+      onCheck={() => {
+        this.setState({
+          event: update(this.state.event, {
+            is_charged: {
+              $set: {
+                value: !this.state.event.is_charged.value,
+              },
+            },
+          }),
+        });
+      }}
+    />);
     const __renderStartTimeRegisterPicker = () => (<DateTimePicker
       format="HH:mm, MM/DD/YYYY"
       hintText={strings.filter_date_start_register}
@@ -785,13 +831,15 @@ class CreateEventForm extends React.Component {
           {!this.props.hotspotId && this.props.dataSourceHotspots && __renderHotspotSelector()}
           {!this.props.matchId && this.props.dataSourceMatches && __renderMatchSelector()}
           {this.state.event.match.home && __renderMatchPreview()}
+          {!this.props.groupId && this.props.dataSourceGroups && __renderGroupSelector()}
           <Row>
             <Col flex={6}>{__renderSeatsInput()}</Col>
             <Col flex={6}>{__renderPriceInput()}</Col>
+            <Col flex={6}>{__renderDepositInput()}</Col>
+            <Col flex={6}>{__renderDiscountInput()}</Col>
           </Row>
           <Row>
-            <Col flex={6}>{!this.props.groupId && this.props.dataSourceGroups && __renderGroupSelector()}</Col>
-            <Col flex={6}>{__renderDiscountInput()}</Col>
+            <Col flex={6}>{__renderIsChargedCheckbox()}</Col>
           </Row>
           <Row>
             <Col flex={3}>{__renderStartTimeRegisterPicker()}</Col>

@@ -41,6 +41,23 @@ export const discountArr = [{
   value: 100,
 }];
 
+export const depositArr = [{
+  text: '0',
+  value: 0,
+}, {
+  text: '5000',
+  value: 5000,
+}, {
+  text: '10000',
+  value: 10000,
+}, {
+  text: '15000',
+  value: 15000,
+}, {
+  text: '20000',
+  value: 20000,
+}];
+
 export const seatsArr = [{
   text: '10',
   value: 10,

@@ -98,6 +98,7 @@
   "event_status_3": "Closed",
   "event_notes": "Notes",
   "event_versus": "VS",
+  "event_is_charged": "Charged",
 
   "error": "Error",
   "error_message": "Whoops! Something went wrong.",
@@ -144,6 +145,7 @@
   "filter_next_6_months": "Next 6 months",
   "filter_price": "Price",
   "filter_discount": "Discount (%)",
+  "filter_deposit": "Deposit",
   "filter_error": "Please select an item from the dropdown",
   "filter_hotspot": "Hotspot",
   "filter_club": "Club",
