@@ -25,14 +25,6 @@ import constants from '../../constants';
 /* export */
 export const FORM_NAME_SEND_NOTIFICATION = 'sendNotification';
 
-/* support functions */
-const setShowFormState = (props) => {
-  if (Boolean(props.currentQueryString.substring(1)) !== props.showForm) {
-    // If query string state has a filter, turn on the form
-    props.toggleShowForm();
-  }
-};
-
 const FormGroup = styled.div`
     padding: 0 15px;
     box-sizing: border-box;
@@ -82,7 +74,7 @@ class EventSendNotification extends React.Component {
   }
 
   componentDidMount() {
-    setShowFormState(this.props);
+    // setShowFormState(this.props);
   }
 
   closeDialog() {

@@ -3,24 +3,34 @@ function transformEvent(o) {
   const hotspot = o.hotspot;
   const match = o.match;
 
+  /* {
+    away_color:"#000000",
+    checkin_total:0,
+    created_user_id:3,
+    created_user_type:1,
+    deposit:5000,
+    end_time_checkin:1519851600,
+    end_time_register:1519851600,
+    free_folk_color:"#ffffff",
+    group_id:2,
+    home_color:"#ffffff",
+    hotspot_id:0,
+    id:192,
+    is_charged:true,
+    is_fan2friend_minigame:false,
+    match_id:0,
+    notes:"",
+    price:25000,
+    register_total:0,
+    seats:20,
+    start_time_checkin:1519721796,
+    start_time_register:1519721796,
+    status:1,
+  } */
+
   const eventObj = event ? {
+    ...event,
     event_id: event.id,
-    group_id: event.group_id,
-    start_time_register: event.start_time_register,
-    end_time_register: event.end_time_register,
-    start_time_checkin: event.start_time_checkin,
-    end_time_checkin: event.end_time_checkin,
-    seats: event.seats,
-    price: event.price,
-    discount: event.discount,
-    created_user_id: event.created_user_id,
-    created_user_type: event.created_user_type,
-    status: event.status,
-    notes: event.notes,
-    checkin_total: event.checkin_total,
-    register_total: event.register_total,
-    home_color: event.home_color,
-    away_color: event.away_color,
   } : {};
 
   const clubs = (match && match.cache_clubs) ? match.cache_clubs.split(',') : [];

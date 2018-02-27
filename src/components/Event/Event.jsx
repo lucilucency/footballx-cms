@@ -8,7 +8,7 @@ import {
 } from 'actions';
 import EventHeader from './EventHeader';
 import pages from './Pages/index';
-import EditEventForm from './Forms/EditEvent';
+import EditEventForm from './Forms/EditEvent2';
 import SendNotificationForm from './Forms/SendNotification';
 
 class RequestLayer extends React.Component {

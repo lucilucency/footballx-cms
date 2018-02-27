@@ -161,6 +161,7 @@
   "form_general_close": "Close",
   "form_general_success": "Success",
   "form_general_fail": "Fail",
+  "form_general_submit": "Submit",
 
 
   "form_create_event": "Create Event",

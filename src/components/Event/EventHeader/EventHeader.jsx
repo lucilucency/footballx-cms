@@ -162,7 +162,8 @@ const ButtonContainer = styled.div`
   flex-direction: row;
   flex-wrap: nowrap;
   font-size: 14px;
-
+  justify-content: center;
+  
   @media only screen and (max-width: 660px) {
     justify-content: center;
 
@@ -297,15 +298,17 @@ class EventHeader extends React.Component {
       return (
         <div>
           <MatchWrapper>
-            {eventData.group_id && <HostedGroup>
-              <div>
-                <small>HOSTED BY</small>
-                <span> {Groups[eventData.group_id] && Groups[eventData.group_id].short_name} </span>
-              </div>
-              <div>
-                <img src={Groups[eventData.group_id] && Groups[eventData.group_id].icon} alt="" />
-              </div>
-            </HostedGroup>}
+            <HostedGroup>
+              {eventData.group_id && <div>
+                <div>
+                  <small>HOSTED BY</small>
+                  <span> {Groups[eventData.group_id] && Groups[eventData.group_id].short_name} </span>
+                </div>
+                <div>
+                  <img src={Groups[eventData.group_id] && Groups[eventData.group_id].icon} alt="" />
+                </div>
+              </div>}
+            </HostedGroup>
             <Match>
               <div>
                 <p><img src={Clubs[eventData.home] && Clubs[eventData.home].icon} alt="" width={128} height={128} /></p>
@@ -387,13 +390,11 @@ class EventHeader extends React.Component {
 const mapStateToProps = state => ({
   user: state.app.metadata.data,
   showFormEditEvent: state.app.formEditEvent.show,
-  showFormGenerateQR: state.app.formGenerateQR.show,
   showFormSendNotification: state.app.formSendNotification.show,
 });
 
 const mapDispatchToProps = dispatch => ({
   toggleShowFormEditEvent: () => dispatch(toggleShowForm('editEvent')),
-  toggleShowFormGenerateQR: () => dispatch(toggleShowForm('generateQR')),
   toggleShowFormSendNotification: () => dispatch(toggleShowForm('sendNotification')),
 });
 

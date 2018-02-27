@@ -619,8 +619,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   toggleShowForm: formName => dispatch(toggleShowForm(formName)),
-  putEvent: (hotspotId, params) => dispatch(editEvent(hotspotId, params)),
-  deleteEvent: hotspotId => dispatch(deleteEvent(hotspotId)),
+  putEvent: (eventId, params) => dispatch(editEvent(eventId, params)),
+  deleteEvent: eventId => dispatch(deleteEvent(eventId)),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(EditEventForm));

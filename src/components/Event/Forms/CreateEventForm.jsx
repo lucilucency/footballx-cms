@@ -6,7 +6,7 @@ import update from 'immutability-helper';
 import PropTypes from 'prop-types';
 /* actions & helpers */
 import { toDateTimeString, Row, Col, bindAll } from 'utils';
-import { createEvent as defaultCreateEvent, getHotspots, getGroups, getMatchesLeague } from 'actions';
+import { createEvent as defaultCreateEvent, editEvent as defaultEditEvent, getHotspots, getGroups, getMatchesLeague } from 'actions';
 import util from 'util';
 /* data */
 import strings from 'lang';
@@ -56,6 +56,7 @@ const initialState = props => ({
     start_time_checkin: {},
     end_time_checkin: {},
     notes: {},
+    is_fan2friend_minigame: {},
   },
   disabled: true,
   cardLabelName: {},
@@ -71,9 +72,6 @@ class CreateEventForm extends React.Component {
     showForm: PropTypes.bool,
     loading: PropTypes.bool,
     callback: PropTypes.func,
-    // history: PropTypes.shape({
-    //   push: PropTypes.func,
-    // }),
 
     hotspotId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     groupId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
@@ -87,6 +85,7 @@ class CreateEventForm extends React.Component {
     dispatchGroups: PropTypes.func,
 
     toggle: PropTypes.bool,
+    isEditing: PropTypes.bool,
   };
 
   constructor(props) {
@@ -111,10 +110,6 @@ class CreateEventForm extends React.Component {
   }
 
   componentDidMount() {
-    // if (!this.props.matchId) getMatches(this.props, this);
-    // if (!this.props.hotspotId) getHotspots(this.props, this);
-    // if (!this.props.groupId) getGroups(this.props, this);
-
     if (!this.props.matchId) {
       const now = Date.now();
       const params = {
@@ -128,11 +123,49 @@ class CreateEventForm extends React.Component {
     if (!this.props.groupId) this.props.dispatchGroups();
   }
 
-  componentWillUpdate(nextProps) {
-    if (this.props.showForm !== nextProps.showForm) {
-      this.clearState();
+  componentWillReceiveProps(newProps) {
+    if (newProps.isEditing) {
+      this.setState({
+        event: {
+          event_id: newProps.event.event_id,
+          hotspots: newProps.event.hotspot_id ? [newProps.event.hotspot_id] : [],
+
+          group: newProps.event.group_id ? { value: newProps.event.group_id, text: newProps.dataSourceGroups.find(o => o.value === newProps.event.group_id).text } : {},
+          match: newProps.event.match_id ? { value: newProps.event.match_id } : {},
+          seats: { value: newProps.event.seats, text: newProps.event.seats && newProps.event.seats.toString() },
+          price: { value: newProps.event.price, text: newProps.event.price && newProps.event.price.toString() },
+          discount: { value: newProps.event.discount, text: newProps.event.discount && newProps.event.discount.toString() },
+          deposit: { value: newProps.event.deposit, text: newProps.event.deposit && newProps.event.deposit.toString() },
+          is_charged: { value: newProps.event.is_charged },
+          notes: { value: newProps.event.notes },
+
+          start_time_register: { value: newProps.event.start_time_register, text: toDateTimeString(moment(newProps.event.start_time_register * 1000)) },
+          end_time_register: { value: newProps.event.end_time_register, text: toDateTimeString(moment(newProps.event.end_time_register * 1000)) },
+          start_time_checkin: { value: newProps.event.start_time_checkin, text: toDateTimeString(moment(newProps.event.start_time_checkin * 1000)) },
+          end_time_checkin: { value: newProps.event.end_time_checkin, text: toDateTimeString(moment(newProps.event.end_time_checkin * 1000)) },
+
+          home_color: { value: newProps.event.home_color },
+          away_color: { value: newProps.event.away_color },
+          free_folk_color: { value: newProps.event.free_folk_color },
+
+          is_fan2friend_minigame: { value: newProps.event.is_fan2friend_minigame },
+
+          /* for fun??? */
+          created_user_id: { value: newProps.event.created_user_id },
+          created_user_type: { value: newProps.event.created_user_type },
+          status: { value: newProps.event.status },
+          checkin_total: { value: newProps.event.checkin_total },
+          register_total: { value: newProps.event.register_total },
+        },
+      });
     }
   }
+
+  // componentWillUpdate(nextProps) {
+    // if (this.props.showForm !== nextProps.showForm) {
+    //   this.clearState();
+    // }
+  // }
 
   onDragHomeColor(color) {
     this.setState({
@@ -164,19 +197,23 @@ class CreateEventForm extends React.Component {
     return {
       match_id: event.match.value,
       group_id: event.group.value,
+      seats: event.seats.value,
       price: event.price.value,
       discount: event.discount.value,
       deposit: event.deposit.value,
       is_charged: true,
-      seats: event.seats.value,
+      notes: event.notes.value || '',
+
       start_time_register: event.start_time_register.value,
       end_time_register: event.end_time_register.value,
       start_time_checkin: event.start_time_checkin.value,
       end_time_checkin: event.end_time_checkin.value,
-      notes: event.notes.value || '',
-      home_color: event.home_color && event.home_color.value,
-      away_color: event.away_color && event.away_color.value,
-      free_folk_color: event.free_folk_color && event.free_folk_color.value,
+
+      home_color: event.home_color.value,
+      away_color: event.away_color.value,
+      free_folk_color: event.free_folk_color.value,
+
+      is_fan2friend_minigame: event.is_fan2friend_minigame.value,
     };
   }
 
@@ -204,9 +241,14 @@ class CreateEventForm extends React.Component {
         show: { $set: true },
       }),
     }, () => {
-      const createEventFn = that.props.dispatch ? that.props.dispatch : that.props.defaultSubmitFunction;
+      const createEventFn = that.props.dispatch ? that.props.dispatch : that.props.defaultCreateFunction;
+      const editEventFn = that.props.dispatch ? that.props.dispatch : that.props.defaultEditFunction;
+
       const doCreateEvent = (eventData, payload) => new Promise((resolve) => {
         resolve(createEventFn(eventData, payload));
+      });
+      const doEditEvent = (eventId, eventData) => new Promise((resolve) => {
+        resolve(editEventFn(eventId, eventData));
       });
 
       event.hotspots && Promise.all(event.hotspots.map((o) => {
@@ -222,7 +264,7 @@ class CreateEventForm extends React.Component {
         });
         const eventData = this.getFormData();
         eventData.hotspot_id = o;
-        return doCreateEvent(eventData, this.state.payload);
+        return this.props.isEditing ? doEditEvent(this.state.event.event_id, eventData) : doCreateEvent(eventData, this.state.payload);
       })).then((results) => {
         const resultsReport = event.hotspots.map((hotspotId, index) => {
           const hotspotName = !that.props.hotspotId ? that.props.dataSourceHotspots.find(o => o.value === hotspotId).textShort : event.match.text;
@@ -711,7 +753,7 @@ class CreateEventForm extends React.Component {
     />);
     const __renderIsChargedCheckbox = () => (<Checkbox
       label={strings.event_is_charged}
-      checked={this.state.event.is_charged.value}
+      checked={this.state.event.is_charged.value || false}
       // disabled={this.state.isClosed}
       onCheck={() => {
         this.setState({
@@ -828,10 +870,10 @@ class CreateEventForm extends React.Component {
         {this.state.error && <Error text={this.state.error} />}
 
         <div>
-          {!this.props.hotspotId && this.props.dataSourceHotspots && __renderHotspotSelector()}
-          {!this.props.matchId && this.props.dataSourceMatches && __renderMatchSelector()}
-          {this.state.event.match.home && __renderMatchPreview()}
-          {!this.props.groupId && this.props.dataSourceGroups && __renderGroupSelector()}
+          {!this.props.isEditing && !this.props.hotspotId && this.props.dataSourceHotspots && __renderHotspotSelector()}
+          {!this.props.isEditing && !this.props.matchId && this.props.dataSourceMatches && __renderMatchSelector()}
+          {!this.props.isEditing && this.state.event.match.home && __renderMatchPreview()}
+          {!this.props.isEditing && !this.props.groupId && this.props.dataSourceGroups && __renderGroupSelector()}
           <Row>
             <Col flex={6}>{__renderSeatsInput()}</Col>
             <Col flex={6}>{__renderPriceInput()}</Col>
@@ -854,7 +896,7 @@ class CreateEventForm extends React.Component {
         </div>
         <RaisedButton
           type="submit"
-          label={strings.form_create_event}
+          label={strings.form_general_submit}
         />
       </ValidatorForm>
 
@@ -902,7 +944,7 @@ class CreateEventForm extends React.Component {
 
 const mapStateToProps = state => ({
   currentQueryString: window.location.search,
-  showForm: state.app.formCreateEvent.show,
+  // showForm: state.app.formCreateEvent.show,
   dataSourceHotspots: state.app.hotspots.data.map(o => ({
     text: `${o.name} - ${o.address}`,
     value: o.id,
@@ -926,8 +968,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  defaultSubmitFunction: params => dispatch(defaultCreateEvent(params)),
-
+  defaultCreateFunction: params => dispatch(defaultCreateEvent(params)),
+  defaultEditFunction: (eventId, params) => dispatch(defaultEditEvent(eventId, params)),
   dispatchHotspots: () => dispatch(getHotspots()),
   dispatchGroups: () => dispatch(getGroups()),
   dispatchLeagueMatches: params => dispatch(getMatchesLeague(params)),

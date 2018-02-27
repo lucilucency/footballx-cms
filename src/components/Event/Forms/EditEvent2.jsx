@@ -1,4 +1,4 @@
-/* eslint-disable react/prefer-stateless-function */
+/* eslint-disable react/prefer-stateless-function,react/forbid-prop-types */
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -11,34 +11,34 @@ import CreateEventForm from 'components/Event/Forms/CreateEventForm';
 
 class CreateHotspotEventForm extends React.Component {
   static propTypes = {
-    hotspotId: PropTypes.number,
-    createHotspotEvent: PropTypes.func,
     toggleShowForm: PropTypes.func,
     showForm: PropTypes.bool,
+    event: PropTypes.object,
   };
+
 
   render() {
     return (<CreateEventForm
-      hotspotId={Number(this.props.hotspotId)}
-      dispatch={this.props.createHotspotEvent}
       callback={() => {
         this.props.toggleShowForm(false);
       }}
       showForm={this.props.showForm}
+      event={this.props.event}
+      isEditing
     />);
   }
 }
 
 const mapStateToProps = state => ({
-  hotspot: state.app.hotspot.data,
-  showForm: state.app.formCreateEvent.show,
+  event: state.app.event.data,
+  showForm: state.app.formEditEvent.show,
   currentQueryString: window.location.search,
   error: state.app.hotspotEvents.error,
 });
 
 const mapDispatchToProps = dispatch => ({
   createHotspotEvent: (params, payload) => dispatch(createHotspotEvent(params, payload)),
-  toggleShowForm: state => dispatch(toggleShowForm('createEvent', state)),
+  toggleShowForm: () => dispatch(toggleShowForm('editEvent')),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CreateHotspotEventForm));
