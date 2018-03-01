@@ -460,7 +460,7 @@
   "th_membership_expired_date": "Expired date",
   "th_membership_t_shirt_size": "T-shirt Size",
   "th_membership_joined_year": "Joined Year",
-  "th_membership_is_purchase": "Purchase",
+  "th_membership_is_purchase": "Paid",
   "th_no": "No.",
   "th_result": "Result",
   "th_win": "Win %",
@@ -598,7 +598,7 @@
   "th_email": "Email",
   "th_place": "Place",
   "th_city": "City",
-  "th_dob": "DoB",
+  "th_dob": "Date of Birth",
   "th_gender": "Gender",
 
 

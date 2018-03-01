@@ -99,7 +99,7 @@ class Table extends React.Component {
   }
 
   render() {
-    const { loading, error, selectable = false, summable, maxRows, pageLength = 20, paginated } = this.props;
+    const { loading, error, selectable = false, summable, maxRows, pageLength = 20, paginated, hidePaginatedTop = false } = this.props;
     let {
       columns,
       data = [],
@@ -118,7 +118,7 @@ class Table extends React.Component {
     }
     return (
       <StyledBody>
-        {paginated && <Pagination
+        {paginated && !hidePaginatedTop && <Pagination
           numPages={Math.ceil(dataLength / pageLength)}
           currentPage={currentPage}
           nextPage={this.nextPage}
@@ -275,6 +275,7 @@ Table.propTypes = {
   maxRows: number,
   pageLength: number,
   paginated: bool,
+  hidePaginatedTop: bool,
 };
 
 export default Table;

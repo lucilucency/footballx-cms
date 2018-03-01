@@ -225,6 +225,7 @@ export function renderDialog(dialogConstruct = {}, trigger) {
       // autoScrollBodyContent
       modal={modal}
       contentStyle={contentStyle}
+      autoScrollBodyContent={true}
     >
       {view}
     </Dialog>

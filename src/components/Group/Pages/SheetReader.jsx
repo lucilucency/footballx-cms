@@ -1,10 +1,11 @@
 import React from 'react';
 import XLSX from 'xlsx';
 import Table from 'components/Table';
-import { Row, toDateString } from 'utils';
+import { Row, toDateString, validateEmail, validatePhone } from 'utils';
 import strings from 'lang';
 import { RaisedButton } from 'material-ui';
 import Container from 'components/Container';
+import styled, { css } from 'styled-components';
 import FileInput from './FileInput';
 
 /* generate an array of column objects */
@@ -29,6 +30,14 @@ const fileHeader = {
   membership_code: strings.th_membership_code,
 };
 
+const State = styled.div`
+  ${props => props.isValid ? css`
+    color: lightgreen;
+  ` : css`
+    color: red;
+  `}
+`;
+
 const isValidHeader = (header) => {
   return header.indexOf(fileHeader.name) !== -1 &&
     header.indexOf(fileHeader.email) !== -1 &&
@@ -40,7 +49,7 @@ const isValidHeader = (header) => {
 
 const downloadExampleFile = () => {
   const data = [
-    [fileHeader.name, fileHeader.email, fileHeader.phone, fileHeader.city, fileHeader.address, fileHeader.dob, fileHeader.gender, fileHeader.membership_code],
+    [fileHeader.name, fileHeader.email, fileHeader.phone, fileHeader.dob, fileHeader.city, fileHeader.address, fileHeader.gender, fileHeader.size, fileHeader.joined_year, fileHeader.is_purchase, fileHeader.membership_code],
     ['Lê Thuý Ngọc', 'ngocle@gmaill.com', '1633456789', 'Đà Nẵng', 'Liên Chiểu', '26/5/1996', 'Nữ', 'DNA17001'],
     ['Lê Thuý Ngọc', 'ngocle@gmaill.com', '1633456789', 'Đà Nẵng', 'Liên Chiểu', '26/5/1996', 'Nữ', 'DNA17001'],
     ['Lê Thuý Ngọc', 'ngocle@gmaill.com', '1633456789', 'Đà Nẵng', 'Liên Chiểu', '26/5/1996', 'Nữ', 'DNA17001'],
@@ -93,8 +102,8 @@ class SheetReader extends React.Component {
           joined_year: row[9],
           is_purchase: Boolean(row[10]),
           membership_code: row[11],
+          is_valid: validateEmail(row[2]) && validatePhone(row[3]),
         }));
-        console.log(data);
         this.setState({ data, cols: makeCols(ws['!ref']) });
       } else {
         this.setState({ errorText: 'Invalid format!' });
@@ -104,7 +113,7 @@ class SheetReader extends React.Component {
   }
 
   uploadFile() {
-    this.props.onUpload(this.state.data);
+    this.props.onUpload(this.state.data.filter(o => o.is_valid));
   }
 
   render() {
@@ -156,12 +165,22 @@ class SheetReader extends React.Component {
         }, {
           displayName: fileHeader.membership_code,
           field: 'membership_code',
+        }, {
+          displayName: '',
+          field: 'is_valid',
+          displayFn: (row, col, field) => (<div>
+            <State isValid={field}>{field.toString()}</State>
+          </div>),
         }]}
         data={this.state.data}
       /> : null}
 
       <Row style={{ flexDirection: 'flex-reverse' }}>
-        {this.state.data.length !== 0 && <RaisedButton onClick={this.uploadFile} label={'Upload'} style={{ float: 'left' }}/>}
+        {this.state.data.length !== 0 && <RaisedButton
+          onClick={this.uploadFile}
+          label={'Upload'}
+          style={{ float: 'left' }}
+        />}
       </Row>
     </div>);
   }

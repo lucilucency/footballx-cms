@@ -2,13 +2,38 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { getGroupMembers } from 'actions';
-import { Row, Col, subTextStyle } from 'utils';
+import { Row, Col, subTextStyle, bindAll, renderDialog } from 'utils';
 import strings from 'lang';
+import IconPrint from 'material-ui/svg-icons/action/print';
 import Table, { TableLink } from 'components/Table';
 import Container from 'components/Container';
+import QRCode from 'qrcode.react'
 import XUsersImportForm from './XUsersImportForm';
 
-const MembershipsTableCols = (browser) => ([{
+const PrintingMembersTableCols = [{
+  displayName: strings.th_name,
+  field: 'name',
+  displayFn: (row, col, field) => (<div>
+    {row.xuser_id ?
+      <TableLink to={`/xuser/${row.xuser_id}`}>{field && field.toUpperCase()}</TableLink> :
+      <b>{field && field.toUpperCase()}</b>
+    }
+  </div>),
+}, {
+  displayName: strings.th_membership_code,
+  field: 'membership_code',
+  displayFn: (row, col, field) => (<span style={{textDecoration: row.xuser_id ? 'line-through' : 'none'}}>
+    {field}
+  </span>)
+}, {
+  displayName: strings.th_membership_code,
+  field: 'membership_code',
+  displayFn: (row, col, field) => (<span style={{textDecoration: row.xuser_id ? 'line-through' : 'none'}}>
+    <QRCode size={50} value={field}/>
+  </span>)
+}];
+
+const MembersTableCols = (browser) => ([{
   displayName: strings.th_name,
   field: 'name',
   displayFn: (row, col, field) => (<div>
@@ -76,6 +101,20 @@ class RequestLayer extends React.Component {
     groupMembers: PropTypes.shape([]),
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      openDialog: false,
+      createPackageFormData: {},
+    };
+
+    bindAll([
+      'handleOpenDialog',
+      'handleCloseDialog',
+      'handleCreatePackage',
+    ], this);
+  }
+
   componentDidMount() {
     getData(this.props);
   }
@@ -86,18 +125,82 @@ class RequestLayer extends React.Component {
     }
   }
 
+  handleOpenDialog() {
+    this.setState({ openDialog: true });
+  }
+
+  handleCloseDialog() {
+    this.setState({ openDialog: false, dialogConstruct: {} });
+  }
+
+  renderDialog(dialogConstruct = {}, trigger) {
+    const defaultDialogCons = {
+      title: 'Example Dialog',
+      actions: [],
+      view: <h1>Welcome!</h1>,
+    };
+    const { title, actions, view } = Object.assign(defaultDialogCons, dialogConstruct);
+
+    return (
+      <Dialog
+        title={title}
+        actions={actions}
+        modal={false}
+        open={trigger}
+        onRequestClose={this.handleCloseDialog}
+        autoScrollBodyContent
+      >
+        {view}
+      </Dialog>
+    );
+  }
+
+  handleCreatePackage() {
+    this.setState({
+      dialogConstruct: {
+        title: 'More cards more fun!',
+        view: <Table
+          columns={PrintingMembersTableCols}
+          data={this.props.groupMembers.data}
+          error={false}
+          loading={this.props.groupMembers.loading}
+        />,
+      },
+    }, () => {
+      this.handleOpenDialog();
+    });
+  }
+
   render() {
     const props = this.props;
     // const { routeParams } = this.props;
     // const subInfo = routeParams.subInfo;
 
     return (<div>
-      <Container title={strings.title_group_memberships} error={props.groupMembers.error} loading={this.props.groupMembers.loading}>
-        <Table paginated columns={MembershipsTableCols(props.browser)} data={this.props.groupMembers.data} error={false} loading={this.props.groupMembers.loading} />
+      <Container
+        title={strings.title_group_memberships}
+        error={props.groupMembers.error}
+        loading={this.props.groupMembers.loading}
+        actions={[{
+          title: 'Create Package',
+          icon: <IconPrint />,
+          onClick: this.handleCreatePackage,
+        }]}
+      >
+        <Table
+          paginated
+          hidePaginatedTop
+          columns={MembersTableCols(props.browser)}
+          data={this.props.groupMembers.data}
+          error={false}
+          loading={this.props.groupMembers.loading}
+        />
       </Container>
       <Container title={strings.title_group_import_membership}>
         <XUsersImportForm groupId={this.props.groupId} />
       </Container>
+
+      {renderDialog(this.state.dialogConstruct, this.state.openDialog)}
     </div>);
   }
 }
