@@ -1,5 +1,6 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Heading from 'components/Heading';
 import Spinner from 'components/Spinner';
@@ -28,7 +29,13 @@ const Container = ({ title, subtitle, style, className, children, error, loading
     {title && <Heading title={title} subtitle={subtitle} titleTo={titleTo} actions={Boolean(actions)} />}
     {actions && <div style={{ float: 'right' }}>
       <IconMenu iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}>
-        {actions.map(action => <MenuItem key={action.key} primaryText={action.title} leftIcon={action.icon && action.icon} onClick={action.onClick} />)}
+        {actions.map(action => <MenuItem
+          containerElement={action.link ? <Link to={action.link} /> : null}
+          key={action.key}
+          primaryText={action.title}
+          leftIcon={action.icon && action.icon}
+          onClick={action.onClick}
+        />)}
       </IconMenu>
     </div>}
     <AsyncContainer error={error} loading={loading}>

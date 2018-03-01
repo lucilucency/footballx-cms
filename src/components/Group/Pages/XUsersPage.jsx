@@ -29,7 +29,7 @@ const PrintingMembersTableCols = [{
   displayName: strings.th_membership_code,
   field: 'membership_code',
   displayFn: (row, col, field) => (<span style={{textDecoration: row.xuser_id ? 'line-through' : 'none'}}>
-    <QRCode size={50} value={field}/>
+    <QRCode size={100} value={field}/>
   </span>)
 }];
 
@@ -133,28 +133,6 @@ class RequestLayer extends React.Component {
     this.setState({ openDialog: false, dialogConstruct: {} });
   }
 
-  renderDialog(dialogConstruct = {}, trigger) {
-    const defaultDialogCons = {
-      title: 'Example Dialog',
-      actions: [],
-      view: <h1>Welcome!</h1>,
-    };
-    const { title, actions, view } = Object.assign(defaultDialogCons, dialogConstruct);
-
-    return (
-      <Dialog
-        title={title}
-        actions={actions}
-        modal={false}
-        open={trigger}
-        onRequestClose={this.handleCloseDialog}
-        autoScrollBodyContent
-      >
-        {view}
-      </Dialog>
-    );
-  }
-
   handleCreatePackage() {
     this.setState({
       dialogConstruct: {
@@ -173,24 +151,25 @@ class RequestLayer extends React.Component {
 
   render() {
     const props = this.props;
-    // const { routeParams } = this.props;
-    // const subInfo = routeParams.subInfo;
+    console.log(props);
+    const { routeParams } = this.props;
+    const subInfo = routeParams.subInfo === 'printing';
 
     return (<div>
       <Container
         title={strings.title_group_memberships}
         error={props.groupMembers.error}
         loading={this.props.groupMembers.loading}
-        actions={[{
+        actions={!subInfo && [{
           title: 'Create Package',
           icon: <IconPrint />,
-          onClick: this.handleCreatePackage,
+          link: props.location.pathname + '/printing',
         }]}
       >
         <Table
-          paginated
+          paginated={!subInfo}
           hidePaginatedTop
-          columns={MembersTableCols(props.browser)}
+          columns={subInfo ? PrintingMembersTableCols : MembersTableCols(props.browser)}
           data={this.props.groupMembers.data}
           error={false}
           loading={this.props.groupMembers.loading}
