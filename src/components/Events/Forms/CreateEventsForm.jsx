@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 /* actions & helpers */
 import { createEvent } from 'actions';
 /* components */
-import CreateEventForm from 'components/Event/Forms/CreateEventForm';
+import CreateEventForm from 'components/Event/Forms/CreateEditEventForm';
 
 class CreateEventsForm extends React.Component {
   componentDidMount() {

@@ -1,10 +1,11 @@
+/* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import XLSX from 'xlsx';
 import Table from 'components/Table';
 import { Row, toDateString, validateEmail, validatePhone } from 'utils';
 import strings from 'lang';
 import { RaisedButton } from 'material-ui';
-import Container from 'components/Container';
+// import Container from 'components/Container';
 import styled, { css } from 'styled-components';
 import FileInput from './FileInput';
 
@@ -49,7 +50,19 @@ const isValidHeader = (header) => {
 
 const downloadExampleFile = () => {
   const data = [
-    [fileHeader.name, fileHeader.email, fileHeader.phone, fileHeader.dob, fileHeader.city, fileHeader.address, fileHeader.gender, fileHeader.size, fileHeader.joined_year, fileHeader.is_purchase, fileHeader.membership_code],
+    [
+      fileHeader.name,
+      fileHeader.email,
+      fileHeader.phone,
+      fileHeader.dob,
+      fileHeader.city,
+      fileHeader.address,
+      fileHeader.gender,
+      fileHeader.size,
+      fileHeader.joined_year,
+      fileHeader.is_purchase,
+      fileHeader.membership_code
+    ],
     ['Lê Thuý Ngọc', 'ngocle@gmaill.com', '1633456789', 'Đà Nẵng', 'Liên Chiểu', '26/5/1996', 'Nữ', 'DNA17001'],
     ['Lê Thuý Ngọc', 'ngocle@gmaill.com', '1633456789', 'Đà Nẵng', 'Liên Chiểu', '26/5/1996', 'Nữ', 'DNA17001'],
     ['Lê Thuý Ngọc', 'ngocle@gmaill.com', '1633456789', 'Đà Nẵng', 'Liên Chiểu', '26/5/1996', 'Nữ', 'DNA17001'],
@@ -62,6 +75,7 @@ const downloadExampleFile = () => {
 
 class SheetReader extends React.Component {
   static propTypes = {
+    groupMembers: React.PropTypes.array,
     onUpload: React.PropTypes.func,
   };
 
@@ -73,7 +87,22 @@ class SheetReader extends React.Component {
     };
     this.handleFile = this.handleFile.bind(this);
     this.uploadFile = this.uploadFile.bind(this);
+    this.isValidRow = this.isValidRow.bind(this);
   }
+
+  componentWillReceiveProps(props) {
+    this.groupMembersPhone = props.groupMembers.map(o => o.phone);
+    this.groupMembersEmail = props.groupMembers.map(o => o.email);
+  }
+
+  isValidRow(row) {
+    const isValidEmail = validateEmail(row[2]);
+    const isExistPhone = this.groupMembersPhone.indexOf(row[3]) === -1;
+    const isExistEmail = this.groupMembersEmail.indexOf(row[2]) === -1;
+    return isValidEmail && isExistEmail && isExistPhone;
+  }
+
+
   handleFile(file) {
     this.setState({ errorText: null });
     const reader = new FileReader();
@@ -102,7 +131,7 @@ class SheetReader extends React.Component {
           joined_year: row[9],
           is_purchase: Boolean(row[10]),
           membership_code: row[11],
-          is_valid: validateEmail(row[2]) && validatePhone(row[3]),
+          is_valid: this.isValidRow(row),
         }));
         this.setState({ data, cols: makeCols(ws['!ref']) });
       } else {

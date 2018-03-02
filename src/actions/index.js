@@ -24,6 +24,7 @@ export const getUserMetadata = (params = {}) => (dispatch) => {
 };
 
 // auth
+export const login = (username, password) => fxActionAuth('auth', 'user/login', { username, password });
 export const huserLogin = (username, password) => fxActionAuth('auth', 'huser/login', { username, password });
 export const cuserLogin = (username, password) => fxActionAuth('auth', 'cuser/login', { username, password });
 /* huser */
@@ -52,8 +53,9 @@ export const editGroup = (groupId, params) => fxActionPut('EDIT/group', `group/$
 export const getGroupEvents = groupId => fxActionGet('groupEvents', `group/${groupId}/events`, {}, transform.transformEvents);
 export const createGroupEvent = (params, payload) => fxActionPost('ADD/groupEvents', 'event', params, transform.transformCreateEvent, payload);
 export const getGroupHUsers = groupId => fxActionGet('groupHUsers', `group/${groupId}/husers`);
-export const importXUsers = (groupId, params, payload) => fxActionPost('ADD/groupMembers', `group/${groupId}/membership`, params, __blankTransforms, payload);
+export const importGroupMembers = (groupId, params, payload) => fxActionPost('ADD/groupMembers', `group/${groupId}/membership`, params, __blankTransforms, payload);
 export const getGroupMembers = groupId => fxActionGet('groupMembers', `group/${groupId}/memberships`, {}, transform.transformGroupMembers);
+export const getGroupMembershipPackages = groupId => fxActionGet('groupMembershipPackages', `group/${groupId}/membership_packages`);
 
 // export const createGroup = (params) => fxActionPost('ADD/events', 'event', params, transform.transformCreateGroup);
 /* event */

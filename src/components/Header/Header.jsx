@@ -28,10 +28,10 @@ const navbarPages = [
   <Link key={strings.header_clubs} to="/clubs">{strings.header_clubs}</Link>,
 ];
 
-const navbarPagesGUser = group => [
+const navbarPagesGUser = user => [
   <Link key={strings.header_matches} to="/matches">{strings.header_matches}</Link>,
-  group && group.id &&
-  <Link key={strings.header_events} to={`/group/${group.id}`}>{strings.header_groups}</Link>,
+  user && user.group_id &&
+  <Link key={strings.header_events} to={`/group/${user.group_id}`}>{strings.header_my_group}</Link>,
 ];
 
 const navbarPagesHUser = hotspot => ([
@@ -147,7 +147,7 @@ const LinkGroup = (propsVar) => {
           </div>
         </TabContainer>
       ))}
-      {(user && user.user_type === 3) && navbarPagesGUser(hotspot).map(page => (
+      {(user && user.user_type === 3) && navbarPagesGUser(user).map(page => (
         <TabContainer key={page.key}>
           <div style={{
             margin: '0 10px',
@@ -213,7 +213,7 @@ const SettingsGroup = (propsVar) => {
     >
       <LocalizationMenu />
       <AccountGroup />
-      {user && <Link to={'/notify'}>
+      {user && user.user_type === 1 && <Link to={'/notify'}>
         <StyledFlatButton
           label={strings.header_send_notification}
           hoverColor="transparent"
@@ -256,6 +256,7 @@ const Header = (propsVar) => {
     small,
     auth,
   } = propsVar;
+
   return (
     <div>
       <ToolbarHeader>

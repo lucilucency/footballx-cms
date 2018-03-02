@@ -1,37 +1,32 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import XLSX from 'xlsx';
 import { getGroupMembers } from 'actions';
 import { Row, Col, subTextStyle, bindAll, renderDialog } from 'utils';
 import strings from 'lang';
 import IconPrint from 'material-ui/svg-icons/action/print';
 import Table, { TableLink } from 'components/Table';
 import Container from 'components/Container';
-import QRCode from 'qrcode.react'
+// import QRCode from 'qrcode.react';
+import MrSuicideGoatQRCode from './MrSuicideGoatQRCode';
 import XUsersImportForm from './XUsersImportForm';
 
-const PrintingMembersTableCols = [{
-  displayName: strings.th_name,
-  field: 'name',
-  displayFn: (row, col, field) => (<div>
-    {row.xuser_id ?
-      <TableLink to={`/xuser/${row.xuser_id}`}>{field && field.toUpperCase()}</TableLink> :
-      <b>{field && field.toUpperCase()}</b>
-    }
-  </div>),
-}, {
-  displayName: strings.th_membership_code,
-  field: 'membership_code',
-  displayFn: (row, col, field) => (<span style={{textDecoration: row.xuser_id ? 'line-through' : 'none'}}>
-    {field}
-  </span>)
-}, {
-  displayName: strings.th_membership_code,
-  field: 'membership_code',
-  displayFn: (row, col, field) => (<span style={{textDecoration: row.xuser_id ? 'line-through' : 'none'}}>
-    <QRCode size={100} value={field}/>
-  </span>)
-}];
+
+const groupMembers = {};
+const fileHeader = {
+  name: strings.th_name,
+  email: strings.th_email,
+  phone: strings.th_phone,
+  dob: strings.th_dob,
+  city: strings.th_city,
+  address: strings.th_address,
+  gender: strings.th_gender,
+  size: strings.th_membership_t_shirt_size,
+  joined_year: strings.th_membership_joined_year,
+  is_purchase: strings.th_membership_is_purchase,
+  membership_code: strings.th_membership_code,
+};
 
 const MembersTableCols = (browser) => ([{
   displayName: strings.th_name,
@@ -85,9 +80,9 @@ const MembersTableCols = (browser) => ([{
 }, {
   displayName: strings.th_membership_code,
   field: 'membership_code',
-  displayFn: (row, col, field) => (<span style={{textDecoration: row.xuser_id ? 'line-through' : 'none'}}>
+  displayFn: (row, col, field) => (<span style={{ textDecoration: row.xuser_id ? 'line-through' : 'none' }}>
     {field}
-  </span>)
+  </span>),
 }]);
 
 const getData = (props) => {
@@ -109,14 +104,18 @@ class RequestLayer extends React.Component {
     };
 
     bindAll([
-      'handleOpenDialog',
-      'handleCloseDialog',
-      'handleCreatePackage',
+      'downloadMembers',
     ], this);
   }
 
   componentDidMount() {
     getData(this.props);
+  }
+
+  componentWillReceiveProps(newProps) {
+    newProps.groupMembers.data.forEach(o => {
+      groupMembers[o.id] = o;
+    });
   }
 
   componentWillUpdate(nextProps) {
@@ -125,45 +124,80 @@ class RequestLayer extends React.Component {
     }
   }
 
-  handleOpenDialog() {
-    this.setState({ openDialog: true });
-  }
+  downloadMembers() {
+    const data = [
+      [fileHeader.name, fileHeader.email, fileHeader.phone, fileHeader.dob, fileHeader.city, fileHeader.address, fileHeader.membership_code, ''],
+    ];
 
-  handleCloseDialog() {
-    this.setState({ openDialog: false, dialogConstruct: {} });
-  }
+    for (const id in groupMembers) {
+      const o = groupMembers[id];
+      if (o) {
+        const fileName = `${o.name}_${o.membership_code}.png`;
+        const a = document.createElement('a');
+        a.download = fileName;
+        a.href = groupMembers[id].canvas.toDataURL('image/png').replace(/^data:image\/[^;]/, 'data:application/octet-stream');
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
 
-  handleCreatePackage() {
-    this.setState({
-      dialogConstruct: {
-        title: 'More cards more fun!',
-        view: <Table
-          columns={PrintingMembersTableCols}
-          data={this.props.groupMembers.data}
-          error={false}
-          loading={this.props.groupMembers.loading}
-        />,
-      },
-    }, () => {
-      this.handleOpenDialog();
-    });
+        data.push([o.name, o.email, o.phone, o.dob, o.city, o.address, o.membership_code, fileName])
+      }
+    }
+
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'SheetJS');
+    XLSX.writeFile(wb, 'Group Membership QR.xlsx');
   }
 
   render() {
     const props = this.props;
-    console.log(props);
     const { routeParams } = this.props;
     const subInfo = routeParams.subInfo === 'printing';
+
+    const PrintingMembersTableCols = [{
+      displayName: strings.th_name,
+      field: 'name',
+      displayFn: (row, col, field) => (<div>
+        {row.xuser_id ?
+          <TableLink to={`/xuser/${row.xuser_id}`}>{field && field.toUpperCase()}</TableLink> :
+          <b>{field && field.toUpperCase()}</b>
+        }
+      </div>),
+    }, {
+      displayName: strings.th_membership_code,
+      field: 'membership_code',
+      displayFn: (row, col, field) => (<span style={{ textDecoration: row.xuser_id ? 'line-through' : 'none' }}>
+        {field}
+      </span>),
+    }, {
+      displayName: strings.th_membership_code,
+      field: 'membership_code',
+      displayFn: (row, col, field) => (<span style={{ display: 'none' }}>
+        <MrSuicideGoatQRCode
+          size={1500}
+          value={field}
+          getCanvas={(canvas) => {
+            groupMembers[row.id].canvas = canvas;
+          }}
+        />
+      </span>),
+    }];
+
 
     return (<div>
       <Container
         title={strings.title_group_memberships}
         error={props.groupMembers.error}
         loading={this.props.groupMembers.loading}
-        actions={!subInfo && [{
-          title: 'Create Package',
+        actions={!subInfo ? [{
+          title: 'View Members QRCode',
           icon: <IconPrint />,
-          link: props.location.pathname + '/printing',
+          link: `${props.location.pathname}/printing`,
+        }] : [{
+          title: 'Download Members QRCode',
+          icon: <IconPrint />,
+          onClick: this.downloadMembers,
         }]}
       >
         <Table
@@ -176,7 +210,7 @@ class RequestLayer extends React.Component {
         />
       </Container>
       <Container title={strings.title_group_import_membership}>
-        <XUsersImportForm groupId={this.props.groupId} />
+        <XUsersImportForm groupId={this.props.groupId} groupMembers={this.props.groupMembers.data} />
       </Container>
 
       {renderDialog(this.state.dialogConstruct, this.state.openDialog)}

@@ -948,19 +948,19 @@ const mapStateToProps = state => ({
   // showForm: state.app.formCreateEvent.show,
   dataSourceHotspots: state.app.hotspots.data.map(o => ({
     text: `${o.name} - ${o.address}`,
-    value: o.id,
+    value: Number(o.id),
     textShort: o.name,
   })),
   dataSourceGroups: state.app.groups.data.map(o => ({
     text: `${o.name}`,
-    value: o.id,
+    value: Number(o.id),
     textShort: `${o.short_name}`,
   })),
   dataSourceMatches: state.app.matchesLeague.data.matches.map((o) => {
     const matchTime = toDateTimeString(o.date * 1000);
     return {
       text: `${Clubs[o.home.club_id] && Clubs[o.home.club_id].name} vs ${Clubs[o.away.club_id] && Clubs[o.away.club_id].name} - ${matchTime}`,
-      value: `${o.id}`,
+      value: o.id,
       date: o.date,
       home: o.home,
       away: o.away,

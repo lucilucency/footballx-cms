@@ -26,14 +26,14 @@ const StyledFlatButton = styled(FlatButton)`
 
 const LoggedIn = (propsVar) => {
   const { user } = propsVar;
-  if (!user.id) {
+  if (!user.user_id) {
     return <Spinner color="#fff" size={0.5} />;
   }
   return (
     <div>
-      <Link to={`/user/${user.id}`}>
+      <Link to={`/user/${user.user_id}`}>
         <StyledFlatButton
-          label={user.fullname || strings.header_my_account}
+          label={user.fullname || user.name || strings.header_my_account}
           hoverColor="transparent"
           icon={<UserIcon />}
         />

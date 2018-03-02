@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { createGroupEvent } from 'actions';
 
 /* component */
-import CreateEventForm from 'components/Event/Forms/CreateEventForm';
+import CreateEventForm from 'components/Event/Forms/CreateEditEventForm';
 
 class CreateGroupEventForm extends React.Component {
   static propTypes = {

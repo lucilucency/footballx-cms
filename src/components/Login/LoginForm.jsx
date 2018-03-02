@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
-import { huserLogin, getUserMetadata, getHUserHotspot } from 'actions';
+import { login, getUserMetadata, getHUserHotspot } from 'actions';
 import strings from 'lang';
 
 class LoginForm extends React.Component {
@@ -32,14 +32,34 @@ class LoginForm extends React.Component {
       if (!e) {
         if (o.payload.data) {
           const data = o.payload.data;
-          data.user.user_type = 2; // huser
+          data.user_type = data.type;
+          delete data.type;
+          if (data.user_type === 1) {
+            data.user = data.cuser;
+          } else if (data.user_type === 2) {
+            data.user = data.huser;
+          } else if (data.user_type === 3) {
+            data.user = data.guser;
+          }
+
+          delete data.huser;
+          delete data.guser;
+          delete data.cuser;
+
+          data.user.user_type = data.user_type;
+
           localStorage.setItem('access_token', data.access_token);
           localStorage.setItem('account_user', JSON.stringify(data.user));
-          that.props.getHUserHotspot(data.user.id).then((h) => {
-            localStorage.setItem('account_hotspot', JSON.stringify(h.payload));
-            that.props.getHUserMetadata({ access_token: data.access_token, account_hotspot: h.payload, account_user: data.user });
-          });
-          that.props.history.push('');
+
+          if (data.user_type === 2) {
+            that.props.getHUserHotspot(data.user.id).then((h) => {
+              localStorage.setItem('account_hotspot', JSON.stringify(h.payload));
+              that.props.dispatchUserMetadata({ access_token: data.access_token, account_hotspot: h.payload, account_user: data.user });
+              that.props.history.push('');
+            });
+          } else {
+            that.props.history.push('');
+          }
         } else {
           that.setState({
             loginError: true,
@@ -89,8 +109,8 @@ class LoginForm extends React.Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-  huserLogin: (username, password) => dispatch(huserLogin(username, password)),
-  getHUserMetadata: params => dispatch(getUserMetadata(params)),
+  huserLogin: (username, password) => dispatch(login(username, password)),
+  dispatchUserMetadata: params => dispatch(getUserMetadata(params)),
   getHUserHotspot: id => dispatch(getHUserHotspot(id)),
 });
 

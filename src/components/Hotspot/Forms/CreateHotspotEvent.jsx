@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { createHotspotEvent, toggleShowForm } from 'actions';
 
 /* component */
-import CreateEventForm from 'components/Event/Forms/CreateEventForm';
+import CreateEventForm from 'components/Event/Forms/CreateEditEventForm';
 
 class CreateHotspotEventForm extends React.Component {
   static propTypes = {

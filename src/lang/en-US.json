@@ -155,6 +155,8 @@
   "filter_event": "Event",
   "filter_notification_user": "User segment",
   "filter_notification_topic": "Topic",
+  "filter_create_new_group_membership": "Create new group membership",
+  "filter_select_group_membership": "Select group membership",
 
 
   "form_general_open": "Open",
@@ -240,6 +242,7 @@
   "header_hotspot": "Hotspot",
   "header_hotspots": "Hotspots",
   "header_groups": "Groups",
+  "header_my_group": "My Group",
   "header_my_hotspot": "My Hotspot",
   "header_cards": "Cards",
 

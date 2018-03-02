@@ -8,9 +8,10 @@ import LoggedIn from './LoggedIn';
 
 const AccountWidget = (propsVar) => {
   const { loading, error, user, style } = propsVar;
+  console.log('================');
+  console.log(propsVar);
   return (
     <div style={style}>
-      {loading && !error && <Spinner />}
       {error && <Error />}
       {!error && !loading && user
         ? <LoggedIn user={user} />

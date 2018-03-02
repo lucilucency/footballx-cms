@@ -80,7 +80,7 @@ class RequestLayer extends React.Component {
         <div>
           <Helmet title={title} />
           <div>
-            <GroupHeader {...this.props} groupId={Number(groupId)} isOwner={isOwner()} />
+            {!match.params.subInfo && <GroupHeader {...this.props} groupId={Number(groupId)} isOwner={isOwner()} />}
             <CreateGroupEventForm groupId={Number(groupId)} />
             <EditGroupForm group={group} />
             <TabBar info={info} tabs={pages(Number(groupId))} />
