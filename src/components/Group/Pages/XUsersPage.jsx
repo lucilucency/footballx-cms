@@ -54,6 +54,7 @@ const MembersTableCols = browser => ([{
   displayFn: (row, col, field) => (<div>
     {field && <Status>{'Activated'}</Status>}
   </div>),
+  sortFn: true,
 }]);
 
 const getData = (props) => {
