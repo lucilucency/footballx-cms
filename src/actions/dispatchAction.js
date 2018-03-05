@@ -40,7 +40,7 @@ export function action(type, host, path, params = {}, transform) {
     };
 
     dispatch(dispatchStart());
-    return fetchDataWithRetry(1000, 3);
+    return fetchDataWithRetry(1000, 1);
   };
 }
 
@@ -87,7 +87,7 @@ export function fxActionAuth(type = 'auth', path, params = {}, transform) {
     };
 
     dispatch(dispatchStart());
-    return fetchDataWithRetry(1000, 3);
+    return fetchDataWithRetry(1000, 1);
   };
 }
 
@@ -153,7 +153,7 @@ export function fxActionPost(type, path, params = {}, transform, payload) {
     };
 
     dispatch(dispatchStart());
-    return fetchDataWithRetry(1000, 3);
+    return fetchDataWithRetry(1000, 1);
   };
 }
 
@@ -212,7 +212,7 @@ export function fxActionGet(type, path, params = {}, transform) {
     };
 
     dispatch(dispatchStart());
-    return fetchDataWithRetry(1000, 3);
+    return fetchDataWithRetry(1000, 1);
   };
 }
 
@@ -271,7 +271,7 @@ export function fxActionPut(type, path, params = {}, transform) {
     };
 
     dispatch(dispatchStart());
-    return fetchDataWithRetry(1000, 3);
+    return fetchDataWithRetry(1000, 1);
   };
 }
 
@@ -329,6 +329,6 @@ export function fxActionDelete(type, path, params = {}, transform) {
     };
 
     dispatch(dispatchStart());
-    return fetchDataWithRetry(1000, 3);
+    return fetchDataWithRetry(1000, 1);
   };
 }

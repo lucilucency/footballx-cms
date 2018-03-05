@@ -73,6 +73,21 @@ const downloadExampleFile = () => {
   XLSX.writeFile(wb, 'example.xlsx');
 };
 
+const toGenderString = (input) => {
+  if (input) {
+    const __input = input.trim();
+    if (__input === 'Nam' || __input === 'NAM' || __input === 'nam' || __input === 'male' || __input === 'Male') {
+      return 'male';
+    } else if (__input === 'Nữ' || __input === 'NỮ' || __input === 'nữ' || __input === 'Female' || __input === 'female') {
+      return 'female';
+    } else {
+      return '';
+    }
+  } else {
+    return '';
+  }
+};
+
 class SheetReader extends React.Component {
   static propTypes = {
     groupMembers: React.PropTypes.array,
@@ -86,7 +101,6 @@ class SheetReader extends React.Component {
       cols: [],
     };
     this.handleFile = this.handleFile.bind(this);
-    this.uploadFile = this.uploadFile.bind(this);
     this.isValidRow = this.isValidRow.bind(this);
   }
 
@@ -123,26 +137,25 @@ class SheetReader extends React.Component {
           name: row[1],
           email: row[2],
           phone: row[3],
-          dob: toDateString(row[4]),
-          city: row[5],
-          address: row[6],
-          gender: row[7],
-          size: row[8],
-          joined_year: row[9],
-          is_purchase: Boolean(row[10]),
-          membership_code: row[11],
+          dob: toDateString(row[6]),
+          city: row[4],
+          address: row[5],
+          gender: toGenderString(row[7]),
+          // size: row[8],
+          // joined_year: row[9],
+          // is_purchase: Boolean(row[10]),
+          membership_code: row[8],
           is_valid: this.isValidRow(row),
         }));
-        this.setState({ data, cols: makeCols(ws['!ref']) });
+        this.setState({ data }, () => {
+          console.log(this.state.data);
+          this.props.onUpload(this.state.data);
+        });
       } else {
         this.setState({ errorText: 'Invalid format!' });
       }
     };
     if (rABS) reader.readAsBinaryString(file); else reader.readAsArrayBuffer(file);
-  }
-
-  uploadFile() {
-    this.props.onUpload(this.state.data.filter(o => o.is_valid));
   }
 
   render() {
@@ -179,13 +192,13 @@ class SheetReader extends React.Component {
         }, {
           displayName: fileHeader.gender,
           field: 'gender',
-        }, {
+        }, false && {
           displayName: fileHeader.size,
           field: 'size',
-        }, {
+        }, false && {
           displayName: fileHeader.joined_year,
           field: 'joined_year',
-        }, {
+        }, false && {
           displayName: fileHeader.is_purchase,
           field: 'is_purchase',
           displayFn: (row, col, field) => (<div>
@@ -203,14 +216,6 @@ class SheetReader extends React.Component {
         }]}
         data={this.state.data}
       /> : null}
-
-      <Row style={{ flexDirection: 'flex-reverse' }}>
-        {this.state.data.length !== 0 && <RaisedButton
-          onClick={this.uploadFile}
-          label={'Upload'}
-          style={{ float: 'left' }}
-        />}
-      </Row>
     </div>);
   }
 }

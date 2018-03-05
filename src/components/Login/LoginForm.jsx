@@ -35,30 +35,37 @@ class LoginForm extends React.Component {
           data.user_type = data.type;
           delete data.type;
           if (data.user_type === 1) {
-            data.user = data.cuser;
-          } else if (data.user_type === 2) {
-            data.user = data.huser;
-          } else if (data.user_type === 3) {
-            data.user = data.guser;
-          }
-
-          delete data.huser;
-          delete data.guser;
-          delete data.cuser;
-
-          data.user.user_type = data.user_type;
-
-          localStorage.setItem('access_token', data.access_token);
-          localStorage.setItem('account_user', JSON.stringify(data.user));
-
-          if (data.user_type === 2) {
-            that.props.getHUserHotspot(data.user.id).then((h) => {
-              localStorage.setItem('account_hotspot', JSON.stringify(h.payload));
-              that.props.dispatchUserMetadata({ access_token: data.access_token, account_hotspot: h.payload, account_user: data.user });
-              that.props.history.push('');
+            that.setState({
+              loginError: true,
+              message: 'Permission denied!',
             });
           } else {
-            that.props.history.push('');
+            if (data.user_type === 1) {
+              data.user = data.cuser;
+            } else if (data.user_type === 2) {
+              data.user = data.huser;
+            } else if (data.user_type === 3) {
+              data.user = data.guser;
+            }
+
+            delete data.huser;
+            delete data.guser;
+            delete data.cuser;
+
+            data.user.user_type = data.user_type;
+
+            localStorage.setItem('access_token', data.access_token);
+            localStorage.setItem('account_user', JSON.stringify(data.user));
+
+            if (data.user_type === 2) {
+              that.props.getHUserHotspot(data.user.id).then((h) => {
+                localStorage.setItem('account_hotspot', JSON.stringify(h.payload));
+                that.props.dispatchUserMetadata({ access_token: data.access_token, account_hotspot: h.payload, account_user: data.user });
+                that.props.history.push('');
+              });
+            } else {
+              that.props.history.push('');
+            }
           }
         } else {
           that.setState({

@@ -30,11 +30,12 @@ const fileHeader = {
 
 const MembersTableCols = (browser) => ([{
   displayName: strings.th_name,
-  field: 'name',
+  field: 'xuser_id',
+  sortFn: true,
   displayFn: (row, col, field) => (<div>
-    {row.xuser_id ?
-      <TableLink to={`/xuser/${row.xuser_id}`}>{field && field.toUpperCase()}</TableLink> :
-      <b>{field && field.toUpperCase()}</b>
+    {field ?
+      <TableLink to={`/xuser/${field}`}>{row.name && row.name.toUpperCase()}</TableLink> :
+      <b>{row.name && row.name.toUpperCase()}</b>
     }
     {browser.greaterThan.small && <div>
       <span style={{ ...subTextStyle, maxWidth: browser.greaterThan.medium ? 300 : 150 }} title={row.hotspot_address}>
@@ -43,7 +44,7 @@ const MembersTableCols = (browser) => ([{
     </div>}
   </div>),
 }, {
-  displayName: strings.th_phone,
+  displayName: strings.th_contact,
   field: 'phone',
   displayFn: (row, col, field) => (<div>
     {field}
@@ -65,13 +66,13 @@ const MembersTableCols = (browser) => ([{
 }, {
   displayName: strings.th_gender,
   field: 'gender',
-}, {
+}, false && {
   displayName: strings.th_membership_t_shirt_size,
   field: 'size',
-}, {
+}, false && {
   displayName: strings.th_membership_joined_year,
   field: 'joined_year',
-}, {
+}, false && {
   displayName: strings.th_membership_is_purchase,
   field: 'is_purchase',
   displayFn: (row, col, field) => (<div>
@@ -209,16 +210,16 @@ class RequestLayer extends React.Component {
           loading={this.props.groupMembers.loading}
         />
       </Container>
-      <Container title={strings.title_group_import_membership}>
+      {props.user.user_type === 1 && <Container title={strings.title_group_import_membership}>
         <XUsersImportForm groupId={this.props.groupId} groupMembers={this.props.groupMembers.data} />
-      </Container>
-
+      </Container>}
       {renderDialog(this.state.dialogConstruct, this.state.openDialog)}
     </div>);
   }
 }
 
 const mapStateToProps = state => ({
+  user: state.app.metadata.data.user,
   groupMembers: state.app.groupMembers,
   browser: state.browser,
 });

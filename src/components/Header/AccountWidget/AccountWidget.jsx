@@ -8,8 +8,6 @@ import LoggedIn from './LoggedIn';
 
 const AccountWidget = (propsVar) => {
   const { loading, error, user, style } = propsVar;
-  console.log('================');
-  console.log(propsVar);
   return (
     <div style={style}>
       {error && <Error />}
