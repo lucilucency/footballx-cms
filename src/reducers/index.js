@@ -14,6 +14,7 @@ export default combineReducers({
   groupEvents: fxReducer('groupEvents', []),
   groupHUsers: fxReducer('groupHUsers', []),
   groupMembers: fxReducer('groupMembers', []),
+  groupXUsers: fxReducer('groupXUsers', []),
   groupMembershipPackages: fxReducer('groupMembershipPackages', []),
 
   hotspots: fxReducer('hotspots', []),

@@ -418,7 +418,8 @@
   "tab_group_events": "Events",
   "tab_group_husers": "Managers",
   "tab_group_overview": "Overview",
-  "tab_group_members": "Members",
+  "tab_group_members": "Imported Members",
+  "tab_group_xusers": "X-Users",
 
   "tab_events_all": "All",
   "tab_events_add": "+ Event",
@@ -464,6 +465,7 @@
   "th_membership_t_shirt_size": "T-shirt Size",
   "th_membership_joined_year": "Joined Year",
   "th_membership_is_purchase": "Paid",
+  "th_xuser_is_activated": "Activated",
   "th_no": "No.",
   "th_result": "Result",
   "th_win": "Win %",

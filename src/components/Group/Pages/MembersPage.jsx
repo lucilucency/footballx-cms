@@ -3,16 +3,18 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import XLSX from 'xlsx';
-import { getGroupXUsers } from 'actions';
-import { subTextStyle, renderDialog, transformations, toDateString } from 'utils';
+import { getGroupImportedMembers } from 'actions';
+import { subTextStyle, renderDialog } from 'utils';
 import strings from 'lang';
 import IconPrint from 'material-ui/svg-icons/action/print';
 import Table, { TableLink } from 'components/Table';
 import Container from 'components/Container';
-import styled from 'styled-components';
-import constants from 'components/constants';
+// import QRCode from 'qrcode.react';
+import MrSuicideGoatQRCode from './MrSuicideGoatQRCode';
+import XUsersImportForm from './MembersImportForm';
 
-const groupXUsers = {};
+
+const groupMembers = {};
 const fileHeader = {
   name: strings.th_name,
   email: strings.th_email,
@@ -27,33 +29,62 @@ const fileHeader = {
   membership_code: strings.th_membership_code,
 };
 
-const Status = styled.div`
-  //filter: drop-shadow(0 0 5px green);
-  color: ${constants.colorGreen}
-`;
-
 const MembersTableCols = browser => ([{
-  displayName: strings.th_xuser,
-  tooltip: strings.tooltip_hero_id,
-  field: 'nickname',
-  displayFn: transformations.th_xuser_image,
+  displayName: strings.th_name,
+  field: 'xuser_id',
   sortFn: true,
-}, {
-  displayName: strings.th_address,
-  field: 'code',
   displayFn: (row, col, field) => (<div>
-    <b>{field}</b>
+    {field ?
+      <TableLink to={`/xuser/${field}`}>{row.name && row.name.toUpperCase()}</TableLink> :
+      <b>{row.name && row.name.toUpperCase()}</b>
+    }
+    {browser.greaterThan.small && <div>
+      <span style={{ ...subTextStyle, maxWidth: browser.greaterThan.medium ? 300 : 150 }} title={row.hotspot_address}>
+        {row.dob}
+      </span>
+    </div>}
+  </div>),
+}, {
+  displayName: strings.th_contact,
+  field: 'phone',
+  displayFn: (row, col, field) => (<div>
+    {field}
     {browser.greaterThan.small &&
     <span style={{ ...subTextStyle, maxWidth: browser.greaterThan.medium ? 300 : 150 }} title={row.hotspot_address}>
-      {toDateString(row.expire_date * 1000)}
+      {row.email}
     </span>}
   </div>),
 }, {
-  displayName: strings.th_xuser_is_activated,
-  field: 'is_activated',
+  displayName: strings.th_address,
+  field: 'address',
   displayFn: (row, col, field) => (<div>
-    {field && <Status>{'Activated'}</Status>}
+    <b>{row.city}</b>
+    {browser.greaterThan.small &&
+    <span style={{ ...subTextStyle, maxWidth: browser.greaterThan.medium ? 300 : 150 }} title={row.hotspot_address}>
+      {field}
+    </span>}
   </div>),
+}, {
+  displayName: strings.th_gender,
+  field: 'gender',
+}, false && {
+  displayName: strings.th_membership_t_shirt_size,
+  field: 'size',
+}, false && {
+  displayName: strings.th_membership_joined_year,
+  field: 'joined_year',
+}, false && {
+  displayName: strings.th_membership_is_purchase,
+  field: 'is_purchase',
+  displayFn: (row, col, field) => (<div>
+    {field && <img src="/assets/images/paid-rectangle-stamp-300.png" alt="" width={50} />}
+  </div>),
+}, {
+  displayName: strings.th_membership_code,
+  field: 'membership_code',
+  displayFn: (row, col, field) => (<span style={{ textDecoration: row.xuser_id ? 'line-through' : 'none' }}>
+    {field}
+  </span>),
 }]);
 
 const getData = (props) => {
@@ -65,13 +96,13 @@ const downloadMembers = () => {
     [fileHeader.name, fileHeader.email, fileHeader.phone, fileHeader.dob, fileHeader.city, fileHeader.address, fileHeader.membership_code, ''],
   ];
 
-  for (const id in groupXUsers) {
-    const o = groupXUsers[id];
+  for (const id in groupMembers) {
+    const o = groupMembers[id];
     if (o) {
       const fileName = `${o.name}_${o.membership_code}.png`;
       const a = document.createElement('a');
       a.download = fileName;
-      a.href = groupXUsers[id].canvas.toDataURL('image/png').replace(/^data:image\/[^;]/, 'data:application/octet-stream');
+      a.href = groupMembers[id].canvas.toDataURL('image/png').replace(/^data:image\/[^;]/, 'data:application/octet-stream');
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -90,7 +121,7 @@ class RequestLayer extends React.Component {
   static propTypes = {
     location: PropTypes.shape({ key: PropTypes.string }),
     groupId: PropTypes.number,
-    groupXUsers: PropTypes.shape([]),
+    groupMembers: PropTypes.shape([]),
     routeParams: PropTypes.shape({ subInfo: PropTypes.string }),
   };
 
@@ -111,8 +142,8 @@ class RequestLayer extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    newProps.groupXUsers.data.forEach((o) => {
-      groupXUsers[o.id] = o;
+    newProps.groupMembers.data.forEach((o) => {
+      groupMembers[o.id] = o;
     });
   }
 
@@ -127,11 +158,41 @@ class RequestLayer extends React.Component {
     const { routeParams } = this.props;
     const subInfo = routeParams.subInfo === 'printing';
 
+    const PrintingMembersTableCols = [{
+      displayName: strings.th_name,
+      field: 'name',
+      displayFn: (row, col, field) => (<div>
+        {row.xuser_id ?
+          <TableLink to={`/xuser/${row.xuser_id}`}>{field && field.toUpperCase()}</TableLink> :
+          <b>{field && field.toUpperCase()}</b>
+        }
+      </div>),
+    }, {
+      displayName: strings.th_membership_code,
+      field: 'membership_code',
+      displayFn: (row, col, field) => (<span style={{ textDecoration: row.xuser_id ? 'line-through' : 'none' }}>
+        {field}
+      </span>),
+    }, {
+      displayName: strings.th_membership_code,
+      field: 'membership_code',
+      displayFn: (row, col, field) => (<span style={{ display: 'none' }}>
+        <MrSuicideGoatQRCode
+          size={1500}
+          value={field}
+          getCanvas={(canvas) => {
+            groupMembers[row.id].canvas = canvas;
+          }}
+        />
+      </span>),
+    }];
+
+
     return (<div>
       <Container
         title={strings.title_group_memberships}
-        error={props.groupXUsers.error}
-        loading={this.props.groupXUsers.loading}
+        error={props.groupMembers.error}
+        loading={this.props.groupMembers.loading}
         actions={!subInfo ? [{
           title: 'View Members QRCode',
           icon: <IconPrint />,
@@ -145,13 +206,15 @@ class RequestLayer extends React.Component {
         <Table
           paginated={!subInfo}
           hidePaginatedTop
-          columns={MembersTableCols(props.browser)}
-          data={this.props.groupXUsers.data}
+          columns={subInfo ? PrintingMembersTableCols : MembersTableCols(props.browser)}
+          data={this.props.groupMembers.data}
           error={false}
-          loading={this.props.groupXUsers.loading}
+          loading={this.props.groupMembers.loading}
         />
       </Container>
-
+      {props.user.user_type === 1 && <Container title={strings.title_group_import_membership}>
+        <XUsersImportForm groupId={this.props.groupId} groupMembers={this.props.groupMembers.data} />
+      </Container>}
       {renderDialog(this.state.dialogConstruct, this.state.openDialog)}
     </div>);
   }
@@ -159,12 +222,12 @@ class RequestLayer extends React.Component {
 
 const mapStateToProps = state => ({
   user: state.app.metadata.data.user,
-  groupXUsers: state.app.groupXUsers,
+  groupMembers: state.app.groupMembers,
   browser: state.browser,
 });
 
 const mapDispatchToProps = dispatch => ({
-  getGroupMembers: groupId => dispatch(getGroupXUsers(groupId)),
+  getGroupMembers: groupId => dispatch(getGroupImportedMembers(groupId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RequestLayer);
