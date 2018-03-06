@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import QRCode from 'qrcode.react';
 
 class MatchLog extends React.Component {
   componentDidMount() {}
@@ -6,10 +8,23 @@ class MatchLog extends React.Component {
   render() {
     return (
       <div>
-        <h1>Logs Page</h1>
+        <QRCode
+          size={300}
+          value={JSON.stringify({
+            object: 'event',
+            data: {
+              event_id: this.props.event.data.event_id,
+              notification: null,
+            },
+          })}
+        />
       </div>
     );
   }
 }
 
-export default MatchLog;
+const mapStateToProps = state => ({
+  user: state.app.metadata.data.user,
+});
+
+export default connect(mapStateToProps, null)(MatchLog);

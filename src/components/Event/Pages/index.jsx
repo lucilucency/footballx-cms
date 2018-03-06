@@ -2,6 +2,7 @@ import React from 'react';
 import strings from 'lang';
 import Heading from 'components/Heading/index';
 import OverviewPage from './Overview';
+import MatchLogPage from './MatchLog';
 
 const pages = [{
   name: strings.tab_hotspot_overview,
@@ -12,9 +13,7 @@ const pages = [{
   name: strings.tab_log,
   key: 'log',
   parsed: true,
-  content: () => (<div>
-    <Heading title={strings.heading_log} />
-  </div>),
+  content: props => (<MatchLogPage {...props} />),
 }];
 
 export default eventId => pages.map(page => ({

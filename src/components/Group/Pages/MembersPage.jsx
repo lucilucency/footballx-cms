@@ -10,9 +10,7 @@ import IconPrint from 'material-ui/svg-icons/action/print';
 import Table, { TableLink } from 'components/Table';
 import Container from 'components/Container';
 // import QRCode from 'qrcode.react';
-import MrSuicideGoatQRCode from './MrSuicideGoatQRCode';
 import XUsersImportForm from './MembersImportForm';
-
 
 const groupMembers = {};
 const fileHeader = {
@@ -172,18 +170,6 @@ class RequestLayer extends React.Component {
       field: 'membership_code',
       displayFn: (row, col, field) => (<span style={{ textDecoration: row.xuser_id ? 'line-through' : 'none' }}>
         {field}
-      </span>),
-    }, {
-      displayName: strings.th_membership_code,
-      field: 'membership_code',
-      displayFn: (row, col, field) => (<span style={{ display: 'none' }}>
-        <MrSuicideGoatQRCode
-          size={1500}
-          value={field}
-          getCanvas={(canvas) => {
-            groupMembers[row.id].canvas = canvas;
-          }}
-        />
       </span>),
     }];
 

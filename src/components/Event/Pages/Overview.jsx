@@ -2,6 +2,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { getOrdinal, transformations } from 'utils';
+import { toDateTimeString } from 'utils/time';
+import strings from 'lang';
+import { messaging } from '_firebase';
 /* components */
 import Container from 'components/Container';
 import { IconFacebook } from 'components/Icons';
@@ -11,10 +15,7 @@ import Divider from 'material-ui/Divider';
 import IconPlace from 'material-ui/svg-icons/maps/place';
 import IconPhone from 'material-ui/svg-icons/communication/phone';
 import IconWifi from 'material-ui/svg-icons/notification/wifi';
-/* actions & helpers */
-import { getOrdinal, transformations } from 'utils';
-import { toDateTimeString } from 'utils/time';
-import strings from 'lang';
+
 /* css */
 import styled, { css } from 'styled-components';
 import constants from 'components/constants';
@@ -99,6 +100,38 @@ class AllEvents extends React.Component {
   componentDidMount() {
     // const eventId = this.props.props.match.params.eventId;
     // this.props.getEventXUsers(eventId);
+
+    // messaging.useServiceWorker().then(function () {
+    //   messaging.requestPermission()
+    //     .then(function() {
+    //       console.log('Notification permission granted.');
+    //       messaging.getToken()
+    //         .then(function(currentToken) {
+    //           if (currentToken) {
+    //             console.log(currentToken);
+    //             this.setState({
+    //               pushToken: currentToken
+    //             });
+    //
+    //           } else {
+    //             // Show permission request.
+    //             console.log('No Instance ID token available. Request permission to generate one.');
+    //             // Show permission UI.
+    //           }
+    //         })
+    //         .catch(function(err) {
+    //           console.log('An error occurred while retrieving token. ', err);
+    //         });
+    //     })
+    //     .catch(function(err) {
+    //       console.log('Unable to get permission to notify.', err);
+    //     });
+    //
+    //   messaging.onMessage(function(payload) {
+    //     console.log("Message received. ", payload);
+    //     // ...
+    //   });
+    // })
   }
 
   render() {

@@ -32,6 +32,7 @@
     "compression-webpack-plugin": "^1.1.10",
     "css-modules-require-hook": "^4.2.3",
     "dirty-chai": "^2.0.1",
+    "firebase": "^4.10.1",
     "form-data": "^2.3.2",
     "form-urlencoded": "^2.0.4",
     "fuzzy": "^0.1.3",

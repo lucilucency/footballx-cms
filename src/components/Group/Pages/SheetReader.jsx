@@ -111,9 +111,9 @@ class SheetReader extends React.Component {
 
   isValidRow(row) {
     const isValidEmail = validateEmail(row[2]);
-    const isExistPhone = this.groupMembersPhone.indexOf(row[3]) === -1;
-    const isExistEmail = this.groupMembersEmail.indexOf(row[2]) === -1;
-    return isValidEmail && isExistEmail && isExistPhone;
+    const notExistPhone = this.groupMembersPhone.indexOf(row[3]) === -1;
+    // const notExistEmail = this.groupMembersEmail.indexOf(row[2]) === -1;
+    return isValidEmail && notExistPhone;
   }
 
 

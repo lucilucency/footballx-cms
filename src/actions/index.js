@@ -7,8 +7,6 @@ const __blankTransforms = () => ([]);
 export * from 'actions/ajax';
 
 export const getUserMetadata = (params = {}) => (dispatch) => {
-  console.log('params: ');
-  console.log(params);
   const getDataStart = payload => ({
     type: 'OK/metadata',
     payload,
@@ -21,9 +19,6 @@ export const getUserMetadata = (params = {}) => (dispatch) => {
   if (accessToken && accountUser) {
     payload = { user: accountUser, access_token: accessToken, hotspot: accountHotspot };
   }
-  console.log('payload: ');
-  console.log(payload);
-
   dispatch(getDataStart(payload));
 };
 

@@ -11,6 +11,7 @@ import Table, { TableLink } from 'components/Table';
 import Container from 'components/Container';
 import styled from 'styled-components';
 import constants from 'components/constants';
+import MrSuicideGoatQRCode from './MrSuicideGoatQRCode';
 
 const groupXUsers = {};
 const fileHeader = {
@@ -55,6 +56,27 @@ const MembersTableCols = browser => ([{
     {field && <Status>{'Activated'}</Status>}
   </div>),
   sortFn: true,
+}, {
+  displayName: '',
+  field: 'membership_code',
+  displayFn: (row, col, field) => (<span style={{ display: 'none' }}>
+    <MrSuicideGoatQRCode
+      size={1000}
+      value={JSON.stringify({
+        object: 'xuser',
+        data: {
+          xuser_id: row.xuser_id,
+          code: row.code,
+          group_id: row.group_id,
+          group_membership_id: row.group_membership_id,
+          expire_date: row.expire_date,
+        },
+      })}
+      getCanvas={(canvas) => {
+        groupXUsers[row.id].canvas = canvas;
+      }}
+    />
+  </span>),
 }]);
 
 const getData = (props) => {
@@ -63,13 +85,13 @@ const getData = (props) => {
 
 const downloadMembers = () => {
   const data = [
-    [fileHeader.name, fileHeader.email, fileHeader.phone, fileHeader.dob, fileHeader.city, fileHeader.address, fileHeader.membership_code, ''],
+    [fileHeader.name, fileHeader.email, fileHeader.phone, fileHeader.email, fileHeader.membership_code, ''],
   ];
 
   for (const id in groupXUsers) {
     const o = groupXUsers[id];
     if (o) {
-      const fileName = `${o.name}_${o.membership_code}.png`;
+      const fileName = `${o.fullname}_${o.email}.png`;
       const a = document.createElement('a');
       a.download = fileName;
       a.href = groupXUsers[id].canvas.toDataURL('image/png').replace(/^data:image\/[^;]/, 'data:application/octet-stream');
@@ -77,7 +99,7 @@ const downloadMembers = () => {
       a.click();
       document.body.removeChild(a);
 
-      data.push([o.name, o.email, o.phone, o.dob, o.city, o.address, o.membership_code, fileName]);
+      data.push([o.fullname, o.email, o.phone, o.email, o.code, fileName]);
     }
   }
 
