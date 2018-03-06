@@ -101,6 +101,12 @@ class AllEvents extends React.Component {
     // const eventId = this.props.props.match.params.eventId;
     // this.props.getEventXUsers(eventId);
 
+    messaging.onMessage(function(payload) {
+      console.log('vklllllll');
+      console.log('Message received. ', payload);
+      // ...
+    });
+
     // messaging.useServiceWorker().then(function () {
     //   messaging.requestPermission()
     //     .then(function() {
