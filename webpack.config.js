@@ -30,7 +30,7 @@ HashBundlePlugin.prototype.apply = (compiler) => {
 
 const config = {
   node: {
-    fs: 'empty'
+    fs: 'empty',
   },
   entry: ['babel-polyfill', path.resolve(__dirname, 'src')],
   output: {

@@ -130,7 +130,7 @@ class CreateEventForm extends React.Component {
           event_id: newProps.event.event_id,
           hotspots: newProps.event.hotspot_id ? [newProps.event.hotspot_id] : [],
 
-          group: newProps.event.group_id ? { value: newProps.event.group_id, text: newProps.dataSourceGroups.find(o => o.value === newProps.event.group_id).text } : {},
+          group: newProps.event.group_id ? { value: newProps.event.group_id, text: newProps.dataSourceGroups.find(o => o.value === newProps.event.group_id) && newProps.dataSourceGroups.find(o => o.value === newProps.event.group_id).text } : {},
           match: newProps.event.match_id ? { value: newProps.event.match_id } : {},
           seats: { value: newProps.event.seats, text: newProps.event.seats && newProps.event.seats.toString() },
           price: { value: newProps.event.price, text: newProps.event.price && newProps.event.price.toString() },
@@ -162,9 +162,9 @@ class CreateEventForm extends React.Component {
   }
 
   // componentWillUpdate(nextProps) {
-    // if (this.props.showForm !== nextProps.showForm) {
-    //   this.clearState();
-    // }
+  // if (this.props.showForm !== nextProps.showForm) {
+  //   this.clearState();
+  // }
   // }
 
   onDragHomeColor(color) {

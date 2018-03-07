@@ -38,7 +38,7 @@ export default (type, initialData) => (state = {
         ...state,
         loading: false,
         data: update(state.data, {
-          $push: Array.isArray(action.payload ) ? action.payload : [action.payload],
+          $push: Array.isArray(action.payload) ? action.payload : [action.payload],
         }),
         error: false,
       };

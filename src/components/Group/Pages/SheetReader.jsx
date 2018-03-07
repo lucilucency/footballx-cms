@@ -32,21 +32,19 @@ const fileHeader = {
 };
 
 const State = styled.div`
-  ${props => props.isValid ? css`
+  ${props => (props.isValid ? css`
     color: lightgreen;
   ` : css`
     color: red;
-  `}
+  `)}
 `;
 
-const isValidHeader = (header) => {
-  return header.indexOf(fileHeader.name) !== -1 &&
+const isValidHeader = header => header.indexOf(fileHeader.name) !== -1 &&
     header.indexOf(fileHeader.email) !== -1 &&
     header.indexOf(fileHeader.phone) !== -1 &&
     header.indexOf(fileHeader.city) !== -1 &&
     header.indexOf(fileHeader.address) !== -1 &&
     header.indexOf(fileHeader.membership_code) !== -1;
-};
 
 const downloadExampleFile = () => {
   const data = [
@@ -61,7 +59,7 @@ const downloadExampleFile = () => {
       fileHeader.size,
       fileHeader.joined_year,
       fileHeader.is_purchase,
-      fileHeader.membership_code
+      fileHeader.membership_code,
     ],
     ['Lê Thuý Ngọc', 'ngocle@gmaill.com', '1633456789', 'Đà Nẵng', 'Liên Chiểu', '26/5/1996', 'Nữ', 'DNA17001'],
     ['Lê Thuý Ngọc', 'ngocle@gmaill.com', '1633456789', 'Đà Nẵng', 'Liên Chiểu', '26/5/1996', 'Nữ', 'DNA17001'],
@@ -80,12 +78,10 @@ const toGenderString = (input) => {
       return 'male';
     } else if (__input === 'Nữ' || __input === 'NỮ' || __input === 'nữ' || __input === 'Female' || __input === 'female') {
       return 'female';
-    } else {
-      return '';
     }
-  } else {
     return '';
   }
+  return '';
 };
 
 class SheetReader extends React.Component {

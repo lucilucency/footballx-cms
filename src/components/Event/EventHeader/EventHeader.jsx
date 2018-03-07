@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 /* actions - helpers */
 import { toggleShowForm } from 'actions';
-import { toDateTimeString, renderDialog } from 'utils';
+import { toDateTimeString, renderDialog, bindAll } from 'utils';
 import strings from 'lang';
 import Clubs from 'fxconstants/build/clubsObj.json';
 import Groups from 'fxconstants/build/groupsObj.json';
@@ -13,10 +13,12 @@ import { FlatButton } from 'material-ui';
 import IconFingerprint from 'material-ui/svg-icons/action/fingerprint';
 import IconEdit from 'material-ui/svg-icons/editor/mode-edit';
 import IconSendNotification from 'material-ui/svg-icons/alert/add-alert';
+import IconCode from 'material-ui/svg-icons/action/code';
 
 import Spinner from 'components/Spinner';
 import ShowFormToggle from 'components/Form/ShowFormToggle';
 import GenerateQRForm from 'components/Event/Forms/GenerateQR';
+import CheckinQRForm from 'components/Event/Forms/CheckinQR';
 /* css */
 import styled from 'styled-components';
 import constants from 'components/constants';
@@ -205,9 +207,13 @@ class EventHeader extends React.Component {
       openDialog: false,
     };
 
-    this.openRandomForm = this.openRandomForm.bind(this);
-    this.handleOpenDialog = this.handleOpenDialog.bind(this);
-    this.handleCloseDialog = this.handleCloseDialog.bind(this);
+    bindAll([
+      'openRandomForm',
+      'openCheckinQRForm',
+      'handleOpenDialog',
+      'handleCloseDialog',
+    ], this);
+
 
     // this.url = 'http://streaming.tdiradio.com:8000/house.mp3';
     // this.url = '/assets/audio/XoSoMienBacNhacChuong-VA-4937390.mp3';
@@ -246,10 +252,37 @@ class EventHeader extends React.Component {
 
   openRandomForm() {
     // this.togglePlay();
-
     this.setState({
       dialogConstruct: {
         view: <GenerateQRForm
+          toggle={false}
+          eventId={this.props.event.event_id}
+        />,
+        onRequestClose: this.handleCloseDialog,
+        modal: true,
+        contentStyle: {
+          width: '100%',
+          maxWidth: 'none',
+          overflow: 'hidden',
+        },
+        actions: [
+          <FlatButton
+            label="OK"
+            primary
+            keyboardFocused
+            onClick={this.handleCloseDialog}
+          />,
+        ],
+      },
+    }, () => {
+      this.handleOpenDialog();
+    });
+  }
+
+  openCheckinQRForm() {
+    this.setState({
+      dialogConstruct: {
+        view: <CheckinQRForm
           toggle={false}
           eventId={this.props.event.event_id}
         />,
@@ -352,6 +385,16 @@ class EventHeader extends React.Component {
             </EventInfo>
           </MatchWrapper>
           <ButtonContainer>
+            <FlatButton
+              onClick={this.openCheckinQRForm}
+              icon={<IconCode />}
+              label={strings.form_checkin_qr}
+            />
+            <FlatButton
+              onClick={this.openRandomForm}
+              icon={<IconCode />}
+              label={strings.form_mini_game_scan_qr}
+            />
             <ShowFormToggle
               name={'generateQR'}
               show={showFormGenerateQR}

@@ -175,7 +175,7 @@ export const transformations = {
             // subtitle={Clubs[row.home] && Clubs[row.home].name}
             clubName={Clubs[row.home] && Clubs[row.home].short_name}
           />
-          {/*<span style={{ margin: 5 }}>vs</span>*/}
+          {/* <span style={{ margin: 5 }}>vs</span> */}
           <TableClubImage
             image={Clubs[row.away] && Clubs[row.away].icon}
             title={<span>{Clubs[row.away] && Clubs[row.away].short_name}</span>}
@@ -225,7 +225,7 @@ export function renderDialog(dialogConstruct = {}, trigger) {
       // autoScrollBodyContent
       modal={modal}
       contentStyle={contentStyle}
-      autoScrollBodyContent={true}
+      autoScrollBodyContent
     >
       {view}
     </Dialog>

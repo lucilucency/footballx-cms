@@ -29,7 +29,7 @@ const Container = ({ title, subtitle, style, className, children, error, loading
     {title && <Heading title={title} subtitle={subtitle} titleTo={titleTo} actions={Boolean(actions)} />}
     {actions && <div style={{ float: 'right' }}>
       <IconMenu iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}>
-        {actions.map(action => {
+        {actions.map((action) => {
           if (action.link) {
             return (<MenuItem
               containerElement={<Link to={action.link} />}
@@ -37,14 +37,13 @@ const Container = ({ title, subtitle, style, className, children, error, loading
               primaryText={action.title}
               leftIcon={action.icon && action.icon}
             />);
-          } else {
-            return (<MenuItem
-              key={action.key}
-              primaryText={action.title}
-              leftIcon={action.icon && action.icon}
-              onClick={action.onClick}
-            />);
           }
+          return (<MenuItem
+            key={action.key}
+            primaryText={action.title}
+            leftIcon={action.icon && action.icon}
+            onClick={action.onClick}
+          />);
         })}
       </IconMenu>
     </div>}

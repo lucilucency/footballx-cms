@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { getOrdinal, transformations } from 'utils';
 import { toDateTimeString } from 'utils/time';
 import strings from 'lang';
-import { messaging } from '_firebase';
+import { FIREBASE_MESSAGING } from 'firebaseNotification';
 /* components */
 import Container from 'components/Container';
 import { IconFacebook } from 'components/Icons';
@@ -29,7 +29,7 @@ const eventXUsersColumns = (user, event) => [{
   field: 'nickname',
   displayFn: transformations.th_xuser_image,
   sortFn: true,
-}, false && user.user_type === 1 && {
+}, null && user.user_type === 1 && {
   displayName: '',
   field: 'facebook_id',
   displayFn: (row, col, field) => (<div>
@@ -90,7 +90,7 @@ const HotspotContainer = styled.div`
   }
 `;
 
-class AllEvents extends React.Component {
+class Overview extends React.Component {
   static propTypes = {
     event: PropTypes.shape({}),
     eventXUsers: PropTypes.shape([]),
@@ -98,46 +98,10 @@ class AllEvents extends React.Component {
   };
 
   componentDidMount() {
-    // const eventId = this.props.props.match.params.eventId;
-    // this.props.getEventXUsers(eventId);
-
-    messaging.onMessage(function(payload) {
-      console.log('vklllllll');
+    FIREBASE_MESSAGING.onMessage((payload) => {
       console.log('Message received. ', payload);
       // ...
     });
-
-    // messaging.useServiceWorker().then(function () {
-    //   messaging.requestPermission()
-    //     .then(function() {
-    //       console.log('Notification permission granted.');
-    //       messaging.getToken()
-    //         .then(function(currentToken) {
-    //           if (currentToken) {
-    //             console.log(currentToken);
-    //             this.setState({
-    //               pushToken: currentToken
-    //             });
-    //
-    //           } else {
-    //             // Show permission request.
-    //             console.log('No Instance ID token available. Request permission to generate one.');
-    //             // Show permission UI.
-    //           }
-    //         })
-    //         .catch(function(err) {
-    //           console.log('An error occurred while retrieving token. ', err);
-    //         });
-    //     })
-    //     .catch(function(err) {
-    //       console.log('Unable to get permission to notify.', err);
-    //     });
-    //
-    //   messaging.onMessage(function(payload) {
-    //     console.log("Message received. ", payload);
-    //     // ...
-    //   });
-    // })
   }
 
   render() {
@@ -225,5 +189,5 @@ const mapStateToProps = state => ({
   eventXUsers: state.app.eventXUsers,
 });
 
-export default connect(mapStateToProps, null)(AllEvents);
+export default connect(mapStateToProps, null)(Overview);
 

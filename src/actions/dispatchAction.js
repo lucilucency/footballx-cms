@@ -198,7 +198,7 @@ export function fxActionGet(type, path, params = {}, transform) {
         .catch((err) => {
           console.log(`Error in ${type}`);
           console.log(err);
-          
+
           if (err.message === 'Unauthorized') {
             localStorage.removeItem('access_token');
             localStorage.removeItem('account_user');

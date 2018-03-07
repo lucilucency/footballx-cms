@@ -193,6 +193,8 @@
   "form_create_group_huser": "Create Manager",
   "form_create_group_huser_cancel": "Cancel Create Manager",
 
+  "form_checkin_qr": "Checkin QR",
+  "form_mini_game_scan_qr": "Mini game scan QR",
   "form_mini_game": "Mini Game",
   "form_mini_game_close": "Close mini game",
   "form_mini_game_lucky_guy": "Who's lucky guy",

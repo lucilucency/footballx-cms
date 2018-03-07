@@ -4,11 +4,10 @@ import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 /* actions - helpers */
 import { toggleShowForm } from 'actions/dispatchForm';
-import strings from 'lang';
 import { Row, Col } from 'utils';
 /* components */
-import { RaisedButton } from 'material-ui';
-import ReactCardFlip from 'react-card-flip';
+import QRCode from 'qrcode.react'
+import { FIREBASE_MESSAGING } from 'src/firebaseNotification';
 /* css */
 import styled, { css } from 'styled-components';
 
@@ -40,7 +39,6 @@ const FormGroup = styled.div`
 
 const H2 = styled.h1`
   text-align: center;
-  margin-bottom: 0;
   
   ${props => (props.show ? css`
     opacity: 1;
@@ -78,7 +76,7 @@ const initialState = {
   isFlipped: false,
 };
 
-class GenerateQR extends React.Component {
+class MinigameScanQR extends React.Component {
   static propTypes = {
     showForm: PropTypes.bool,
     callback: PropTypes.func,
@@ -93,11 +91,14 @@ class GenerateQR extends React.Component {
       play: false,
     };
 
-    this.doRandomXUser = this.doRandomXUser.bind(this);
   }
 
   componentDidMount() {
     setShowFormState(this.props);
+    FIREBASE_MESSAGING.onMessage((payload) => {
+      console.log('Message received. ', payload);
+      // ...
+    });
   }
 
   componentWillUpdate(nextProps) {
@@ -110,54 +111,6 @@ class GenerateQR extends React.Component {
     this.setState(initialState);
   }
 
-  doRandomXUser() {
-    const that = this;
-    const winnerIds = this.state.winners.length ? this.state.winners.map(o => o.id) : [];
-    const dataSource = that.props.xusers.filter(o => winnerIds.indexOf(o.id) === -1);
-
-    if (dataSource.length && that.state.tries > 0) {
-      this.setState({ ...initialState, isFlipping: true }, () => {
-        const bound = dataSource.length;
-        const duration = that.state.duration;
-        const started = new Date().getTime();
-        const timerRandom = () => {
-          setTimeout(() => {
-            const onGameTime = new Date().getTime() - started;
-            if (onGameTime < duration) {
-              const winner = dataSource[Math.floor(Math.random() * bound)];
-              const nextState = {
-                isFlipped: !that.state.isFlipped,
-                step: onGameTime < 0.8 * duration ? Math.max(that.state.step - that.state.margin, 100) : Math.max(that.state.step + (that.state.margin * 2), 100),
-              };
-              if (that.state.isFlipped) {
-                nextState.nextWinner = winner;
-              } else {
-                nextState.prevWinner = winner;
-              }
-              that.setState(nextState, timerRandom());
-            } else {
-              this.setState({ isFlipped: !this.state.isFlipped }, setTimeout(() => {
-                that.setState({ isFlipping: false }, () => {
-                  const winners = this.state.winners;
-                  if (winners.map(o => o.facebook_id).indexOf(this.state.nextWinner.facebook_id) === -1) {
-                    setTimeout(() => {
-                      winners.push(this.state.nextWinner);
-                      this.setState({ winners, tries: that.state.tries - 1 });
-                    }, 1000);
-                  }
-                });
-              }, 1000));
-            }
-          }, that.state.step);
-        };
-
-        that.setState({ isFlipped: true });
-        const winner = that.props.xusers[Math.floor(Math.random() * bound)];
-        that.setState({ prevWinner: winner }, timerRandom());
-      });
-    }
-  }
-
   render() {
     const {
       toggle = true,
@@ -168,28 +121,18 @@ class GenerateQR extends React.Component {
     const largeSize = browser.height / 3;
     const smallSize = ((browser.width - 80) / 10) - 20;
 
-    let { step } = this.state;
-    step /= 500;
-
     // let winner = xusers.find(o => o.id === this.state.winner);
     const { prevWinner, nextWinner } = this.state;
 
     return (
       <FormGroup toggle={toggle} showForm={showForm}>
-        <div style={{ height: largeSize, marginTop: 20 }}>
-          <ReactCardFlip
-            flipSpeedBackToFront={step}
-            flipSpeedFrontToBack={step}
-            isFlipped={this.state.isFlipped}
-            infinite
-          >
-            <div key="back">
-              <img src={prevWinner && prevWinner.avatar} alt="" width={largeSize} height={largeSize} />
-            </div>
-            <div key="front">
-              <img src={nextWinner && nextWinner.avatar} alt="" width={largeSize} height={largeSize} />
-            </div>
-          </ReactCardFlip>
+        <div  style={{ margin: 'auto' }}>
+          <QRCode size={largeSize} value={JSON.stringify({
+            object: 'scan-minigame',
+            data: {
+              event_id: this.props.event.data.event_id,
+            },
+          })}/>
         </div>
 
         <div>
@@ -197,16 +140,6 @@ class GenerateQR extends React.Component {
             <a href={`https://www.facebook.com/${nextWinner.facebook_id}`} target="_blank">{nextWinner.nickname}</a>
           </H2>}
         </div>
-
-        <Row>
-          {!this.state.isFlipping && <RaisedButton
-            style={{ margin: 'auto', marginBottom: 20, marginTop: 20 }}
-            label={strings.form_mini_game_lucky_guy}
-            primary
-            onClick={event => this.doRandomXUser(event)}
-            disabled={Boolean(this.state.tries <= 0)}
-          />}
-        </Row>
 
         <ListWinner>
           {this.state.winners.filter(o => o).map(o => (
@@ -235,4 +168,4 @@ const mapDispatchToProps = dispatch => ({
   toggleShowForm: formName => dispatch(toggleShowForm(formName)),
 });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(GenerateQR));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(MinigameScanQR));
