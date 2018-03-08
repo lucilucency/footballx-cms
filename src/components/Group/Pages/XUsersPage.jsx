@@ -59,9 +59,9 @@ const MembersTableCols = browser => ([{
 }, {
   displayName: '',
   field: 'membership_code',
-  displayFn: (row, col, field) => (<span style={{ display: 'none' }}>
+  displayFn: (row) => (<span style={{  }}>
     <MrSuicideGoatQRCode
-      size={1000}
+      size={200}
       value={JSON.stringify({
         object: 'xuser',
         data: {
@@ -123,10 +123,6 @@ class RequestLayer extends React.Component {
       openDialog: false,
       createPackageFormData: {},
     };
-
-    // bindAll([
-    //   'downloadMembers',
-    // ], this);
   }
 
   componentDidMount() {
@@ -134,7 +130,10 @@ class RequestLayer extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    newProps.groupXUsers.data.forEach((o) => {
+    const { routeParams } = this.props;
+    const printing = routeParams.subInfo === 'printing';
+    const dataSource = printing ? newProps.groupXUsers.data.filter(o => !o.is_activated) : newProps.groupXUsers.data;
+    dataSource.forEach((o) => {
       groupXUsers[o.id] = o;
     });
   }
@@ -148,14 +147,14 @@ class RequestLayer extends React.Component {
   render() {
     const props = this.props;
     const { routeParams } = this.props;
-    const subInfo = routeParams.subInfo === 'printing';
+    const printing = routeParams.subInfo === 'printing';
 
     return (<div>
       <Container
         title={strings.title_group_memberships}
         error={props.groupXUsers.error}
         loading={this.props.groupXUsers.loading}
-        actions={!subInfo ? [{
+        actions={!printing ? [{
           title: 'View Members QRCode',
           icon: <IconPrint />,
           link: `${props.location.pathname}/printing`,
@@ -166,10 +165,10 @@ class RequestLayer extends React.Component {
         }]}
       >
         <Table
-          paginated={!subInfo}
+          paginated={!printing}
           hidePaginatedTop
           columns={MembersTableCols(props.browser)}
-          data={this.props.groupXUsers.data}
+          data={printing ? this.props.groupXUsers.data.filter(o => !o.is_activated) : this.props.groupXUsers.data}
           error={false}
           loading={this.props.groupXUsers.loading}
         />

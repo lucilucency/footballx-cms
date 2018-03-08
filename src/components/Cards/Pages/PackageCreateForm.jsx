@@ -206,8 +206,6 @@ class RegisterView extends React.Component {
             data: { $set: resultsReport },
           }),
         }, () => {
-          console.log('new cards: ');
-          console.log(results.payload.codes);
           downloadCards(results.payload.codes);
         });
       });
