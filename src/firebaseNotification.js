@@ -1,12 +1,13 @@
 import * as firebase from 'firebase';
 
 const prodConfig = {
-  apiKey: 'AIzaSyA65s_6yPsTyvoRUNJ6zkSe1JfB0hokd5M',
-  authDomain: 'footballx-f8db2.firebaseapp.com',
-  databaseURL: 'https://footballx-f8db2.firebaseio.com',
-  projectId: 'footballx-f8db2',
-  storageBucket: 'footballx-f8db2.appspot.com',
-  messagingSenderId: '318454074670',
+  apiKey: 'AIzaSyCGjNTtY-6Ec0rxRh-HRQqFt1MlQ6YODDY',
+  authDomain: 'footballx-dev.firebaseapp.com',
+  databaseURL: 'https://footballx-dev.firebaseio.com',
+  projectId: 'footballx-dev',
+  storageBucket: 'footballx-dev.appspot.com',
+  messagingSenderId: '738646846066',
+  keyPair: 'BGMXAkBgIfCEC-dyt9NZsjSzRQxDtm9NBbQ8B5xFi_Jmkv0T1d9ugn3wbuRuC-5PcZfZgWIOqGt9QUot98m2xfw',
 };
 
 const devConfig = {

@@ -71,7 +71,7 @@ const initialState = {
   newUser: null,
 };
 
-class GenerateQR extends React.Component {
+class CheckinQR extends React.Component {
   static propTypes = {
     showForm: PropTypes.bool,
     callback: PropTypes.func,
@@ -125,6 +125,13 @@ class GenerateQR extends React.Component {
     const smallSize = ((browser.width - 80) / 10) - 20;
 
     const { newUser } = this.state;
+    console.log({
+      object: 'event',
+      data: {
+        event_id: this.props.eventId,
+        notification: null,
+      },
+    });
 
     return (
       <FormGroup toggle={toggle} showForm={showForm}>
@@ -171,4 +178,4 @@ const mapDispatchToProps = dispatch => ({
   toggleShowForm: formName => dispatch(toggleShowForm(formName)),
 });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(GenerateQR));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CheckinQR));

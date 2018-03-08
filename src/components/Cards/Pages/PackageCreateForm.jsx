@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import update from 'react-addons-update';
 import strings from 'lang';
-// import { validateEmail } from 'utils/misc';
+import XLSX from 'xlsx';
 import { ajaxGet, createCardPackage } from 'actions';
 
 import { Dialog, AutoComplete, TextField, FlatButton, List, ListItem } from 'material-ui';
@@ -57,6 +57,19 @@ const initialState = props => ({
     show: false,
   },
 });
+
+const downloadCards = (codes) => {
+  const data = [
+    ['Code'],
+  ];
+  codes.forEach((code) => {
+    data.push([code]);
+  });
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'SheetJS');
+  XLSX.writeFile(wb, 'cards.xlsx');
+};
 
 class RegisterView extends React.Component {
   static propTypes = {
@@ -192,6 +205,10 @@ class RegisterView extends React.Component {
           submitResults: update(that.state.submitResults, {
             data: { $set: resultsReport },
           }),
+        }, () => {
+          console.log('new cards: ');
+          console.log(results.payload.codes);
+          downloadCards(results.payload.codes);
         });
       });
     });

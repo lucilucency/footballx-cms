@@ -7,7 +7,7 @@ import { toggleShowForm } from 'actions/dispatchForm';
 import { Row, Col } from 'utils';
 /* components */
 import QRCode from 'qrcode.react'
-import { FIREBASE_MESSAGING } from 'src/firebaseNotification';
+import { FIREBASE_MESSAGING } from 'firebaseNotification';
 /* css */
 import styled, { css } from 'styled-components';
 
@@ -43,11 +43,11 @@ const H2 = styled.h1`
   ${props => (props.show ? css`
     opacity: 1;
     transform: scale(1);
-    transition: all 0.3s ease-in-out 0.1s;
+    transition: all 3s ease-in-out 1s;
 ` : css`
     opacity: 0;
     transform: scale(10);
-    transition: all 0.3s ease-in-out 0.2s;
+    transition: all 3s ease-in-out 2s;
 `)}
 `;
 
@@ -120,25 +120,31 @@ class MinigameScanQR extends React.Component {
 
     const largeSize = browser.height / 3;
     const smallSize = ((browser.width - 80) / 10) - 20;
-
+    console.log({
+      object: 'scan-minigame',
+      data: {
+        event_id: this.props.eventId,
+      },
+    });
     // let winner = xusers.find(o => o.id === this.state.winner);
-    const { prevWinner, nextWinner } = this.state;
 
     return (
       <FormGroup toggle={toggle} showForm={showForm}>
-        <div  style={{ margin: 'auto' }}>
-          <QRCode size={largeSize} value={JSON.stringify({
-            object: 'scan-minigame',
-            data: {
-              event_id: this.props.event.data.event_id,
-            },
-          })}/>
-        </div>
-
         <div>
-          {nextWinner && <H2 show={!this.state.isFlipping}>
-            <a href={`https://www.facebook.com/${nextWinner.facebook_id}`} target="_blank">{nextWinner.nickname}</a>
-          </H2>}
+          <H2 show>
+            <a target="_blank">Scan and claim gift card rewards!</a>
+          </H2>
+        </div>
+        <div style={{ margin: 'auto' }}>
+          <QRCode
+            size={largeSize}
+            value={JSON.stringify({
+              object: 'scan-minigame',
+              data: {
+                event_id: this.props.eventId,
+              },
+            })}
+          />
         </div>
 
         <ListWinner>

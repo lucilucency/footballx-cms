@@ -18,7 +18,8 @@ import IconCode from 'material-ui/svg-icons/action/code';
 import Spinner from 'components/Spinner';
 import ShowFormToggle from 'components/Form/ShowFormToggle';
 import GenerateQRForm from 'components/Event/Forms/GenerateQR';
-import CheckinQRForm from 'components/Event/Forms/CheckinQR';
+import CheckinQRView from 'components/Event/Forms/CheckinQR';
+import MinigameScanQRView from 'components/Event/Forms/MinigameScanQR';
 /* css */
 import styled from 'styled-components';
 import constants from 'components/constants';
@@ -208,8 +209,9 @@ class EventHeader extends React.Component {
     };
 
     bindAll([
-      'openRandomForm',
-      'openCheckinQRForm',
+      'openCheckinQRView',
+      'openMinigameLottery',
+      'openMinigameScanView',
       'handleOpenDialog',
       'handleCloseDialog',
     ], this);
@@ -250,13 +252,12 @@ class EventHeader extends React.Component {
     this.setState({ openDialog: false, dialogConstruct: {} });
   }
 
-  openRandomForm() {
-    // this.togglePlay();
+  openMinigameLottery() {
     this.setState({
       dialogConstruct: {
         view: <GenerateQRForm
           toggle={false}
-          eventId={this.props.event.event_id}
+          eventId={this.props.event.data.event_id}
         />,
         onRequestClose: this.handleCloseDialog,
         modal: true,
@@ -279,12 +280,40 @@ class EventHeader extends React.Component {
     });
   }
 
-  openCheckinQRForm() {
+  openCheckinQRView() {
     this.setState({
       dialogConstruct: {
-        view: <CheckinQRForm
+        view: <CheckinQRView
           toggle={false}
-          eventId={this.props.event.event_id}
+          eventId={this.props.event.data.event_id}
+        />,
+        onRequestClose: this.handleCloseDialog,
+        modal: true,
+        contentStyle: {
+          width: '100%',
+          maxWidth: 'none',
+          overflow: 'hidden',
+        },
+        actions: [
+          <FlatButton
+            label="OK"
+            primary
+            keyboardFocused
+            onClick={this.handleCloseDialog}
+          />,
+        ],
+      },
+    }, () => {
+      this.handleOpenDialog();
+    });
+  }
+
+  openMinigameScanView() {
+    this.setState({
+      dialogConstruct: {
+        view: <MinigameScanQRView
+          toggle={false}
+          eventId={this.props.event.data.event_id}
         />,
         onRequestClose: this.handleCloseDialog,
         modal: true,
@@ -386,19 +415,19 @@ class EventHeader extends React.Component {
           </MatchWrapper>
           <ButtonContainer>
             <FlatButton
-              onClick={this.openCheckinQRForm}
+              onClick={this.openCheckinQRView}
               icon={<IconCode />}
               label={strings.form_checkin_qr}
             />
             <FlatButton
-              onClick={this.openRandomForm}
+              onClick={this.openMinigameScanView}
               icon={<IconCode />}
               label={strings.form_mini_game_scan_qr}
             />
             <ShowFormToggle
               name={'generateQR'}
               show={showFormGenerateQR}
-              onClick={this.openRandomForm}
+              onClick={this.openMinigameLottery}
               icon={<IconFingerprint />}
               text={strings.form_mini_game}
               textToggle={strings.form_mini_game_close}
