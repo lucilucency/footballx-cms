@@ -59,9 +59,9 @@ const MembersTableCols = browser => ([{
 }, {
   displayName: '',
   field: 'membership_code',
-  displayFn: (row) => (<span style={{  }}>
+  displayFn: (row) => (<span style={{ display: 'none' }}>
     <MrSuicideGoatQRCode
-      size={200}
+      size={640}
       value={JSON.stringify({
         object: 'xuser',
         data: {
