@@ -16,6 +16,7 @@ import MrSuicideGoatQRCode from './MrSuicideGoatQRCode';
 const groupXUsers = {};
 const fileHeader = {
   name: strings.th_name,
+  nickname: strings.th_nickname,
   email: strings.th_email,
   phone: strings.th_phone,
   dob: strings.th_dob,
@@ -85,21 +86,24 @@ const getData = (props) => {
 
 const downloadMembers = () => {
   const data = [
-    [fileHeader.name, fileHeader.email, fileHeader.phone, fileHeader.email, fileHeader.membership_code, ''],
+    [fileHeader.name, fileHeader.nickname, fileHeader.phone, fileHeader.email, fileHeader.membership_code, ''],
   ];
 
   for (const id in groupXUsers) {
     const o = groupXUsers[id];
-    if (o) {
-      const fileName = `${o.fullname}_${o.email}.png`;
+    if (o && o.canvas) {
+      const fileName = `${o.fullname}_${o.phone}.png`;
       const a = document.createElement('a');
       a.download = fileName;
       a.href = groupXUsers[id].canvas.toDataURL('image/png').replace(/^data:image\/[^;]/, 'data:application/octet-stream');
       document.body.appendChild(a);
       a.click();
-      document.body.removeChild(a);
+      // setTimeout(document.body.removeChild(a), 500);
+      // document.body.removeChild(a);
 
-      data.push([o.fullname, o.email, o.phone, o.email, o.code, fileName]);
+      data.push([o.fullname, o.nickname, o.phone, o.email, o.code, fileName]);
+    } else {
+      console.log(id);
     }
   }
 
@@ -132,7 +136,7 @@ class RequestLayer extends React.Component {
   componentWillReceiveProps(newProps) {
     const { routeParams } = this.props;
     const printing = routeParams.subInfo === 'printing';
-    const dataSource = printing ? newProps.groupXUsers.data.filter(o => !o.is_activated) : newProps.groupXUsers.data;
+    const dataSource = printing ? newProps.groupXUsersData.filter(o => !o.is_activated) : newProps.groupXUsersData;
     dataSource.forEach((o) => {
       groupXUsers[o.id] = o;
     });
@@ -146,14 +150,14 @@ class RequestLayer extends React.Component {
 
   render() {
     const props = this.props;
-    const { routeParams } = this.props;
+    const { routeParams, groupXUsersData, loading, error } = this.props;
     const printing = routeParams.subInfo === 'printing';
 
     return (<div>
       <Container
         title={strings.title_group_memberships}
-        error={props.groupXUsers.error}
-        loading={this.props.groupXUsers.loading}
+        error={false}
+        loading={loading}
         actions={!printing ? [{
           title: 'View Members QRCode',
           icon: <IconPrint />,
@@ -168,9 +172,9 @@ class RequestLayer extends React.Component {
           paginated={!printing}
           hidePaginatedTop
           columns={MembersTableCols(props.browser)}
-          data={printing ? this.props.groupXUsers.data.filter(o => !o.is_activated) : this.props.groupXUsers.data}
+          data={printing ? groupXUsersData.filter(o => !o.is_activated) : groupXUsersData}
           error={false}
-          loading={this.props.groupXUsers.loading}
+          loading={loading}
         />
       </Container>
 
@@ -181,7 +185,9 @@ class RequestLayer extends React.Component {
 
 const mapStateToProps = state => ({
   user: state.app.metadata.data.user,
-  groupXUsers: state.app.groupXUsers,
+  groupXUsersData: state.app.groupXUsers.data,
+  loading: state.app.groupXUsers.loading,
+  error: state.app.groupXUsers.error,
   browser: state.browser,
 });
 

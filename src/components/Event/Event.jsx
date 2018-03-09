@@ -36,11 +36,32 @@ class RequestLayer extends React.Component {
 
   render() {
     const { event, user, match } = this.props;
+    let { eventXUsers } = this.props;
     const userData = user.user;
     if (!userData) {
       this.props.history.push('/login');
       return false;
     }
+
+    eventXUsers = eventXUsers.map(row => {
+      const eventData = event.data;
+      const priceCheckin = !row.is_subscriber && row.price;
+      let priceRegister;
+      if (eventData.is_only_disc_gmem) {
+        if (eventData.group_id && eventData.group_id === row.group_id) {
+          priceRegister = eventData.deposit / 100 * eventData.price_after_discount;
+        } else {
+          priceRegister = eventData.deposit / 100 * eventData.price;
+        }
+      } else {
+        priceRegister = eventData.deposit / 100 * eventData.price_after_discount;
+      }
+      const paid = row.event_status === 'checkin' ? priceCheckin : priceRegister;
+      return {
+        ...row,
+        paid,
+      }
+    });
 
     const eventId = match.params.eventId || event.data.event_id;
     const info = match.params.info || 'overview';
@@ -57,10 +78,10 @@ class RequestLayer extends React.Component {
         <SendNotificationForm event={this.props.event.data} />
         <TabBar
           info={info}
-          tabs={pages(eventId, this.props)}
+          tabs={pages(eventId, {event, user, match, eventXUsers})}
         />
         {/* pass page data here */}
-        {page && page.content(this.props, event.loading)}
+        {page && page.content({event, user, match, eventXUsers}, event.loading)}
       </div>);
     }
 
@@ -72,6 +93,7 @@ class RequestLayer extends React.Component {
 const mapStateToProps = state => ({
   user: state.app.metadata.data,
   event: state.app.event,
+  eventXUsers: state.app.eventXUsers.data,
 });
 
 const mapDispatchToProps = dispatch => ({

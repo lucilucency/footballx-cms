@@ -369,6 +369,9 @@ class EventHeader extends React.Component {
                 <div>
                   <img src={Groups[eventData.group_id] && Groups[eventData.group_id].icon} alt="" />
                 </div>
+                {eventData.is_only_disc_gmem && <small>
+                  {`Only discount for Members of ${Groups[eventData.group_id] && Groups[eventData.group_id].short_name}!`}
+                </small>}
               </div>}
             </HostedGroup>
             <Match>
@@ -401,22 +404,28 @@ class EventHeader extends React.Component {
                   {eventData.price} {eventData.discount && <span style={{ display: 'block', color: colors.green600 }}>-{eventData.discount}%</span>}
                 </li>
                 <li>
-                  <span>{strings.event_heading_register_total}</span>
-                  <div>{eventData.register_total + eventData.checkin_total}</div>
-                  {/* <div>{eventXUsers.length}</div> */}
+                  <span>{strings.event_heading_deposit}</span>
+                  {`${eventData.deposit}%`}
                 </li>
-                <li>
-                  <span>{strings.event_heading_checkin_total}</span>
-                  <div>{eventData.checkin_total}</div>
-                  {/* <div>{eventXUsers.filter(o => o.status === "checkin").length}</div> */}
-                </li>
+                {false && <div>
+                  <li>
+                    <span>{strings.event_heading_register_total}</span>
+                    <div>{eventData.register_total + eventData.checkin_total}</div>
+                    {/* <div>{eventXUsers.length}</div> */}
+                  </li>
+                  <li>
+                    <span>{strings.event_heading_checkin_total}</span>
+                    <div>{eventData.checkin_total}</div>
+                    {/* <div>{eventXUsers.filter(o => o.status === "checkin").length}</div> */}
+                  </li>
+                </div>}
               </ul>
             </EventInfo>
           </MatchWrapper>
           <ButtonContainer>
             <FlatButton
               onClick={this.openCheckinQRView}
-              icon={<IconCode />}
+              icon={<IconFingerprint />}
               label={strings.form_checkin_qr}
             />
             <FlatButton
@@ -428,7 +437,7 @@ class EventHeader extends React.Component {
               name={'generateQR'}
               show={showFormGenerateQR}
               onClick={this.openMinigameLottery}
-              icon={<IconFingerprint />}
+              icon={<IconCode />}
               text={strings.form_mini_game}
               textToggle={strings.form_mini_game_close}
             />

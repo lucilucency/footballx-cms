@@ -89,7 +89,7 @@ const tableEventsColumns = browser => [browser.greaterThan.medium && {
     </div>);
   },
 }, {
-  displayName: strings.th_xusers,
+  displayName: strings.th_xusers_checkin,
   field: 'checkin_total',
   sortFn: true,
   displayFn: row => (<div>

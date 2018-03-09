@@ -22,6 +22,7 @@ const setShowFormState = (props) => {
 };
 
 const FormGroup = styled.div`
+  background-color: whitesmoke;
   padding: 0 15px;
   box-sizing: border-box;
   text-align: center;
@@ -98,9 +99,8 @@ class CheckinQR extends React.Component {
           facebook_id: payloadData['gcm.notification.facebook_id'],
           nickname: payloadData['gcm.notification.nickname'],
           xuser_id: payloadData['gcm.notification.xuser_id'],
-        }
-      })
-      // ...
+        },
+      });
     });
   }
 
@@ -135,21 +135,34 @@ class CheckinQR extends React.Component {
 
     return (
       <FormGroup toggle={toggle} showForm={showForm}>
-        <div  style={{ margin: 'auto' }}>
-          <QRCode size={largeSize} value={JSON.stringify({
-            object: 'event',
-            data: {
-              event_id: this.props.eventId,
-              notification: null,
-            },
-          })}/>
-        </div>
-
-        <div>
-          {newUser && <H2 show={this.state.newUser}>
-            <a href={`https://www.facebook.com/${newUser.facebook_id}`} target="_blank">{newUser.nickname}</a>
-          </H2>}
-        </div>
+        <Row>
+          <Col flex={3}>
+            <H2 show>
+              <a target="_blank">Scan me to checkin!</a>
+            </H2>
+            <div
+              style={{ margin: 'auto' }}
+            >
+              <QRCode
+                size={largeSize}
+                value={JSON.stringify({
+                  object: 'event',
+                  data: {
+                    event_id: this.props.eventId,
+                    notification: null,
+                  },
+                })}
+              />
+            </div>
+          </Col>
+          <Col flex={9} style={{  }}>
+            <div>
+              {newUser && <H2 show={this.state.newUser}>
+                <a href={`https://www.facebook.com/${newUser.facebook_id}`} target="_blank">{newUser.nickname}</a>
+              </H2>}
+            </div>
+          </Col>
+        </Row>
 
         <ListWinner>
           {this.state.newUsers.filter(o => o).map(o => (

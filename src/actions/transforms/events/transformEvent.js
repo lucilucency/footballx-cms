@@ -31,6 +31,7 @@ function transformEvent(o) {
   const eventObj = event ? {
     ...event,
     event_id: event.id,
+    price_after_discount: event.discount ? event.price * (100 - event.discount) / 100 : event.price,
   } : {};
 
   const clubs = (match && match.cache_clubs) ? match.cache_clubs.split(',') : [];

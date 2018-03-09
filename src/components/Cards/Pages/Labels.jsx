@@ -97,6 +97,7 @@ class CardLabelsPage extends React.Component {
 
   render() {
     const { cardLabels } = this.props;
+    window.abc = cardLabels.data;
 
     return (<div>
       <Container

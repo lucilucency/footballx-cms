@@ -22,6 +22,7 @@ const setShowFormState = (props) => {
 };
 
 const FormGroup = styled.div`
+  background-color: whitesmoke;
   padding: 0 15px;
   box-sizing: border-box;
   text-align: center;
@@ -146,7 +147,6 @@ class MinigameScanQR extends React.Component {
             })}
           />
         </div>
-
         <ListWinner>
           {this.state.winners.filter(o => o).map(o => (
             <Winner flex={1} >
