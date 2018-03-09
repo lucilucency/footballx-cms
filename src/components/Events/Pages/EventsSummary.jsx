@@ -81,7 +81,6 @@ export const EventsSummary = (propsVar) => {
     });
   });
 
-
   dataKeys.forEach((key) => {
     const total = data[key].reduce(sum, 0);
     const avg = total / events.length;

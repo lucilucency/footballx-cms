@@ -10,8 +10,8 @@ const pages = [{
   content: props => (<OverviewPage props={props} />),
 
 }, {
-  name: strings.tab_log,
-  key: 'log',
+  name: strings.tab_records,
+  key: 'records',
   parsed: true,
   content: props => (<MatchLogPage {...props} />),
 }];

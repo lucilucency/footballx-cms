@@ -2,7 +2,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { getOrdinal, transformations } from 'utils';
+import { getOrdinal, transformations, sum, abbreviateNumber } from 'utils';
 import { toDateTimeString } from 'utils/time';
 import strings from 'lang';
 import { FIREBASE_MESSAGING } from 'firebaseNotification';
@@ -64,28 +64,19 @@ const eventXUsersColumns = (user, event) => [{
   sortFn: true,
 }, {
   displayName: strings.th_subscription,
-  field: 'is_subscriber',
+  field: 'paidSubscription',
   displayFn: (row, col, field) => (<div>
-    {field && 1}
+    {field}
   </div>),
 }, {
   displayName: strings.th_paid,
-  field: 'paid',
-  // displayFn: (row, col, field) => {
-  //   const priceCheckin = !row.is_subscriber && field;
-  //   let priceRegister;
-  //   if (event.is_only_disc_gmem) {
-  //     if (event.group_id && event.group_id === row.group_id) {
-  //       priceRegister = event.deposit / 100 * event.price_after_discount;
-  //     } else {
-  //       priceRegister = event.deposit / 100 * event.price;
-  //     }
-  //   } else {
-  //     priceRegister = event.deposit / 100 * event.price_after_discount;
-  //   }
-  //   const price = row.event_status === 'checkin' ? priceCheckin : priceRegister;
-  //   return (<div>{price}</div>)
-  // },
+  field: 'paidXCoin',
+}, user.user_type === 1 && {
+  displayName: 'Remaining Subs',
+  field: 'subscription'
+}, user.user_type === 1 && {
+  displayName: 'Remaining XCoin',
+  field: 'xcoin'
 }];
 
 const OverviewContainer = styled.div`
@@ -147,6 +138,31 @@ class Overview extends React.Component {
       return -1;
     });
 
+    const computed = {};
+    const data = {
+      paidXCoin: [],
+      paidSubscription: [],
+    };
+    const dataKeys = Object.keys(data);
+    xusers.forEach((xuser) => {
+      dataKeys.forEach((key) => {
+        data[key].push(xuser[key]);
+      });
+    });
+
+    dataKeys.forEach((key) => {
+      const total = data[key].reduce(sum, 0);
+      const max = Math.max(...data[key]);
+      const maxXUser = xusers.find(o => o[key] === max) || {};
+
+      computed[key] = {
+        total,
+        max,
+        maxXUser,
+      };
+    });
+
+
     return (<div>
       <div><i>*{strings.event_notes}: {eventData.notes}</i></div>
       <OverviewContainer>
@@ -158,7 +174,7 @@ class Overview extends React.Component {
             error={false}
           >
             <Table
-              columns={eventXUsersColumns(user, event.data)}
+              columns={eventXUsersColumns(user.user, event.data)}
               data={xusers}
               loading={eventXUsers.loading}
               error={false}
@@ -169,7 +185,6 @@ class Overview extends React.Component {
         </XUsersContainer>
         <HotspotContainer>
           <Container
-            title={strings.th_record}
             loading={false}
             error={false}
           >
@@ -177,14 +192,15 @@ class Overview extends React.Component {
               <List>
                 <ListItem
                   leftIcon={<IconPlace />}
-                  primaryText={eventData.hotspot_name}
-                  secondaryText={eventData.hotspot_address}
+                  primaryText={'Total XCoin'}
+                  secondaryText={computed['paidXCoin'].total && computed['paidXCoin'].total.toLocaleString()}
                 />
-                {eventData.hotspot_phone && <ListItem
+                <ListItem
                   insetChildren
                   leftIcon={<IconPhone />}
-                  primaryText={eventData.hotspot_phone}
-                />}
+                  primaryText={'Total Subscription'}
+                  secondaryText={computed['paidSubscription'].total && computed['paidSubscription'].total.toLocaleString()}
+                />
               </List>
               {eventData.hotspot_wifi && <Divider inset />}
               {eventData.hotspot_wifi && <List>
