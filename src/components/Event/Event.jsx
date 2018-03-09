@@ -56,8 +56,9 @@ class RequestLayer extends React.Component {
       } else {
         priceRegister = eventData.deposit / 100 * eventData.price_after_discount;
       }
-      const paidXCoin = row.event_status === 'checkin' ? priceCheckin : priceRegister;
+
       const paidSubscription = row.is_subscriber ? 1 : 0;
+      const paidXCoin = paidSubscription ? 0 : (row.event_status === 'checkin' ? priceCheckin : priceRegister);
       return {
         ...row,
         paidXCoin,

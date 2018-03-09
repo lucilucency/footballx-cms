@@ -63,20 +63,23 @@ const eventXUsersColumns = (user, event) => [{
   },
   sortFn: true,
 }, {
-  displayName: strings.th_subscription,
+  displayName: strings.th_paid_subs,
   field: 'paidSubscription',
   displayFn: (row, col, field) => (<div>
-    {field}
+    {field > 0 && field}
   </div>),
 }, {
-  displayName: strings.th_paid,
+  displayName: strings.th_paid_xcoin,
   field: 'paidXCoin',
+  displayFn: (row,col, field) => (<div>
+    {field > 0 && field}
+  </div>),
 }, user.user_type === 1 && {
   displayName: 'Remaining Subs',
-  field: 'subscription'
+  field: 'subscription',
 }, user.user_type === 1 && {
   displayName: 'Remaining XCoin',
-  field: 'xcoin'
+  field: 'xcoin',
 }];
 
 const OverviewContainer = styled.div`
@@ -140,6 +143,7 @@ class Overview extends React.Component {
 
     const computed = {};
     const data = {
+      subscription: [],
       paidXCoin: [],
       paidSubscription: [],
     };
@@ -151,17 +155,21 @@ class Overview extends React.Component {
     });
 
     dataKeys.forEach((key) => {
+      const amount = data[key].filter(o => o).length;
       const total = data[key].reduce(sum, 0);
       const max = Math.max(...data[key]);
       const maxXUser = xusers.find(o => o[key] === max) || {};
 
       computed[key] = {
+        amount,
         total,
         max,
         maxXUser,
       };
     });
 
+    const subscription = computed['subscription'].total;
+    const paidSubscription = computed['paidSubscription'].total;
 
     return (<div>
       <div><i>*{strings.event_notes}: {eventData.notes}</i></div>
@@ -193,23 +201,15 @@ class Overview extends React.Component {
                 <ListItem
                   leftIcon={<IconPlace />}
                   primaryText={'Total XCoin'}
-                  secondaryText={computed['paidXCoin'].total && computed['paidXCoin'].total.toLocaleString()}
+                  secondaryText={`${computed['paidXCoin'].total.toLocaleString()} (${computed['paidXCoin'].amount} users)`}
                 />
                 <ListItem
                   insetChildren
                   leftIcon={<IconPhone />}
                   primaryText={'Total Subscription'}
-                  secondaryText={computed['paidSubscription'].total && computed['paidSubscription'].total.toLocaleString()}
+                  secondaryText={`${(subscription + paidSubscription).toLocaleString()} (Paid: ${paidSubscription}, Remaining: ${subscription})`}
                 />
               </List>
-              {eventData.hotspot_wifi && <Divider inset />}
-              {eventData.hotspot_wifi && <List>
-                <ListItem
-                  leftIcon={<IconWifi />}
-                  primaryText={eventData.hotspot_wifi}
-                  secondaryText={eventData.hotspot_wifi_password}
-                />
-              </List>}
             </div>
           </Container>
         </HotspotContainer>
