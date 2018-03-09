@@ -17,7 +17,7 @@ import IconCode from 'material-ui/svg-icons/action/code';
 
 import Spinner from 'components/Spinner';
 import ShowFormToggle from 'components/Form/ShowFormToggle';
-import GenerateQRForm from 'components/Event/Forms/GenerateQR';
+import GenerateQRForm from 'components/Event/Forms/MinigameLottery';
 import CheckinQRView from 'components/Event/Forms/CheckinQR';
 import MinigameScanQRView from 'components/Event/Forms/MinigameScanQR';
 /* css */

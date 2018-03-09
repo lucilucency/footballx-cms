@@ -66,14 +66,22 @@ const Winner = styled(Col)`
   text-align: center;
   display: flex;
   flex-direction: column-reverse;
+  
+  & i {
+    position: absolute;
+    font-size: 2.5em;
+    margin-top: -0.85em;
+    margin-left: -0.25em;
+    color: rgb(245, 245, 245);
+  }
 `;
 
 const initialState = {
   winners: [],
   prevWinner: null,
   nextWinner: null,
-  duration: 5000,
-  step: 300,
+  duration: 3700,
+  step: 200,
   margin: 50,
   isFlipped: false,
 };
@@ -94,10 +102,31 @@ class GenerateQR extends React.Component {
     };
 
     this.doRandomXUser = this.doRandomXUser.bind(this);
+
+    // this.url = 'http://streaming.tdiradio.com:8000/house.mp3';
+    this.url = '/assets/audio/Drum Roll - Gaming Sound Effect (HD).mp3';
+    this.audio = new Audio(this.url);
+    this.togglePlay = this.togglePlay.bind(this);
   }
 
   componentDidMount() {
     setShowFormState(this.props);
+  }
+
+  togglePlay() {
+    this.setState({ play: !this.state.play }, () => {
+      if (this.state.play) {
+        const playPromise = this.audio.play();
+        if (playPromise !== null) {
+          playPromise.catch(() => { this.audio.play(); });
+        }
+      } else {
+        const playPromise = this.audio.pause();
+        if (playPromise !== null) {
+          playPromise.catch(() => { this.audio.pause(); });
+        }
+      }
+    });
   }
 
   componentWillUpdate(nextProps) {
@@ -112,11 +141,13 @@ class GenerateQR extends React.Component {
 
   doRandomXUser() {
     const that = this;
-    const winnerIds = this.state.winners.length ? this.state.winners.map(o => o.id) : [];
+    const winnerIds = this.state.winners.length ? this.state.winners.filter(o => o).map(o => o.id) : [];
     const dataSource = that.props.xusers.filter(o => winnerIds.indexOf(o.id) === -1);
 
     if (dataSource.length && that.state.tries > 0) {
       this.setState({ ...initialState, isFlipping: true }, () => {
+        this.togglePlay();
+
         const bound = dataSource.length;
         const duration = that.state.duration;
         const started = new Date().getTime();
@@ -127,7 +158,8 @@ class GenerateQR extends React.Component {
               const winner = dataSource[Math.floor(Math.random() * bound)];
               const nextState = {
                 isFlipped: !that.state.isFlipped,
-                step: onGameTime < 0.8 * duration ? Math.max(that.state.step - that.state.margin, 100) : Math.max(that.state.step + (that.state.margin * 2), 100),
+                // step: onGameTime < 0.9 * duration ? Math.max(that.state.step - that.state.margin, 100) : Math.max(that.state.step + (that.state.margin * 2), 100),
+                step: Math.max(that.state.step - that.state.margin, 100),
               };
               if (that.state.isFlipped) {
                 nextState.nextWinner = winner;
@@ -138,15 +170,17 @@ class GenerateQR extends React.Component {
             } else {
               this.setState({ isFlipped: !this.state.isFlipped }, setTimeout(() => {
                 that.setState({ isFlipping: false }, () => {
+                  this.togglePlay();
+
                   const winners = this.state.winners;
                   if (winners.map(o => o.facebook_id).indexOf(this.state.nextWinner.facebook_id) === -1) {
                     setTimeout(() => {
                       winners.push(this.state.nextWinner);
                       this.setState({ winners, tries: that.state.tries - 1 });
-                    }, 1000);
+                    }, 1200);
                   }
                 });
-              }, 1000));
+              }, 1200));
             }
           }, that.state.step);
         };
@@ -209,10 +243,11 @@ class GenerateQR extends React.Component {
         </Row>
 
         <ListWinner>
-          {this.state.winners.filter(o => o).map(o => (
+          {this.state.winners.filter(o => o).map((o, index) => (
             <Winner flex={1} >
               <div style={{ textAlign: 'center', margin: 10 }}>
-                {browser.greaterThan.medium && <h4 style={{ textAlign: 'center' }}>{o.nickname}</h4>}
+                {browser.greaterThan.medium && <h5 style={{ textAlign: 'center' }}>{o.nickname}</h5>}
+                <i>{index + 1}</i>
                 <img src={o.avatar} alt="" width={smallSize} height={smallSize} />
               </div>
             </Winner>

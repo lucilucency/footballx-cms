@@ -190,7 +190,7 @@ class RequestLayer extends React.Component {
         }]}
       >
         <Table
-          paginated={!subInfo}
+          // paginated={!subInfo}
           hidePaginatedTop
           columns={subInfo ? PrintingMembersTableCols : MembersTableCols(props.browser)}
           data={this.props.groupMembers.data}

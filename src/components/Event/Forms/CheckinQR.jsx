@@ -125,13 +125,13 @@ class CheckinQR extends React.Component {
     const smallSize = ((browser.width - 80) / 10) - 20;
 
     const { newUser } = this.state;
-    console.log({
+    console.log(JSON.stringify({
       object: 'event',
       data: {
         event_id: this.props.eventId,
         notification: null,
       },
-    });
+    }));
 
     return (
       <FormGroup toggle={toggle} showForm={showForm}>

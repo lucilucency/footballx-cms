@@ -129,7 +129,6 @@ class Overview extends React.Component {
   }
 
   render() {
-    console.log(this.props);
     const { event, eventXUsers, user } = this.props;
     const eventData = event.data;
     const eventId = eventData.event_id;
