@@ -38,6 +38,16 @@ const FormGroup = styled.div`
   `)}
 `;
 
+const GuestName = styled.span`
+  position: absolute;
+  bottom: 50%;
+  left: calc(50% - 100px);
+  width: 200px;
+  text-align: center;
+  font-size: 2em;
+  filter: drop-shadow(0 0 5px red);
+`;
+
 const H2 = styled.h1`
   text-align: center;
   margin-bottom: 0;
@@ -140,9 +150,24 @@ class GenerateQR extends React.Component {
   }
 
   doRandomXUser() {
+    // localStorage.setItem('guest_number', 10);
+
     const that = this;
     const winnerIds = this.state.winners.length ? this.state.winners.filter(o => o).map(o => o.id) : [];
     const dataSource = that.props.xusers.filter(o => winnerIds.indexOf(o.id) === -1);
+
+    const addingNumber = Number(localStorage.getItem('guest_number')) || 500;
+    for (let i = 0; i < addingNumber; i++) {
+      const tmp = {
+        id: i+10000,
+        is_guest: true,
+        nickname: `MUSVN-${('000' + i).slice(-3)}`,
+        avatar: '/assets/images/mu_frame.png',
+      };
+      if (this.state.winners.filter(o => o).map(o => o.id).indexOf(tmp.id) === -1) {
+        dataSource.push(tmp);
+      }
+    }
 
     if (dataSource.length && that.state.tries > 0) {
       this.setState({ ...initialState, isFlipping: true }, () => {
@@ -173,7 +198,7 @@ class GenerateQR extends React.Component {
                   this.togglePlay();
 
                   const winners = this.state.winners;
-                  if (winners.map(o => o.facebook_id).indexOf(this.state.nextWinner.facebook_id) === -1) {
+                  if (winners.map(o => o.id).indexOf(this.state.nextWinner.id) === -1) {
                     setTimeout(() => {
                       winners.push(this.state.nextWinner);
                       this.setState({ winners, tries: that.state.tries - 1 });
@@ -219,16 +244,18 @@ class GenerateQR extends React.Component {
           >
             <div key="back">
               <img src={prevWinner && prevWinner.avatar} alt="" width={largeSize} height={largeSize} />
+              {prevWinner && prevWinner.is_guest && <GuestName>{prevWinner.nickname}</GuestName>}
             </div>
             <div key="front">
               <img src={nextWinner && nextWinner.avatar} alt="" width={largeSize} height={largeSize} />
+              {nextWinner && nextWinner.is_guest && <GuestName>{nextWinner.nickname}</GuestName>}
             </div>
           </ReactCardFlip>
         </div>
 
         <div>
           {nextWinner && <H2 show={!this.state.isFlipping}>
-            <a href={`https://www.facebook.com/${nextWinner.facebook_id}`} target="_blank">{nextWinner.nickname}</a>
+            {!nextWinner.is_guest && <a href={`https://www.facebook.com/${nextWinner.facebook_id}`} target="_blank">{nextWinner.nickname}</a>}
           </H2>}
         </div>
 
