@@ -44,7 +44,6 @@ class RequestLayer extends React.Component {
           if (typeof parsedData === 'object') {
             const json = JSON.stringify(eval("(" + parsedData.qr_data + ")"));
             const qrData = JSON.parse(json);
-            console.log('qrData', qrData);
 
             if (qrData.notification.toString() === props.user.user.user_id.toString()) {
               let xuserGroup = {};
@@ -65,9 +64,7 @@ class RequestLayer extends React.Component {
               props.dispatchNewXUserCheckin(payload);
             }
           }
-        }
-        catch(e)
-        {
+        } catch (e) {
           console.log('Error occur!', e);
         }
       }

@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import update from 'react-addons-update';
 /* actions - helpers */
 import { toggleShowForm } from 'actions/dispatchForm';
 import strings from 'lang';
@@ -79,15 +80,14 @@ const Winner = styled(Col)`
   
   & i {
     position: absolute;
-    font-size: 2.5em;
+    font-size: 2em;
     margin-top: -0.85em;
-    margin-left: -0.25em;
+    margin-left: -0.1em;
     color: rgb(245, 245, 245);
   }
 `;
 
 const initialState = {
-  winners: [],
   prevWinner: null,
   nextWinner: null,
   duration: 3700,
@@ -105,6 +105,8 @@ class GenerateQR extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      winners: [],
+      blackList: [],
       tries: 10,
       ...initialState,
       isFlipping: false,
@@ -112,8 +114,8 @@ class GenerateQR extends React.Component {
     };
 
     this.doRandomXUser = this.doRandomXUser.bind(this);
+    this.newGame = this.newGame.bind(this);
 
-    // this.url = 'http://streaming.tdiradio.com:8000/house.mp3';
     this.url = '/assets/audio/Drum Roll - Gaming Sound Effect (HD).mp3';
     this.audio = new Audio(this.url);
     this.togglePlay = this.togglePlay.bind(this);
@@ -121,6 +123,12 @@ class GenerateQR extends React.Component {
 
   componentDidMount() {
     setShowFormState(this.props);
+  }
+
+  componentWillUpdate(nextProps) {
+    if (this.props.eventId !== nextProps.eventId) {
+      this.clearState();
+    }
   }
 
   togglePlay() {
@@ -139,32 +147,33 @@ class GenerateQR extends React.Component {
     });
   }
 
-  componentWillUpdate(nextProps) {
-    if (this.props.eventId !== nextProps.eventId) {
-      this.clearState();
-    }
-  }
-
   clearState() {
     this.setState(initialState);
   }
 
-  doRandomXUser() {
-    // localStorage.setItem('guest_number', 10);
+  newGame() {
+    this.setState({
+      blackList: this.state.winners,
+      winners: [],
+      ...initialState,
+    });
+  }
 
+  doRandomXUser() {
     const that = this;
     const winnerIds = this.state.winners.length ? this.state.winners.filter(o => o).map(o => o.id) : [];
-    const dataSource = that.props.xusers.filter(o => winnerIds.indexOf(o.id) === -1);
+    const blackListIds = this.state.blackList.length ? this.state.blackList.filter(o => o).map(o => o.id) : [];
+    const dataSource = that.props.xusers.filter(o => winnerIds.indexOf(o.id) === -1 && blackListIds.indexOf(o.id) === -1);
 
     const addingNumber = Number(localStorage.getItem('guest_number')) || 500;
-    for (let i = 0; i < addingNumber; i++) {
+    for (let i = 1; i < addingNumber; i++) {
       const tmp = {
-        id: i+10000,
+        id: i + 10000,
         is_guest: true,
-        nickname: `MUSVN-${('000' + i).slice(-3)}`,
+        nickname: `MUSVN-${(`000${i}`).slice(-3)}`,
         avatar: '/assets/images/mu_frame.png',
       };
-      if (this.state.winners.filter(o => o).map(o => o.id).indexOf(tmp.id) === -1) {
+      if (winnerIds.indexOf(tmp.id) === -1 && blackListIds.indexOf(tmp.id) === -1) {
         dataSource.push(tmp);
       }
     }
@@ -197,11 +206,19 @@ class GenerateQR extends React.Component {
                 that.setState({ isFlipping: false }, () => {
                   this.togglePlay();
 
-                  const winners = this.state.winners;
-                  if (winners.map(o => o.id).indexOf(this.state.nextWinner.id) === -1) {
+                  // const winners = Object.assign([], this.state.winners);
+                  // console.log(winners);
+                  // console.log('11111111');
+
+                  if (this.state.winners.map(o => o.id).indexOf(this.state.nextWinner.id) === -1 && blackListIds.indexOf(this.state.nextWinner.id) === -1) {
                     setTimeout(() => {
-                      winners.push(this.state.nextWinner);
-                      this.setState({ winners, tries: that.state.tries - 1 });
+                      // winners.push(this.state.nextWinner);
+                      this.setState({
+                        winners: update(this.state.winners, {
+                          $push: [this.state.nextWinner],
+                        }),
+                        tries: that.state.tries - 1,
+                      });
                     }, 1200);
                   }
                 });
@@ -260,13 +277,22 @@ class GenerateQR extends React.Component {
         </div>
 
         <Row>
-          {!this.state.isFlipping && <RaisedButton
-            style={{ margin: 'auto', marginBottom: 20, marginTop: 20 }}
-            label={strings.form_mini_game_lucky_guy}
-            primary
-            onClick={event => this.doRandomXUser(event)}
-            disabled={Boolean(this.state.tries <= 0)}
-          />}
+          <div style={{ margin: 'auto' }}>
+            {!this.state.isFlipping && <RaisedButton
+              style={{ margin: 'auto', marginBottom: 20, marginTop: 20, marginRight: 20 }}
+              label={strings.form_mini_game_lucky_guy}
+              primary
+              onClick={event => this.doRandomXUser(event)}
+              disabled={Boolean(this.state.tries <= 0)}
+            />}
+            {!this.state.isFlipping && <RaisedButton
+              style={{ margin: 'auto', marginBottom: 20, marginTop: 20 }}
+              label={'New Game'}
+              primary
+              onClick={event => this.newGame(event)}
+              disabled={Boolean(this.state.tries <= 0)}
+            />}
+          </div>
         </Row>
 
         <ListWinner>
