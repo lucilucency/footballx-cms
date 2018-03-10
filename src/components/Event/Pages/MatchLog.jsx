@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { getOrdinal, transformations, sum, abbreviateNumber } from 'utils';
 import { toDateTimeString } from 'utils/time';
 import strings from 'lang';
-import { FIREBASE_MESSAGING } from 'firebaseNotification';
 /* components */
 import Container from 'components/Container';
 import { IconFacebook } from 'components/Icons';
@@ -116,10 +115,7 @@ class Overview extends React.Component {
   };
 
   componentDidMount() {
-    FIREBASE_MESSAGING.onMessage((payload) => {
-      console.log('Message received. ', payload);
-      // ...
-    });
+
   }
 
   render() {

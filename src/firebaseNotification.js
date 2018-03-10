@@ -58,7 +58,7 @@ FIREBASE_MESSAGING.requestPermission()
       .then((currentToken) => {
         if (currentToken) {
           console.log('token: ', currentToken);
-          subscribeTokenToTopic(currentToken, 'event-214-checkin');
+          subscribeTokenToTopic(currentToken, 'event-200-checkin');
         } else {
           // Show permission request.
           console.log('No Instance ID token available. Request permission to generate one.');

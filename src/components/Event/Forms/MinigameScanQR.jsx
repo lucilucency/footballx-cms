@@ -7,7 +7,7 @@ import { toggleShowForm } from 'actions/dispatchForm';
 import { Row, Col } from 'utils';
 /* components */
 import QRCode from 'qrcode.react'
-import { FIREBASE_MESSAGING } from 'firebaseNotification';
+// import { FIREBASE_MESSAGING } from 'firebaseNotification';
 /* css */
 import styled, { css } from 'styled-components';
 
@@ -96,10 +96,9 @@ class MinigameScanQR extends React.Component {
 
   componentDidMount() {
     setShowFormState(this.props);
-    FIREBASE_MESSAGING.onMessage((payload) => {
-      console.log('Message received. ', payload);
-      // ...
-    });
+    // FIREBASE_MESSAGING.onMessage((payload) => {
+    //   console.log('Message received. ', payload);
+    // });
   }
 
   componentWillUpdate(nextProps) {

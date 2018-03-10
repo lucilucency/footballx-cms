@@ -7,9 +7,13 @@ import { toggleShowForm } from 'actions/dispatchForm';
 import { Row, Col } from 'utils';
 /* components */
 import QRCode from 'qrcode.react'
-import { FIREBASE_MESSAGING } from 'firebaseNotification';
+// import { FIREBASE_MESSAGING } from 'firebaseNotification';
 /* css */
 import styled, { css } from 'styled-components';
+
+
+// const socket = require('socket.io-client')('http://dev.ttab.me:51170/');
+
 
 const FORM_NAME = 'generateQR';
 
@@ -22,7 +26,7 @@ const setShowFormState = (props) => {
 };
 
 const FormGroup = styled.div`
-  background-color: whitesmoke;
+  //background-color: whitesmoke;
   padding: 0 15px;
   box-sizing: border-box;
   text-align: center;
@@ -89,19 +93,17 @@ class CheckinQR extends React.Component {
   componentDidMount() {
     setShowFormState(this.props);
 
-    FIREBASE_MESSAGING.onMessage((payload) => {
-      const payloadData = payload.data;
-
-      console.log('Message received. ', payloadData);
-
-      this.setState({
-        newUser: {
-          facebook_id: payloadData['gcm.notification.facebook_id'],
-          nickname: payloadData['gcm.notification.nickname'],
-          xuser_id: payloadData['gcm.notification.xuser_id'],
-        },
-      });
-    });
+    // FIREBASE_MESSAGING.onMessage((payload) => {
+    //   const payloadData = payload.data;
+    //   console.log('Message received. ', payloadData);
+    //   this.setState({
+    //     newUser: {
+    //       facebook_id: payloadData['gcm.notification.facebook_id'],
+    //       nickname: payloadData['gcm.notification.nickname'],
+    //       xuser_id: payloadData['gcm.notification.xuser_id'],
+    //     },
+    //   });
+    // });
   }
 
   componentWillUpdate(nextProps) {
@@ -124,19 +126,34 @@ class CheckinQR extends React.Component {
     const largeSize = browser.height / 3;
     const smallSize = ((browser.width - 80) / 10) - 20;
 
-    const { newUser } = this.state;
+    // const { newXUser } = this.props;
+    const newXUser = {
+      "avatar": "https://graph.facebook.com/584041131957299/picture?type=large",
+      "birthday": "10/12/1991",
+      "email": "khucanhminhluong@gmail.com",
+      "facebook_id": "584041131957299",
+      "fullname": "",
+      "gender": "male",
+      "id": 2161,
+      "instagram_id": "",
+      "is_chat_available": true,
+      "nickname": "Gnoul Cuhk",
+      "phone": "",
+      "subscription": 0
+    };
+
     console.log(JSON.stringify({
       object: 'event',
       data: {
         event_id: this.props.eventId,
-        notification: null,
+        notification: '1234556',
       },
     }));
 
     return (
       <FormGroup toggle={toggle} showForm={showForm}>
         <Row>
-          <Col flex={3}>
+          <Col flex={3} style={{ textAlign: 'center' }}>
             <H2 show>
               <a target="_blank">Scan me to checkin!</a>
             </H2>
@@ -155,11 +172,17 @@ class CheckinQR extends React.Component {
               />
             </div>
           </Col>
-          <Col flex={9} style={{  }}>
+          <Col flex={3} style={{ textAlign: 'center' }}>
             <div>
-              {newUser && <H2 show={this.state.newUser}>
-                <a href={`https://www.facebook.com/${newUser.facebook_id}`} target="_blank">{newUser.nickname}</a>
-              </H2>}
+              <div>
+                {newXUser && newXUser.avatar && <img src={newXUser.avatar} alt="" width={largeSize} height={largeSize} />}
+              </div>
+              <div>
+                {newXUser && <h2>
+                  <a href={`https://www.facebook.com/${newXUser.facebook_id}`} target="_blank">{newXUser.nickname}</a>
+                </h2>}
+                <h2>{JSON.stringify(newXUser)}</h2>
+              </div>
             </div>
           </Col>
         </Row>
@@ -183,7 +206,7 @@ const mapStateToProps = state => ({
   showForm: state.app.formGenerateQR.show,
   currentQueryString: window.location.search,
   loading: state.app.event.loading,
-  xusers: state.app.eventXUsers.data.filter(o => o.event_status === 'checkin'),
+  newXUser: state.app.eventXUser.data,
   browser: state.browser,
 });
 

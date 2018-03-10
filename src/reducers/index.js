@@ -26,6 +26,7 @@ export default combineReducers({
   events: fxReducer('events', []),
   event: fxReducer('event', {}),
   eventXUsers: fxReducer('eventXUsers', []),
+  eventXUser: fxReducer('eventXUser', {}),
 
   cardIssues: fxReducer('cardIssues', []),
   cardPackages: fxReducer('cardPackages', []),

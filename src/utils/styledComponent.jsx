@@ -11,6 +11,7 @@ export const Row = styled.div`
 
 export const Col = styled.div`
   //margin: 10px;
+  width: 100%;
   ${props => props.flex && css`
     flex: ${props.flex};
   `}

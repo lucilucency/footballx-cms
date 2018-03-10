@@ -1,5 +1,5 @@
 import * as transform from 'actions/transforms';
-import { action, fxActionPost, fxActionGet, fxActionPut, fxActionDelete, fxActionAuth } from 'actions/dispatchAction';
+import { action, fxActionPost, fxActionGet, fxActionPut, fxActionDelete, fxActionAuth, fxDispatch } from 'actions/dispatchAction';
 import queryString from 'querystring';
 
 const __blankTransforms = () => ([]);
@@ -62,6 +62,10 @@ export const getGroupMembershipPackages = groupId => fxActionGet('groupMembershi
 export const getEvents = params => fxActionGet('events', 'events', { ...queryString.parse(params.substring(1)) }, transform.transformEvents);
 export const getEvent = eventId => fxActionGet('event', `event/${eventId}`, {}, transform.transformEvent);
 export const getEventXUsers = (eventId, params) => fxActionGet('eventXUsers', `event/${eventId}/xusers`, params);
+export const addEventXUser = (payload) => fxDispatch('ADD/eventXUsers', payload);
+export const dispatchNewXUserCheckin = (payload) => fxDispatch('eventXUser', payload);
+
+
 export const createEvent = params => fxActionPost('ADD/events', 'event', params, transform.transformCreateEvent);
 export const editEvent = (eventId, params) => fxActionPut('EDIT/event', `event/${eventId}`, params, transform.transformEditEvent);
 export const deleteEvent = eventId => fxActionDelete('DELETE/event', `event/${eventId}`);

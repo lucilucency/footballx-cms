@@ -157,6 +157,18 @@ export function fxActionPost(type, path, params = {}, transform, payload) {
   };
 }
 
+export function fxDispatch(type, payload, transform) {
+  return (dispatch) => {
+    const dispatchOK = payload => ({
+      type: `OK/${type}`,
+      payload,
+    });
+    const dispatchData = transform ? transform(payload) : payload;
+    return dispatch(dispatchOK(dispatchData));
+  };
+}
+
+
 export function fxActionGet(type, path, params = {}, transform) {
   const host = FX_API;
   const v = FX_VERSION;

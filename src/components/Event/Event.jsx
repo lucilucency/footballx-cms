@@ -4,7 +4,7 @@ import Helmet from 'react-helmet';
 import PropTypes from 'prop-types';
 import TabBar from 'components/TabBar';
 import {
-  getEvent, getEventXUsers,
+  getEvent, getEventXUsers, addEventXUser, dispatchNewXUserCheckin
 } from 'actions';
 import EventHeader from './EventHeader';
 import pages from './Pages/index';
@@ -32,6 +32,38 @@ class RequestLayer extends React.Component {
     const eventId = this.props.match.params.eventId;
     this.props.getEvent(eventId);
     this.props.getEventXUsers(eventId);
+    const props = this.props;
+    const socket = require('socket.io-client')('http://prod.ttab.me:51170/');
+
+    socket.on('event', function (data) {
+      console.log('---------------------------');
+      console.log("recieved data with event", data);
+      console.log('---------------------------');
+
+      if (data) {
+        try
+        {
+          const parsedData = JSON.parse(data);
+          window.abc = parsedData;
+          if (typeof parsedData === 'object') {
+            console.log('parsed: ', parsedData);
+            // const qrData = JSON.parse(parsedData.qr_data);
+            // console.log('qrData', qrData);
+            const payload = {
+              ...parsedData.xuser,
+              event_status: parsedData.xuser_event_status,
+            };
+
+            props.addEventXUser(payload);
+            props.dispatchNewXUserCheckin(payload);
+          }
+        }
+        catch(e)
+        {
+          console.log('Error occur!', e);
+        }
+      }
+    });
   }
 
   render() {
@@ -102,6 +134,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   getEvent: eventId => dispatch(getEvent(eventId)),
   getEventXUsers: eventId => dispatch(getEventXUsers(eventId)),
+  addEventXUser: payload => dispatch(addEventXUser(payload)),
+  dispatchNewXUserCheckin: payload => dispatch(dispatchNewXUserCheckin(payload)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RequestLayer);
