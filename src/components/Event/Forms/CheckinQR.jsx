@@ -5,9 +5,8 @@ import PropTypes from 'prop-types';
 /* actions - helpers */
 import { toggleShowForm } from 'actions/dispatchForm';
 import { Row, Col } from 'utils';
-/* components */
+import Groups from 'fxconstants/build/groupsObj.json';
 import QRCode from 'qrcode.react'
-// import { FIREBASE_MESSAGING } from 'firebaseNotification';
 /* css */
 import styled, { css } from 'styled-components';
 
@@ -75,6 +74,9 @@ const LeftBar = styled.div`
     margin: auto;
     padding: 20px;
     margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    color: red;
   }
 `;
 
@@ -177,21 +179,21 @@ class CheckinQR extends React.Component {
                 />
               </div>
               <H2 show>
-                <a target="_blank">Scan me to checkin!</a>
+                <a target="_blank">Scan me to check-in!</a>
               </H2>
             </div>
           </LeftBar>
           <LeftBar>
-            <div>
+            {newXUser && <div>
               <div>
-                {newXUser && newXUser.avatar && <img src={newXUser.avatar} alt="" width={largeSize} height={largeSize} />}
-              </div>
-              <div>
-                {newXUser && <H2 show>
+                {newXUser.avatar && <img src={newXUser.avatar} alt="" width={largeSize} height={largeSize} />}
+                {<H2 show>
                   <a href={`https://www.facebook.com/${newXUser.facebook_id}`} target="_blank">{newXUser.nickname}</a>
                 </H2>}
+                {newXUser.group_id && <h2>{`Member of ${Groups[newXUser.group_id].short_name}`}</h2>}
+                {newXUser.group_id && <h2>{newXUser.code}</h2>}
               </div>
-            </div>
+            </div>}
           </LeftBar>
         </div>
 

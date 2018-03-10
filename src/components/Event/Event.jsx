@@ -47,9 +47,18 @@ class RequestLayer extends React.Component {
             console.log('qrData', qrData);
 
             if (qrData.notification.toString() === props.user.user.user_id.toString()) {
+              let xuserGroup = {};
+              if (parsedData.xuser_groups && parsedData.xuser_groups.length) {
+                xuserGroup = parsedData.xuser_groups[0];
+              }
+
               const payload = {
                 ...parsedData.xuser,
-                event_status: parsedData.xuser_event_status,
+                ...xuserGroup,
+                ...parsedData.xuser_group,
+                event_updated_at: Date.now(),
+                event_status: 'checkin',
+                xcoin: parsedData.xuser_balance.xcoin,
               };
 
               props.addEventXUser(payload);
