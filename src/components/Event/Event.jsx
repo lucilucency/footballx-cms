@@ -33,29 +33,28 @@ class RequestLayer extends React.Component {
     this.props.getEvent(eventId);
     this.props.getEventXUsers(eventId);
     const props = this.props;
-    const socket = require('socket.io-client')('http://prod.ttab.me:51170/');
+    const socket = require('socket.io-client')(FX_SOCKET);
 
     socket.on('event', function (data) {
-      console.log('---------------------------');
-      console.log("recieved data with event", data);
-      console.log('---------------------------');
-
       if (data) {
         try
         {
           const parsedData = JSON.parse(data);
           window.abc = parsedData;
           if (typeof parsedData === 'object') {
-            console.log('parsed: ', parsedData);
-            // const qrData = JSON.parse(parsedData.qr_data);
-            // console.log('qrData', qrData);
-            const payload = {
-              ...parsedData.xuser,
-              event_status: parsedData.xuser_event_status,
-            };
+            const json = JSON.stringify(eval("(" + parsedData.qr_data + ")"));
+            const qrData = JSON.parse(json);
+            console.log('qrData', qrData);
 
-            props.addEventXUser(payload);
-            props.dispatchNewXUserCheckin(payload);
+            if (qrData.notification.toString() === props.user.user.user_id.toString()) {
+              const payload = {
+                ...parsedData.xuser,
+                event_status: parsedData.xuser_event_status,
+              };
+
+              props.addEventXUser(payload);
+              props.dispatchNewXUserCheckin(payload);
+            }
           }
         }
         catch(e)
