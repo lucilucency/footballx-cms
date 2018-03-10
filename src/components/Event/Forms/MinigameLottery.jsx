@@ -290,7 +290,6 @@ class GenerateQR extends React.Component {
               label={'New Game'}
               primary
               onClick={event => this.newGame(event)}
-              disabled={Boolean(this.state.tries <= 0)}
             />}
           </div>
         </Row>
