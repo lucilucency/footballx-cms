@@ -15,6 +15,8 @@ import Home from 'components/Home';
 import Search from 'components/Search';
 import Login from 'components/Login';
 import Admin from 'components/Admin';
+import Settings from 'components/Settings';
+
 import Clubs from 'components/Clubs';
 import Matches from 'components/Matches';
 import Event from 'components/Event';
@@ -100,6 +102,8 @@ class App extends React.Component {
 
             <Route exact path="/login" component={Login} />
             <Route exact path="/admin" component={Admin} />
+            <Route exact path="/settings" component={Settings} />
+
             <Route exact path="/clubs/:clubId?/:info?" component={Clubs} />
             <Route exact path="/matches/:matchId?/:info?" component={Matches} />
             <Route exact path="/events/:info?/:subInfo?" component={Events} />

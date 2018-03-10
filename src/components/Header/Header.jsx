@@ -220,6 +220,13 @@ const SettingsGroup = (propsVar) => {
           icon={<NoficationIcon />}
         />
       </Link>}
+      <Link to={'/settings'}>
+        <StyledFlatButton
+          label={'Settings'}
+          hoverColor="transparent"
+          icon={<ActionSettings />}
+        />
+      </Link>
       {user ? <Logout /> : null}
     </VerticalAlignDropdown>
   );
