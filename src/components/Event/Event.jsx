@@ -96,12 +96,26 @@ class RequestLayer extends React.Component {
 
       const paidSubscription = row.is_subscriber ? 1 : 0;
       const paidXCoin = paidSubscription ? 0 : (row.event_status === 'checkin' ? priceCheckin : priceRegister);
+      const paidXCoinTimes = paidSubscription ? 0 : 1;
       return {
         ...row,
         paidXCoin,
         paidSubscription,
       };
     });
+
+    eventXUsers = eventXUsers.reduce(function(prev, cur) {
+      const ids = prev.map(o => o.id);
+      const pos = ids.indexOf(cur.id);
+      if (pos === -1) {
+        prev.push(cur);
+      } else {
+        prev[pos].paidSubscription += cur.paidSubscription;
+        prev[pos].paidXCoin += cur.paidXCoin;
+        prev[pos].paidXCoinTimes += cur.paidXCoinTimes;
+      }
+      return prev;
+    }, []);
 
     const eventId = match.params.eventId || event.data.event_id;
     const info = match.params.info || 'overview';

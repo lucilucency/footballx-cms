@@ -67,18 +67,22 @@ const eventXUsersColumns = (user, event) => [{
   displayFn: (row, col, field) => (<div>
     {field > 0 && field}
   </div>),
+  sortFn: true,
 }, {
   displayName: strings.th_paid_xcoin,
   field: 'paidXCoin',
   displayFn: (row,col, field) => (<div>
     {field > 0 && field}
   </div>),
+  sortFn: true,
 }, user.user_type === 1 && {
   displayName: 'Remaining Subs',
   field: 'subscription',
+  sortFn: true,
 }, user.user_type === 1 && {
   displayName: 'Remaining XCoin',
   field: 'xcoin',
+  sortFn: true,
 }];
 
 const OverviewContainer = styled.div`
@@ -142,6 +146,7 @@ class Overview extends React.Component {
       subscription: [],
       paidXCoin: [],
       paidSubscription: [],
+      xcoin: [],
     };
     const dataKeys = Object.keys(data);
     xusers.forEach((xuser) => {
@@ -195,15 +200,20 @@ class Overview extends React.Component {
             <div>
               <List>
                 <ListItem
-                  leftIcon={<IconPlace />}
-                  primaryText={'Total XCoin'}
+                  primaryText={'Total Paid XCoin'}
                   secondaryText={`${computed['paidXCoin'].total.toLocaleString()} (${computed['paidXCoin'].amount} users)`}
                 />
                 <ListItem
-                  insetChildren
-                  leftIcon={<IconPhone />}
-                  primaryText={'Total Subscription'}
-                  secondaryText={`${(subscription + paidSubscription).toLocaleString()} (Paid: ${paidSubscription}, Remaining: ${subscription})`}
+                  primaryText={'Total Paid Subscription'}
+                  secondaryText={`${(paidSubscription).toLocaleString()}`}
+                />
+                <ListItem
+                  primaryText={'Total Remaining X-Coin'}
+                  secondaryText={computed['xcoin'].total.toLocaleString()}
+                />
+                <ListItem
+                  primaryText={'Total Remaining Subscription'}
+                  secondaryText={subscription.toLocaleString()}
                 />
               </List>
             </div>
