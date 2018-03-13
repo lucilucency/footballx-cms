@@ -90,7 +90,7 @@ const config = {
     }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-      FX_API: JSON.stringify(isProd ? 'http://web-api.ttab.me' : isDev ? 'http://dev.ttab.me:51168' : 'http://localhost:51168'),
+      FX_API: JSON.stringify(isProd ? 'http://web-api.ttab.me' : isDev ? 'http://dev.ttab.me:51168' : isTest ? 'http://web-api.ttab.me' : 'http://localhost:51168'),
       FX_VERSION: JSON.stringify(process.env.FX_VERSION || 'v1'),
       FX_SOCKET: JSON.stringify(isProd ? 'http://prod.ttab.me:51170/' : 'http://dev.ttab.me:51170/'),
     }),

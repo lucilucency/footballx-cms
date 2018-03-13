@@ -19,6 +19,32 @@ import IconWifi from 'material-ui/svg-icons/notification/wifi';
 import styled, { css } from 'styled-components';
 import constants from 'components/constants';
 
+const OverviewContainer = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    @media only screen and (max-width: 1080px) {
+      flex-direction: column-reverse;
+    }
+`;
+
+const XUsersContainer = styled.div`
+  width: calc(75% - 15px);
+  margin-right: 15px;
+
+  @media only screen and (max-width: 1080px) {
+    width: 100%;
+    margin-right: 0;
+  }
+`;
+
+const HotspotContainer = styled.div`
+  width: 25%;
+
+  @media only screen and (max-width: 1080px) {
+    width: 100%;
+  }
+`;
+
 const eventXUsersColumns = (user, event) => [{
   displayName: strings.th_no,
   displayFn: (row, col, field, index) => row.event_status === 'checkin' && getOrdinal(index + 1),
@@ -44,17 +70,15 @@ const eventXUsersColumns = (user, event) => [{
       if (parseInt(row.favorite_club) === parseInt(event.home)) color = event.home_color;
       else if (parseInt(row.favorite_club) === parseInt(event.away)) color = event.away_color;
     }
-
     const Status = styled.div`
-      ${props => props.status === 'checkin' && css`
-          filter: drop-shadow(0 0 5px ${color});
-      `}
-      ${props => props.status === 'registered' && css`
-          color: ${constants.colorMuted}
-      `}
-    `;
+          ${props => props.status === 'checkin' && css`
+              filter: drop-shadow(0 0 5px ${color});
+          `}
+          ${props => props.status === 'registered' && css`
+              color: ${constants.colorMuted}
+          `}
+        `;
     Status.propTypes = { status: PropTypes.string };
-
     return (<div>
       <Status status={row.event_status}>{row.event_status}</Status>
       <span style={{ display: 'block', color: constants.colorMutedLight }}>{toDateTimeString(new Date(row.event_updated_at))}</span>
@@ -84,32 +108,6 @@ const eventXUsersColumns = (user, event) => [{
   field: 'xcoin',
   sortFn: true,
 }];
-
-const OverviewContainer = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    @media only screen and (max-width: 1080px) {
-      flex-direction: column-reverse;
-    }
-`;
-
-const XUsersContainer = styled.div`
-  width: calc(65% - 15px);
-  margin-right: 15px;
-
-  @media only screen and (max-width: 1080px) {
-    width: 100%;
-    margin-right: 0;
-  }
-`;
-
-const HotspotContainer = styled.div`
-  width: 35%;
-
-  @media only screen and (max-width: 1080px) {
-    width: 100%;
-  }
-`;
 
 class Overview extends React.Component {
   static propTypes = {
@@ -194,8 +192,9 @@ class Overview extends React.Component {
         </XUsersContainer>
         <HotspotContainer>
           <Container
-            loading={false}
-            error={false}
+            title="Records"
+            loading={eventXUsers.loading}
+            error={eventXUsers.loading}
           >
             <div>
               <List>
@@ -207,14 +206,14 @@ class Overview extends React.Component {
                   primaryText={'Total Paid Subscription'}
                   secondaryText={`${(paidSubscription).toLocaleString()}`}
                 />
-                <ListItem
+                {user.user.user_type === 1 && <ListItem
                   primaryText={'Total Remaining X-Coin'}
                   secondaryText={computed['xcoin'].total.toLocaleString()}
-                />
-                <ListItem
+                />}
+                {user.user.user_type === 1 && <ListItem
                   primaryText={'Total Remaining Subscription'}
                   secondaryText={subscription.toLocaleString()}
-                />
+                />}
               </List>
             </div>
           </Container>

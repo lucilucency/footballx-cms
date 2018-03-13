@@ -104,18 +104,19 @@ class RequestLayer extends React.Component {
       };
     });
 
-    eventXUsers = eventXUsers.reduce(function(prev, cur) {
-      const ids = prev.map(o => o.id);
-      const pos = ids.indexOf(cur.id);
-      if (pos === -1) {
-        prev.push(cur);
-      } else {
-        prev[pos].paidSubscription += cur.paidSubscription;
-        prev[pos].paidXCoin += cur.paidXCoin;
-        prev[pos].paidXCoinTimes += cur.paidXCoinTimes;
-      }
-      return prev;
-    }, []);
+    /* cancel by fking sheeet MUSVN */
+    // eventXUsers = eventXUsers.reduce(function(prev, cur) {
+    //   const ids = prev.map(o => o.id);
+    //   const pos = ids.indexOf(cur.id);
+    //   if (pos === -1) {
+    //     prev.push(cur);
+    //   } else {
+    //     prev[pos].paidSubscription += cur.paidSubscription;
+    //     prev[pos].paidXCoin += cur.paidXCoin;
+    //     prev[pos].paidXCoinTimes += cur.paidXCoinTimes;
+    //   }
+    //   return prev;
+    // }, []);
 
     const eventId = match.params.eventId || event.data.event_id;
     const info = match.params.info || 'overview';

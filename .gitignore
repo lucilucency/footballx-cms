@@ -8,3 +8,4 @@ build
 analyze.html
 .idea/workspace.xml
 .idea/*
+package-lock.json
