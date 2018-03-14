@@ -75,8 +75,8 @@ const groupEventsColumns = (browser = {}) => [{
     <div className={subTextStyle.subText}>{field}</div>
   </div>),
 }, {
-  displayName: strings.th_xusers,
-  tooltip: strings.tooltip_xuser,
+  displayName: strings.th_xusers_checkin,
+  tooltip: strings.tooltip_xuser_register_checkin,
   field: 'checkin_total',
   sortFn: true,
   displayFn: row => (<div>

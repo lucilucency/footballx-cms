@@ -659,6 +659,7 @@
   "tooltip_gold_per_min": "Gold farmed per minute",
   "tooltip_xp_per_min": "Experience gained per minute",
   "tooltip_xuser": "X-Member",
+  "tooltip_xuser_register_checkin": "User register/checkin in event",
   "tooltip_last_hits_per_min": "Last hits per minute",
   "tooltip_kills_per_min": "Kills per minute",
   "tooltip_hero_damage_per_min": "Hero damage per minute",

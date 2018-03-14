@@ -12,10 +12,15 @@ class CreateGroupEventForm extends React.Component {
   static propTypes = {
     groupId: PropTypes.number,
     createGroupEvent: PropTypes.func,
+    showForm: PropTypes.bool,
   };
   componentDidMount() {}
   render() {
-    return <CreateEventForm groupId={this.props.groupId} dispatch={this.props.createGroupEvent} />;
+    return <CreateEventForm
+      groupId={this.props.groupId}
+      dispatch={this.props.createGroupEvent}
+      showForm={this.props.showForm}
+    />;
   }
 }
 

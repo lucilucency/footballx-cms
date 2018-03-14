@@ -63,6 +63,9 @@ class LoginForm extends React.Component {
                 that.props.dispatchUserMetadata({ access_token: data.access_token, account_hotspot: h.payload, account_user: data.user });
                 that.props.history.push('');
               });
+            } else if (data.user_type === 3) {
+              that.props.dispatchUserMetadata({ access_token: data.access_token, account_user: data.user });
+              that.props.history.push('');
             } else {
               that.props.history.push('');
             }
