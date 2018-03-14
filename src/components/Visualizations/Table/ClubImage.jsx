@@ -1,12 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ReactTooltip from 'react-tooltip';
-import ActionDoneAll from 'material-ui/svg-icons/action/done-all';
 import strings from 'lang';
 import { TableLink } from 'components/Table';
-import { IconDice, IconCrystalBall, IconCheckCircle } from 'components/Icons';
-import SocialPerson from 'material-ui/svg-icons/social/person';
-import NotificationSync from 'material-ui/svg-icons/notification/sync';
+import { IconCheckCircle } from 'components/Icons';
 import styled from 'styled-components';
 import { subTextStyle } from 'utils';
 import constants from 'components/constants';

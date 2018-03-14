@@ -2,19 +2,11 @@
 import React from 'react';
 import XLSX from 'xlsx';
 import Table from 'components/Table';
-import { Row, toDateString, validateEmail, validatePhone } from 'utils';
+import { Row, toDateString, validateEmail } from 'utils';
 import strings from 'lang';
 // import Container from 'components/Container';
 import styled, { css } from 'styled-components';
 import FileInput from './FileInput';
-
-/* generate an array of column objects */
-const makeCols = (refstr) => {
-  const o = [];
-  const C = XLSX.utils.decode_range(refstr).e.c + 1;
-  for (let i = 0; i < C; ++i) o[i] = { name: XLSX.utils.encode_col(i), key: i };
-  return o;
-};
 
 const fileHeader = {
   name: strings.th_name,

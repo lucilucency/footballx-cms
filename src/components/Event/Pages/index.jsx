@@ -1,8 +1,7 @@
 import React from 'react';
 import strings from 'lang';
-import Heading from 'components/Heading/index';
 import OverviewPage from './Overview';
-import MatchLogPage from './MatchLog';
+import MatchLogPage from './Records';
 
 const pages = [{
   name: strings.tab_hotspot_overview,

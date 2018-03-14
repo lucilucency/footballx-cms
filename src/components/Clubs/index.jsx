@@ -70,7 +70,7 @@ RequestLayer.propTypes = {
 
 };
 
-const mapStateToProps = state => ({
-});
+// const mapStateToProps = state => ({
+// });
 
-export default connect(mapStateToProps, null)(RequestLayer);
+export default connect(null, null)(RequestLayer);

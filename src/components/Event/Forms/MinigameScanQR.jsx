@@ -4,10 +4,9 @@ import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 /* actions - helpers */
 import { toggleShowForm } from 'actions/dispatchForm';
-import { Row, Col } from 'utils';
+import { Col } from 'utils';
 /* components */
-import QRCode from 'qrcode.react'
-// import { FIREBASE_MESSAGING } from 'firebaseNotification';
+import QRCode from 'qrcode.react';
 /* css */
 import styled, { css } from 'styled-components';
 
@@ -80,8 +79,9 @@ const initialState = {
 class MinigameScanQR extends React.Component {
   static propTypes = {
     showForm: PropTypes.bool,
-    callback: PropTypes.func,
     toggle: PropTypes.bool,
+    eventId: PropTypes.number,
+    browser: PropTypes.shape({}),
   };
   constructor(props) {
     super(props);
@@ -91,7 +91,6 @@ class MinigameScanQR extends React.Component {
       isFlipping: false,
       play: false,
     };
-
   }
 
   componentDidMount() {

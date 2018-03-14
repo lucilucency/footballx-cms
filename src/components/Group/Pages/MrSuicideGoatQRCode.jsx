@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies,no-proto,no-use-before-define,no-param-reassign,no-unused-expressions,one-var,prefer-const,no-multi-assign,no-return-assign,func-names,prefer-rest-params,max-len */
 
 
 const _createClass = (function () { function defineProperties(target, props) { for (let i = 0; i < props.length; i++) { const descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }());

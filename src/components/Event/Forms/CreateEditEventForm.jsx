@@ -1,4 +1,4 @@
-/* eslint-disable react/forbid-prop-types */
+/* eslint-disable react/forbid-prop-types,max-len */
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -125,12 +125,12 @@ class CreateEventForm extends React.Component {
 
   componentWillReceiveProps(newProps) {
     if (newProps.isEditing) {
+      const __group = newProps.event.group_id ? { value: newProps.event.group_id, text: newProps.dataSourceGroups.find(o => o.value === newProps.event.group_id) && newProps.dataSourceGroups.find(o => o.value === newProps.event.group_id).text } : {};
       this.setState({
         event: {
           event_id: newProps.event.event_id,
           hotspots: newProps.event.hotspot_id ? [newProps.event.hotspot_id] : [],
-
-          group: newProps.event.group_id ? { value: newProps.event.group_id, text: newProps.dataSourceGroups.find(o => o.value === newProps.event.group_id) && newProps.dataSourceGroups.find(o => o.value === newProps.event.group_id).text } : {},
+          group: __group,
           match: newProps.event.match_id ? { value: newProps.event.match_id } : {},
           seats: { value: newProps.event.seats, text: newProps.event.seats && newProps.event.seats.toString() },
           price: { value: newProps.event.price, text: newProps.event.price && newProps.event.price.toString() },

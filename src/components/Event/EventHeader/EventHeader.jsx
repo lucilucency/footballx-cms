@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 /* actions - helpers */
@@ -193,7 +193,11 @@ const ButtonContainer = styled.div`
 class EventHeader extends React.Component {
   static propTypes = {
     loading: PropTypes.bool,
-    event: PropTypes.shape({}),
+    event: PropTypes.shape({
+      data: PropTypes.shape({
+        event_id: PropTypes.number,
+      }),
+    }),
     user: PropTypes.shape({}),
     showFormEditEvent: PropTypes.bool,
     toggleShowFormEditEvent: PropTypes.func,

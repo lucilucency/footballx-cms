@@ -5,24 +5,26 @@ import { subTextStyle } from 'utils/style';
 import strings from 'lang';
 import constants from 'components/constants';
 import { colors } from 'material-ui/styles';
+import { TableLink } from 'components/Table';
 
-const groupEventsColumns = (browser = {}) => [browser.greaterThan.medium && {
-  displayName: strings.th_match_id,
-  tooltip: strings.tooltip_match_id,
-  field: 'match_id',
-  sortFn: true,
-  // displayFn: transformations.match_id_with_time,
-}, {
+const groupEventsColumns = (browser = {}) => [{
   displayName: strings.th_match,
   field: 'event_id',
   displayFn: transformations.th_event_club_vs_club_image,
-  sortFn: true,
-  sortClick: 'home',
+}, {
+  displayName: strings.th_hotspot,
+  field: 'hotspot_id',
+  displayFn: (row, col, field) => (<div>
+    <TableLink to={`/hotspot/${field}`}>{row.hotspot_name}</TableLink>
+    {browser.greaterThan.small &&
+    <span style={{ ...subTextStyle, maxWidth: browser.greaterThan.medium ? 300 : 150 }} title={row.hotspot_address}>
+      {row.hotspot_address}
+    </span>}
+  </div>),
 }, browser.greaterThan.medium && {
   displayName: strings.th_price,
   tooltip: strings.tooltip_price,
   field: 'price',
-  sortFn: true,
   displayFn: (row, col, field) => (<div style={{ float: 'left', textAlign: 'left' }}>
     <span className="ellipsis" style={{ display: 'block', fontSize: '1.25em' }}>{field}</span>
     {row.discount && <span style={{ display: 'block', color: colors.green600, float: 'left' }}>-{row.discount}%</span>}
@@ -31,11 +33,6 @@ const groupEventsColumns = (browser = {}) => [browser.greaterThan.medium && {
   displayName: strings.th_seats,
   tooltip: strings.tooltip_seats,
   field: 'seats',
-  sortFn: true,
-}, browser.greaterThan.medium && {
-  displayName: strings.th_price,
-  tooltip: strings.tooltip_price,
-  field: 'price',
   sortFn: true,
 }, {
   displayName: strings.th_date,
@@ -85,6 +82,7 @@ const groupEventsColumns = (browser = {}) => [browser.greaterThan.medium && {
   displayFn: row => (<div>
     {row.checkin_total} / {row.checkin_total + row.register_total}
   </div>),
+  relativeBars: true,
 }];
 
 export default groupEventsColumns;

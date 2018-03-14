@@ -9,11 +9,10 @@ class SettingsForm extends React.Component {
   constructor() {
     super();
     this.state = {
-      guest_number: Number(localStorage.getItem('guest_number')) || 500,
+      guest_number: Number(localStorage.getItem('guest_number')) || 0,
     };
     this.doLogin = this.doLogin.bind(this);
     this.handleTextFieldKeyDown = this.handleTextFieldKeyDown.bind(this);
-
   }
 
   componentWillMount() {
@@ -28,9 +27,9 @@ class SettingsForm extends React.Component {
   doLogin() {
     const that = this;
     localStorage.setItem('guest_number', that.state.guest_number);
-    const answer = confirm (`Settings Guest Number: ${that.state.guest_number}`)
-    if (answer)
-      that.props.history.push('');
+    // const answer = confirm(`Settings Guest Number: ${that.state.guest_number}`);
+    // if (answer) { that.props.history.push(''); }
+    that.props.history.push('');
   }
 
   handleTextFieldKeyDown = (event) => {
@@ -64,7 +63,4 @@ class SettingsForm extends React.Component {
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-});
-
-export default withRouter(connect(null, mapDispatchToProps)(SettingsForm));
+export default withRouter(connect(null, null)(SettingsForm));

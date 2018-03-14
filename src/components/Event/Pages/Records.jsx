@@ -2,7 +2,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { getOrdinal, transformations, sum, abbreviateNumber } from 'utils';
+import { getOrdinal, transformations, sum } from 'utils';
 import { toDateTimeString } from 'utils/time';
 import strings from 'lang';
 /* components */
@@ -10,11 +10,6 @@ import Container from 'components/Container';
 import { IconFacebook } from 'components/Icons';
 import Table from 'components/Table';
 import { List, ListItem } from 'material-ui/List';
-import Divider from 'material-ui/Divider';
-import IconPlace from 'material-ui/svg-icons/maps/place';
-import IconPhone from 'material-ui/svg-icons/communication/phone';
-import IconWifi from 'material-ui/svg-icons/notification/wifi';
-
 /* css */
 import styled, { css } from 'styled-components';
 import constants from 'components/constants';
@@ -95,7 +90,7 @@ const eventXUsersColumns = (user, event) => [{
 }, {
   displayName: strings.th_paid_xcoin,
   field: 'paidXCoin',
-  displayFn: (row,col, field) => (<div>
+  displayFn: (row, col, field) => (<div>
     {field > 0 && field}
   </div>),
   sortFn: true,
@@ -167,8 +162,8 @@ class Overview extends React.Component {
       };
     });
 
-    const subscription = computed['subscription'].total;
-    const paidSubscription = computed['paidSubscription'].total;
+    const subscription = computed.subscription.total;
+    const paidSubscription = computed.paidSubscription.total;
 
     return (<div>
       <div><i>*{strings.event_notes}: {eventData.notes}</i></div>
@@ -200,7 +195,7 @@ class Overview extends React.Component {
               <List>
                 <ListItem
                   primaryText={'Total Paid XCoin'}
-                  secondaryText={`${computed['paidXCoin'].total.toLocaleString()} (${computed['paidXCoin'].amount} users)`}
+                  secondaryText={`${computed.paidXCoin.total.toLocaleString()} (${computed.paidXCoin.amount} users)`}
                 />
                 <ListItem
                   primaryText={'Total Paid Subscription'}
@@ -208,7 +203,7 @@ class Overview extends React.Component {
                 />
                 {user.user.user_type === 1 && <ListItem
                   primaryText={'Total Remaining X-Coin'}
-                  secondaryText={computed['xcoin'].total.toLocaleString()}
+                  secondaryText={computed.xcoin.total.toLocaleString()}
                 />}
                 {user.user.user_type === 1 && <ListItem
                   primaryText={'Total Remaining Subscription'}
@@ -227,9 +222,9 @@ class Overview extends React.Component {
 // getEventXUsers: (eventId) => dispatch(getEventXUsers(eventId)),
 // });
 
-const mapStateToProps = state => ({
-  // user: state.app.metadata.data.user,
-});
+// const mapStateToProps = state => ({
+// user: state.app.metadata.data.user,
+// });
 
-export default connect(mapStateToProps, null)(Overview);
+export default connect(null, null)(Overview);
 

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 /* data */
 import strings from 'lang';
 import Clubs from 'fxconstants/build/clubsObj.json';
-import ClubsShortname from 'fxconstants/build/clubsObjShortName.json';
+// import ClubsShortname from 'fxconstants/build/clubsObjShortName.json';
 /* components */
 import { Dialog } from 'material-ui';
 import { TableLink } from 'components/Table';

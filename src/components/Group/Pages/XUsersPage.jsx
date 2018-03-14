@@ -7,7 +7,7 @@ import { getGroupXUsers } from 'actions';
 import { subTextStyle, renderDialog, transformations, toDateString } from 'utils';
 import strings from 'lang';
 import IconPrint from 'material-ui/svg-icons/action/print';
-import Table, { TableLink } from 'components/Table';
+import Table from 'components/Table';
 import Container from 'components/Container';
 import styled from 'styled-components';
 import constants from 'components/constants';
@@ -60,7 +60,7 @@ const MembersTableCols = browser => ([{
 }, {
   displayName: '',
   field: 'membership_code',
-  displayFn: (row) => (<span style={{ display: 'none' }}>
+  displayFn: row => (<span style={{ display: 'none' }}>
     <MrSuicideGoatQRCode
       size={640}
       value={JSON.stringify({
@@ -117,7 +117,12 @@ class RequestLayer extends React.Component {
   static propTypes = {
     location: PropTypes.shape({ key: PropTypes.string }),
     groupId: PropTypes.number,
-    groupXUsers: PropTypes.shape([]),
+    groupXUsersData: PropTypes.shape([]),
+    loading: PropTypes.bool,
+    error: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.shape({}),
+    ]),
     routeParams: PropTypes.shape({ subInfo: PropTypes.string }),
   };
 
@@ -156,7 +161,7 @@ class RequestLayer extends React.Component {
     return (<div>
       <Container
         title={strings.title_group_memberships}
-        error={false}
+        error={error}
         loading={loading}
         actions={!printing ? [{
           title: 'View Members QRCode',

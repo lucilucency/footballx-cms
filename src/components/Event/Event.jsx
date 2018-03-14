@@ -1,10 +1,12 @@
+/* eslint-disable no-eval,react/forbid-prop-types */
 import React from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import PropTypes from 'prop-types';
+import socket from 'socketClient';
 import TabBar from 'components/TabBar';
 import {
-  getEvent, getEventXUsers, addEventXUser, dispatchNewXUserCheckin
+  getEvent, getEventXUsers, addEventXUser, dispatchNewXUserCheckin,
 } from 'actions';
 import EventHeader from './EventHeader';
 import pages from './Pages/index';
@@ -27,22 +29,21 @@ class RequestLayer extends React.Component {
     event: PropTypes.shape({
       data: PropTypes.shape({}),
     }),
+    eventXUsers: PropTypes.array,
   };
   componentDidMount() {
     const eventId = this.props.match.params.eventId;
     this.props.getEvent(eventId);
     this.props.getEventXUsers(eventId);
     const props = this.props;
-    const socket = require('socket.io-client')(FX_SOCKET);
 
-    socket.on('event', function (data) {
+    socket.on('event', (data) => {
       if (data) {
-        try
-        {
+        try {
           const parsedData = JSON.parse(data);
           window.abc = parsedData;
           if (typeof parsedData === 'object') {
-            const json = JSON.stringify(eval("(" + parsedData.qr_data + ")"));
+            const json = JSON.stringify(eval(`(${parsedData.qr_data})`));
             const qrData = JSON.parse(json);
 
             if (qrData.notification.toString() === props.user.user.user_id.toString()) {
@@ -80,7 +81,7 @@ class RequestLayer extends React.Component {
       return false;
     }
 
-    eventXUsers = eventXUsers.map(row => {
+    eventXUsers = eventXUsers.map((row) => {
       const eventData = event.data;
       const priceCheckin = !row.is_subscriber && row.price;
       let priceRegister;
@@ -96,7 +97,7 @@ class RequestLayer extends React.Component {
 
       const paidSubscription = row.is_subscriber ? 1 : 0;
       const paidXCoin = paidSubscription ? 0 : (row.event_status === 'checkin' ? priceCheckin : priceRegister);
-      const paidXCoinTimes = paidSubscription ? 0 : 1;
+      // const paidXCoinTimes = paidSubscription ? 0 : 1;
       return {
         ...row,
         paidXCoin,
@@ -133,10 +134,10 @@ class RequestLayer extends React.Component {
         <SendNotificationForm event={this.props.event.data} />
         <TabBar
           info={info}
-          tabs={pages(eventId, {event, user, match, eventXUsers})}
+          tabs={pages(eventId, { event, user, match, eventXUsers })}
         />
         {/* pass page data here */}
-        {page && page.content({event, user, match, eventXUsers}, event.loading)}
+        {page && page.content({ event, user, match, eventXUsers }, event.loading)}
       </div>);
     }
 

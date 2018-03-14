@@ -2,12 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-/* actions - helpers */
 import { toggleShowForm } from 'actions/dispatchForm';
-import { Row, Col } from 'utils';
+import { Col } from 'utils';
 import Groups from 'fxconstants/build/groupsObj.json';
-import QRCode from 'qrcode.react'
-/* css */
+import QRCode from 'qrcode.react';
 import styled, { css } from 'styled-components';
 
 const FORM_NAME = 'generateQR';
@@ -88,15 +86,19 @@ const initialState = {
 class CheckinQR extends React.Component {
   static propTypes = {
     showForm: PropTypes.bool,
-    callback: PropTypes.func,
     toggle: PropTypes.bool,
+    eventId: PropTypes.number,
+    newXUser: PropTypes.shape({}),
+    browser: PropTypes.shape({}),
+    user: PropTypes.shape({
+      user_id: PropTypes.number,
+    }),
   };
   constructor(props) {
     super(props);
     this.state = {
       ...initialState,
     };
-
   }
 
   componentDidMount() {

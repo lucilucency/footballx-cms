@@ -62,8 +62,8 @@ export const getGroupMembershipPackages = groupId => fxActionGet('groupMembershi
 export const getEvents = params => fxActionGet('events', 'events', { ...queryString.parse(params.substring(1)) }, transform.transformEvents);
 export const getEvent = eventId => fxActionGet('event', `event/${eventId}`, {}, transform.transformEvent);
 export const getEventXUsers = (eventId, params) => fxActionGet('eventXUsers', `event/${eventId}/xusers`, params);
-export const addEventXUser = (payload) => fxDispatch('ADD/eventXUsers', payload);
-export const dispatchNewXUserCheckin = (payload) => fxDispatch('eventXUser', payload);
+export const addEventXUser = payload => fxDispatch('ADD/eventXUsers', payload);
+export const dispatchNewXUserCheckin = payload => fxDispatch('eventXUser', payload);
 
 
 export const createEvent = params => fxActionPost('ADD/events', 'event', params, transform.transformCreateEvent);

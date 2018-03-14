@@ -3,14 +3,14 @@ importScripts('https://www.gstatic.com/firebasejs/4.8.1/firebase-app.js');
 // eslint-disable-next-line no-undef
 importScripts('https://www.gstatic.com/firebasejs/4.8.1/firebase-messaging.js');
 
-const prodConfig = {
-  apiKey: 'AIzaSyA65s_6yPsTyvoRUNJ6zkSe1JfB0hokd5M',
-  authDomain: 'footballx-f8db2.firebaseapp.com',
-  databaseURL: 'https://footballx-f8db2.firebaseio.com',
-  projectId: 'footballx-f8db2',
-  storageBucket: 'footballx-f8db2.appspot.com',
-  messagingSenderId: '318454074670',
-};
+// const prodConfig = {
+//   apiKey: 'AIzaSyA65s_6yPsTyvoRUNJ6zkSe1JfB0hokd5M',
+//   authDomain: 'footballx-f8db2.firebaseapp.com',
+//   databaseURL: 'https://footballx-f8db2.firebaseio.com',
+//   projectId: 'footballx-f8db2',
+//   storageBucket: 'footballx-f8db2.appspot.com',
+//   messagingSenderId: '318454074670',
+// };
 
 const devConfig = {
   apiKey: 'AIzaSyCGjNTtY-6Ec0rxRh-HRQqFt1MlQ6YODDY',

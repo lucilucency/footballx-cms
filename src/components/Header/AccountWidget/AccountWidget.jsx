@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import strings from 'lang';
-import Spinner from 'components/Spinner';
 import Error from 'components/Error';
 import LoggedIn from './LoggedIn';
 

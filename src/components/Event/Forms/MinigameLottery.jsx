@@ -99,8 +99,9 @@ const initialState = {
 class GenerateQR extends React.Component {
   static propTypes = {
     showForm: PropTypes.bool,
-    callback: PropTypes.func,
     toggle: PropTypes.bool,
+    eventId: PropTypes.number,
+    browser: PropTypes.shape({}),
   };
   constructor(props) {
     super(props);
@@ -165,7 +166,7 @@ class GenerateQR extends React.Component {
     const blackListIds = this.state.blackList.length ? this.state.blackList.filter(o => o).map(o => o.id) : [];
     const dataSource = that.props.xusers.filter(o => winnerIds.indexOf(o.id) === -1 && blackListIds.indexOf(o.id) === -1);
 
-    const addingNumber = Number(localStorage.getItem('guest_number')) || 500;
+    const addingNumber = Number(localStorage.getItem('guest_number')) || 0;
     for (let i = 1; i < addingNumber; i++) {
       const tmp = {
         id: i + 10000,
