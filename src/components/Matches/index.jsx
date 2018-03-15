@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved,import/no-webpack-loader-syntax */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -11,6 +12,31 @@ import TabBar from 'components/TabBar';
 import Clubs from 'fxconstants/build/clubsObj.json';
 import styled from 'styled-components';
 import constants from 'components/constants';
+
+import BigCalendar from 'react-big-calendar';
+import moment from 'moment';
+import '!style-loader!css-loader!react-big-calendar/lib/css/react-big-calendar.css';
+// import globalize from 'globalize';
+
+// BigCalendar.setLocalizer(BigCalendar.globalizeLocalizer(globalize));
+// BigCalendar.momentLocalizer(moment);
+BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
+
+const events = [
+  {
+    id: 0,
+    title: 'All Day Event very long title',
+    allDay: true,
+    start: new Date(2018, 2, 15, 12),
+    end: new Date(2018, 2, 15, 13),
+  },
+  {
+    id: 1,
+    title: 'Long Event',
+    start: new Date(2018, 2, 7),
+    end: new Date(2018, 2, 7),
+  },
+];
 
 const ConfirmedIcon = styled.span`
   composes: badge;
@@ -105,6 +131,22 @@ class RequestLayer extends React.Component {
     return (<div>
       <Helmet title={strings.title_matches} />
       <div>
+        <div>
+          <BigCalendar
+            selectable
+            events={events}
+            // defaultView="week"
+            // scrollToTime={new Date(1970, 1, 1, 6)}
+            // defaultDate={new Date(2018, 2, 15)}
+            onSelectEvent={event => alert(event.title)}
+            onSelectSlot={slotInfo =>
+              alert(
+                `selected slot: \n\nstart ${slotInfo.start.toLocaleString()} ` +
+                `\nend: ${slotInfo.end.toLocaleString()}` +
+                `\naction: ${slotInfo.action}`)
+            }
+          />
+        </div>
         <TabBar info={route} tabs={matchTabs} />
         {tab && tab.content(this.props)}
       </div>

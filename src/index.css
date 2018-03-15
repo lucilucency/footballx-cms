@@ -70,3 +70,7 @@
      content: none !important;
  }
 }
+
+.rbc-month-row {
+    min-height: 100px;
+}
