@@ -13,30 +13,38 @@ import Clubs from 'fxconstants/build/clubsObj.json';
 import styled from 'styled-components';
 import constants from 'components/constants';
 
-import BigCalendar from 'react-big-calendar';
+// import BigCalendar from 'react-big-calendar';
+import BigCalendar from 'components/Calendar';
 import moment from 'moment';
-import '!style-loader!css-loader!react-big-calendar/lib/css/react-big-calendar.css';
+// import '!style-loader!css-loader!react-big-calendar/lib/css/react-big-calendar.css';
 // import globalize from 'globalize';
 
 // BigCalendar.setLocalizer(BigCalendar.globalizeLocalizer(globalize));
 // BigCalendar.momentLocalizer(moment);
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
 
-const events = [
-  {
-    id: 0,
-    title: 'All Day Event very long title',
-    allDay: true,
-    start: new Date(2018, 2, 15, 12),
-    end: new Date(2018, 2, 15, 13),
-  },
-  {
-    id: 1,
-    title: 'Long Event',
-    start: new Date(2018, 2, 7),
-    end: new Date(2018, 2, 7),
-  },
-];
+const events = [{
+  id: 0,
+  title: 'All Day Event very long title',
+  allDay: true,
+  start: new Date(2018, 2, 15, 12),
+  end: new Date(2018, 2, 15, 13),
+}, {
+  id: 1,
+  title: 'Long Event',
+  start: new Date(2018, 2, 7),
+  end: new Date(2018, 2, 7),
+}, {
+  id: 1,
+  title: 'MANU vs MANC',
+  start: new Date(2018, 2, 18, 21, 30),
+  end: new Date(2018, 2, 18, 23),
+}, {
+  id: 1,
+  title: 'ARS vs CHE',
+  start: new Date(2018, 2, 18, 21, 30),
+  end: new Date(2018, 2, 18, 23),
+}];
 
 const ConfirmedIcon = styled.span`
   composes: badge;

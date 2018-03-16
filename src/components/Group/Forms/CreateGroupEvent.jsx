@@ -16,11 +16,11 @@ class CreateGroupEventForm extends React.Component {
   };
   componentDidMount() {}
   render() {
-    return <CreateEventForm
+    return (<CreateEventForm
       groupId={this.props.groupId}
       dispatch={this.props.createGroupEvent}
       showForm={this.props.showForm}
-    />;
+    />);
   }
 }
 

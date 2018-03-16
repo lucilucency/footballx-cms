@@ -1,4 +1,5 @@
 import * as materialColor from 'material-ui/styles/colors';
+import { lighten, darken, percentage } from 'utils/misc';
 
 export default {
   ...materialColor,
@@ -52,4 +53,28 @@ export default {
   navDrawerWidth: '256px',
   normalTransition: 'all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms',
   linearTransition: 'all 300ms linear',
+
+  /* calendar */
+  'out-of-range-color': lighten('#333', 40),
+  'out-of-range-bg-color': lighten('#333', 0.9),
+  'calendar-border': '#DDD',
+  'cell-border': '#DDD',
+  'border-color': '#CCC',
+  'segment-width': percentage(1 / 7),
+  'time-selection-color': 'white',
+  'time-selection-bg-color': 'rgba(0,0,0, .50)',
+  'date-selection-bg-color': 'rgba(0,0,0, .10)',
+  'event-bg': '#3174ad',
+  // 'event-bg': 'transparent',
+  'event-border': darken('#3174ad', 10),
+  'event-color': '#fff',
+  'event-border-radius': '5px',
+  'event-padding': '2px 5px',
+  'event-zindex': '4',
+  'btn-color': '#373a3c',
+  'btn-bg': '#fff',
+  'btn-border': '#ccc',
+  'current-time-color': '#74ad31',
+  'rbc-css-prefix': 'rbc-i',
+  'today-highlight-bg': '#383c4c',
 };
