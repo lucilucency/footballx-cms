@@ -4,7 +4,7 @@ const defaultMessages = {
   date: 'Date',
   time: 'Time',
   event: 'Event',
-  allDay: 'all day',
+  allDay: 'All day',
   week: 'week',
   work_week: 'work week',
   day: 'day',

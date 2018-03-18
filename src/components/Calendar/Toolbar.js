@@ -4,6 +4,7 @@ import cn from 'classnames';
 import styled from 'styled-components';
 import constants from 'components/constants';
 import { navigate } from './utils/constants';
+import { darken, lighten } from 'utils';
 
 const ToolbarStyled = styled.div`
 
@@ -36,75 +37,76 @@ const ToolbarStyled = styled.div`
     &.rbc-active {
       background-image: none;
       box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
-      background-color: darken(${constants['btn-bg']}, 10%);
-      border-color: darken(${constants['btn-border']}, 12%);
+      background-color: ${darken(constants['btn-bg'], 0.1)};
+      border-color: ${lighten('rgb(19, 147, 249)', 0.2)};
+      filter: drop-shadow(0 0 5px rgb(19, 147, 249));
 
       &:hover,
       &:focus {
         color: ${constants['btn-color']};
-        background-color: darken(${constants['btn-bg']}, 17%);
-        border-color: darken(${constants['btn-border']}, 25%);
+        background-color: ${darken(constants['btn-bg'], 0.17)};
+        border-color: ${darken(constants['btn-border'], 0.25)};
       }
     }
 
     &:focus {
       color: ${constants['btn-color']};
-      background-color: darken(${constants['btn-bg']}, 10%);
-      border-color: darken(${constants['btn-border']}, 12%);
+      background-color: ${darken(constants['btn-bg'], 0.1)};
+      border-color: ${darken(constants['btn-border'], 0.12)};
     }
 
     &:hover {
       color: ${constants['btn-color']};
-      background-color: darken(${constants['btn-bg']}, 10%);
-          border-color: darken(${constants['btn-border']}, 12%);
+      background-color: ${darken(constants['btn-bg'], 0.1)}
+          border-color: ${darken(constants['btn-border'], 0.12)}
     }
   }
 
 
-.rbc-btn-group {
-  display: inline-block;
-  white-space: nowrap;
-
-  > button:first-child:not(:last-child) {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
+  .rbc-btn-group {
+    display: inline-block;
+    white-space: nowrap;
+  
+    > button:first-child:not(:last-child) {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  
+    > button:last-child:not(:first-child) {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  
+    .rbc-rtl & > button:first-child:not(:last-child) {
+      border-radius: 4px;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  
+    .rbc-rtl & > button:last-child:not(:first-child) {
+      border-radius: 4px;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  
+    > button:not(:first-child):not(:last-child) {
+      border-radius: 0;
+    }
+  
+    button + button {
+      margin-left: -1px;
+    }
+  
+    .rbc-rtl & button + button {
+      margin-left: 0;
+      margin-right: -1px;
+    }
+  
+    & + &,
+    & + button {
+      margin-left: 10px;
+    }
   }
-
-  > button:last-child:not(:first-child) {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-  }
-
-  .rbc-rtl & > button:first-child:not(:last-child) {
-    border-radius: 4px;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-  }
-
-  .rbc-rtl & > button:last-child:not(:first-child) {
-    border-radius: 4px;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-  }
-
-  > button:not(:first-child):not(:last-child) {
-    border-radius: 0;
-  }
-
-  button + button {
-    margin-left: -1px;
-  }
-
-  .rbc-rtl & button + button {
-    margin-left: 0;
-    margin-right: -1px;
-  }
-
-  & + &,
-  & + button {
-    margin-left: 10px;
-  }
-}
 `;
 
 class Toolbar extends React.Component {

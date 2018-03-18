@@ -16,12 +16,9 @@ import constants from 'components/constants';
 // import BigCalendar from 'react-big-calendar';
 import BigCalendar from 'components/Calendar';
 import moment from 'moment';
-// import '!style-loader!css-loader!react-big-calendar/lib/css/react-big-calendar.css';
-// import globalize from 'globalize';
 
-// BigCalendar.setLocalizer(BigCalendar.globalizeLocalizer(globalize));
-// BigCalendar.momentLocalizer(moment);
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
+let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
 
 const events = [{
   id: 0,
@@ -37,13 +34,13 @@ const events = [{
 }, {
   id: 1,
   title: 'MANU vs MANC',
-  start: new Date(2018, 2, 18, 21, 30),
-  end: new Date(2018, 2, 18, 23),
+  start: new Date(2018, 2, 16, 21, 30),
+  end: new Date(2018, 2, 16, 23),
 }, {
   id: 1,
   title: 'ARS vs CHE',
-  start: new Date(2018, 2, 18, 21, 30),
-  end: new Date(2018, 2, 18, 23),
+  start: new Date(),
+  end: new Date(2018, 2, 17, 23),
 }];
 
 const ConfirmedIcon = styled.span`
@@ -64,6 +61,39 @@ const getData = (props) => {
   }
 };
 
+const columns = [{
+  displayName: strings.th_match_id,
+  field: 'id',
+  sortFn: true,
+  displayFn: (row, col, field) => (<div>
+    {field}
+    <span style={{ ...subTextStyle, display: 'block', marginTop: 1 }}>
+      {row.league_name || strings.th_premier_league}
+    </span>
+  </div>),
+}, {
+  displayName: strings.th_time,
+  tooltip: strings.tooltip_time,
+  field: 'date',
+  sortFn: true,
+  displayFn: transformations.start_time,
+}, {
+  displayName: <span>{strings.general_home}</span>,
+  field: 'home',
+  color: constants.green,
+  displayFn: row => (<div>
+    {(row.home && row.home.result === 1) && <ConfirmedIcon><IconTrophy /></ConfirmedIcon>}
+    {(row.home && Clubs[row.home.club_id]) && Clubs[row.home.club_id].name}
+  </div>),
+}, {
+  displayName: <span>{strings.general_away}</span>,
+  field: 'away',
+  color: constants.red,
+  displayFn: row => (<div>
+    {(row.away && row.away.result === 1) && <ConfirmedIcon><IconTrophy /></ConfirmedIcon>}
+    {(row.away && Clubs[row.away.club_id]) && Clubs[row.away.club_id].name}</div>),
+}];
+
 class RequestLayer extends React.Component {
   componentDidMount() {
     getData(this.props);
@@ -80,51 +110,18 @@ class RequestLayer extends React.Component {
       window.location.href = '/login';
     }
 
-    const columns = [{
-      displayName: strings.th_match_id,
-      field: 'id',
-      sortFn: true,
-      displayFn: (row, col, field) => (<div>
-        {field}
-        <span style={{ ...subTextStyle, display: 'block', marginTop: 1 }}>
-          {row.league_name || strings.th_premier_league}
-        </span>
-      </div>),
-    }, {
-      displayName: strings.th_time,
-      tooltip: strings.tooltip_time,
-      field: 'date',
-      sortFn: true,
-      displayFn: transformations.start_time,
-    }, {
-      displayName: <span>{strings.general_home}</span>,
-      field: 'home',
-      color: constants.green,
-      displayFn: row => (<div>
-        {(row.home && row.home.result === 1) && <ConfirmedIcon><IconTrophy /></ConfirmedIcon>}
-        {(row.home && Clubs[row.home.club_id]) && Clubs[row.home.club_id].name}
-      </div>),
-    }, {
-      displayName: <span>{strings.general_away}</span>,
-      field: 'away',
-      color: constants.red,
-      displayFn: row => (<div>
-        {(row.away && row.away.result === 1) && <ConfirmedIcon><IconTrophy /></ConfirmedIcon>}
-        {(row.away && Clubs[row.away.club_id]) && Clubs[row.away.club_id].name}</div>),
-    }];
-
     const matchTabs = [{
       name: strings.matches_league,
       key: 'league',
-      content: propsPar => (<div>
-        <Table data={propsPar.matchesLeague} columns={columns} loading={propsPar.loading} />
+      content: propsVar => (<div>
+        <Table data={propsVar.matchesLeague} columns={columns} loading={propsVar.loading} />
       </div>),
       route: '/matches/league',
     }, {
       name: strings.matches_national,
       key: 'national',
-      content: propsPar => (<div>
-        <Table data={propsPar.matchesNation} columns={columns} loading={propsPar.loading} />
+      content: propsVar => (<div>
+        <Table data={propsVar.matchesNation} columns={columns} loading={propsVar.loading} />
       </div>),
       route: '/matches/national',
     }];
@@ -136,17 +133,82 @@ class RequestLayer extends React.Component {
     // }
 
     const tab = matchTabs.find(o => o.key === route);
+    const __renderMatch = row => {
+      const imageContainer = styled.div`
+        position: relative;
+        display: flex;
+        justify-content: center;
+      `;
+      const Wrapper = styled.div`
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        position: relative;
+        margin-top: -1px;
+        height: 100%;
+        align-items: center;
+        min-width: 80px;
+        font-size: 80%;
+        
+        img {
+          margin-right: 7px;
+          margin-left: 7px;
+          position: relative;
+          height: 20px;
+          box-shadow: 0 0 5px ${constants.defaultPrimaryColor};
+          vertical-align: middle;
+          
+          @media only screen and (max-width: 660px) {
+            margin-right: 3px;
+          }
+        }
+      `;
+      return (<Wrapper>
+        <div className="imageContainer">
+          <span>{Clubs[row.home.club_id] && Clubs[row.home.club_id].short_name}</span>
+          <img
+            src={Clubs[row.home.club_id] && Clubs[row.home.club_id].icon}
+            alt=""
+            className="image"
+          />
+        </div>
+        <div className="imageContainer">
+          <img
+            src={Clubs[row.away.club_id] && Clubs[row.away.club_id].icon}
+            alt=""
+            className="image"
+          />
+          <span>{Clubs[row.away.club_id] && Clubs[row.away.club_id].short_name}</span>
+        </div>
+      </Wrapper>);
+    };
+
     return (<div>
       <Helmet title={strings.title_matches} />
       <div>
         <div>
           <BigCalendar
             selectable
-            events={events}
-            // defaultView="week"
+            events={this.props.matchesLeague.map(row => {
+              const startDate = new Date(row.date * 1000);
+              const endDate = new Date(row.date * 1000 + 5400000);
+              // const title = <span>{`${Clubs[row.home.club_id] && Clubs[row.home.club_id].short_name} vs ${Clubs[row.away.club_id] && Clubs[row.away.club_id].short_name}`}</span>;
+              const title = __renderMatch(row);
+
+              return {
+                id: row.id,
+                title,
+                start: startDate,
+                end: endDate,
+              };
+            })}
+            defaultView="month"
+            views={allViews}
+            step={60}
+            showMultiDayTimes
             // scrollToTime={new Date(1970, 1, 1, 6)}
-            // defaultDate={new Date(2018, 2, 15)}
-            onSelectEvent={event => alert(event.title)}
+            defaultDate={new Date()}
+            onSelectEvent={event => console.log(event)}
             onSelectSlot={slotInfo =>
               alert(
                 `selected slot: \n\nstart ${slotInfo.start.toLocaleString()} ` +

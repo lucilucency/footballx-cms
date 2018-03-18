@@ -35,7 +35,7 @@ const CalendarStyled = styled.div`
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  min-height: 500px;
+  min-height: 80vh;
   //background-color: white;
   color: rgb(245, 245, 245);
   padding: 5px;
@@ -68,11 +68,11 @@ const CalendarStyled = styled.div`
 }
 
 .rbc-off-range {
-  color: ${constants['out-of-range-color']};
+  // color: ${constants['out-of-range-color']};
 }
 
 .rbc-off-range-bg {
-  background: ${constants['out-of-range-bg-color']};
+  //background: ${constants['out-of-range-bg-color']};
 }
 
 .rbc-header {
@@ -105,15 +105,156 @@ const CalendarStyled = styled.div`
   background-color: ${constants['today-highlight-bg']};
 }
 
+/* month.less */
+.rbc-month-view {
+  position: relative;
+  border: 1px solid ${constants['calendar-border']};
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 0;
+  width: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+
+  height: 100%; // ie-fix
+}
+
+.rbc-header {
+  border-bottom: 1px solid ${constants['cell-border']};
+}
+
+.rbc-header + .rbc-header {
+  border-left: 1px solid ${constants['cell-border']};
+}
+
+.rbc-rtl & .rbc-header + .rbc-header {
+  border-left-width: 0;
+  border-right: 1px solid ${constants['cell-border']};
+}
+
+.rbc-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.rbc-row-segment {
+  padding: 0 1px 1px 1px;
+
+  .rbc-event-content {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.rbc-selected-cell {
+  background-color: ${constants['date-selection-bg-color']};
+}
+
+
+.rbc-show-more {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background-color: rgba(255, 255, 255, 0.3);
+  z-index: ${constants['event-zindex']};
+  font-weight: bold;
+  font-size: 85%;
+  height: auto;
+  line-height: normal;
+}
+
+.rbc-month-header {
+  display: flex;
+  flex-direction: row;
+}
+
+.rbc-month-row {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  flex: 1 0 0; // postcss will remove the 0px here hence the duplication below
+  flex-basis: 0px;
+  overflow: hidden;
+
+  height: 100%; // ie-fix
+  
+  border-top: 1px solid ${constants['cell-border']};
+  & + & {
+    border-top: 1px solid ${constants['cell-border']};
+  }
+}
+
+.rbc-date-cell {
+  padding-right: 5px;
+  text-align: right;
+
+  &.rbc-now {
+    font-weight: bold;
+  }
+
+  > a {
+    &, &:active, &:visited {
+      color: inherit;
+      text-decoration: none;
+    }
+  }
+}
+
+.rbc-row-bg {
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: row;
+  flex: 1 0 0;
+}
+
+.rbc-day-bg {
+  border-left: 1px solid ${constants['cell-border']};
+  & + & {
+    border-left: 1px solid ${constants['cell-border']};
+  }
+
+  .rbc-rtl & + & {
+    border-left-width: 0;
+    border-right: 1px solid ${constants['cell-border']};
+  }
+}
+
+.rbc-overlay {
+  position: absolute;
+  z-index: ${constants['event-zindex']} + 1;
+  border: 1px solid #e5e5e5;
+  background-color: #fff;
+  box-shadow: 0 5px 15px rgba(0,0,0,.25);
+  padding: 10px;
+
+  > * + * {
+    margin-top: 1px;
+  }
+}
+
+.rbc-overlay-header {
+  border-bottom: 1px solid #e5e5e5;
+  margin: -10px -10px 5px -10px ;
+  padding: 2px 10px;
+}
+
 /* event.less */
 .rbc-event {
   cursor: pointer;
   padding: ${constants['event-padding']};
   background-color: ${constants['event-bg']};
-  border-radius: ${constants['event-border-radius']};
+  // border-radius: ${constants['event-border-radius']};
   color: ${constants['event-color']};
   //opacity: 0.5;
-  text-align: justify;
+  text-align: center;
 
   &.rbc-selected {
     background-color: ${darken(constants['event-bg'], 0.1)};
@@ -240,8 +381,8 @@ const CalendarStyled = styled.div`
   z-index: 10;
   position: absolute;
   cursor: default;
-  background-color: @time-selection-bg-color;
-  color: @time-selection-color;
+  background-color: ${constants['time-selection-bg-color']};
+  color: ${constants['time-selection-color']};
   font-size: 75%;
   padding: 3px;
 }
@@ -372,6 +513,116 @@ const CalendarStyled = styled.div`
     left: 0;
     right: -3px;
   }
+}
+
+/* time-column.less */
+.rbc-time-column {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+
+  .rbc-timeslot-group {
+    flex: 1;
+  }
+}
+
+
+.rbc-timeslot-group {
+  border-bottom: 1px solid ${constants['cell-border']};
+  min-height: 6vh;
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.rbc-time-gutter,
+.rbc-header-gutter {
+  flex: none;
+}
+
+.rbc-label {
+  padding: 0 5px;
+}
+
+.rbc-day-slot {
+  position: relative;
+
+  .rbc-events-container {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 10px;
+    top: 0;
+
+    &.rtl {
+      left: 10px;
+      right: 0;
+    }
+  }
+
+  .rbc-event {
+    border: 1px solid ${constants['event-border']};
+    display: flex;
+    max-height: 100%;
+    min-height: 20px;
+    flex-flow: column wrap;
+    align-items: flex-start;
+    overflow: hidden;
+    position: absolute;
+  }
+
+  .rbc-event-label {
+    flex: none;
+    padding-right: 5px;
+    width: auto;
+  }
+
+  .rbc-event-content {
+    width: 100%;
+    flex: 1 1 0;
+    word-wrap: break-word;
+    line-height: 1;
+    height: 100%;
+    min-height: 1em;
+  }
+
+  .rbc-time-slot {
+    border-top: 1px solid lighten(${constants['cell-border']}, 10%);
+  }
+}
+
+.rbc-time-slot {
+  flex: 1 0 0;
+
+  &.rbc-now {
+    font-weight: bold;
+  }
+}
+
+.rbc-day-header {
+  text-align: center;
+}
+
+/* reset.less */
+.rbc-btn {
+  color: inherit;
+  font: inherit;
+  margin: 0;
+}
+
+button.rbc-btn {
+  overflow: visible;
+  text-transform: none;
+  -webkit-appearance: button;
+  cursor: pointer;
+}
+
+button[disabled].rbc-btn {
+  cursor: not-allowed;
+}
+
+button.rbc-input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
 }
 
 `;

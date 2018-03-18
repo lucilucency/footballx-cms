@@ -11,7 +11,6 @@ import constants from 'components/constants';
 // Import global CSS
 // import 'c3/c3.css';
 // import 'components/tooltip.css';
-// import './index.css';
 
 // Inject global styles
 injectGlobal([`
@@ -41,11 +40,11 @@ li {
   list-style-type: none;
 }
 
-#root {
+#react {
   height: 100%;
   overflow-x: hidden;
   min-height: 100vh;
-  background-color: #192023;
+  background-color: ${constants.defaultBackgroundColor};
   background-image: -webkit-linear-gradient(315deg, #2e2d45, #1c2127);
   background-image: linear-gradient(135deg, #2e2d45, #1c2127);
   color: ${constants.primaryTextColor};
@@ -155,17 +154,17 @@ li {
 `]);
 
 /* Register A service worker */
-// if ('serviceWorker' in navigator) {
-//   window.addEventListener('load', () => {
-//     navigator.serviceWorker.register('/sw.js').then((registration) => {
-//       // Registration was successful
-//       console.log('ServiceWorker registration successful with scope: ', registration.scope);
-//     }, (err) => {
-//       // registration failed :(
-//       console.log('ServiceWorker registration failed: ', err);
-//     });
-//   });
-// }
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').then((registration) => {
+      // Registration was successful
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }, (err) => {
+      // registration failed :(
+      console.log('ServiceWorker registration failed: ', err);
+    });
+  });
+}
 
 // Fetch metadata (used on all pages)
 // store.dispatch(getMetadata());
