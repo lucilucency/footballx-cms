@@ -14,7 +14,7 @@ const defaultMessages = {
   yesterday: 'yesterday',
   tomorrow: 'tomorrow',
   today: 'today',
-  agenda: 'agenda',
+  agenda: 'list',
 
   showMore: total => `+${total} more`,
 };

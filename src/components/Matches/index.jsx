@@ -203,7 +203,7 @@ class RequestLayer extends React.Component {
               };
             })}
             defaultView="month"
-            views={allViews}
+            // views={allViews}
             step={60}
             showMultiDayTimes
             // scrollToTime={new Date(1970, 1, 1, 6)}
