@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import strings from 'lang';
-import Table from 'components/Table';
-import Container from 'components/Container';
-import groupEventsColumns from 'components/Group/Pages/GroupEventsColumns';
+import Table from 'components/Table/index';
+import Container from 'components/Container/index';
+import groupEventsColumns from 'components/Group/Pages/Events/GroupEventsColumns';
 import styled from 'styled-components';
 
 const OverviewWrapper = styled.div``;

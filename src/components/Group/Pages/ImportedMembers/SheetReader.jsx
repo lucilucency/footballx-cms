@@ -1,7 +1,7 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import XLSX from 'xlsx';
-import Table from 'components/Table';
+import Table from 'components/Table/index';
 import { Row, toDateString, validateEmail } from 'utils';
 import strings from 'lang';
 // import Container from 'components/Container';

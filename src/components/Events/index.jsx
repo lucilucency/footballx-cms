@@ -46,6 +46,12 @@ class RequestLayer extends React.Component {
   render() {
     const { location, match } = this.props;
     let { events } = this.props;
+
+    if (!this.props.user) {
+      this.props.history.push('/login');
+      return false;
+    }
+
     // filter local
     const filter = queryString.parse(location.search.replace('?', ''));
     if (!_.isEmpty(filter)) {
@@ -68,11 +74,6 @@ class RequestLayer extends React.Component {
           return value.some(o => event[key].indexOf(o) !== -1);
         });
       });
-    }
-
-    if (!this.props.user) {
-      this.props.history.push('/login');
-      return false;
     }
 
     const route = match.params.info || 'all';

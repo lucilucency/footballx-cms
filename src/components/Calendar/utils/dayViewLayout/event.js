@@ -14,6 +14,45 @@ export function positionFromDate(date, min, total) {
   return Math.min(diff, total);
 }
 
+/**
+ * Return start and end dates with respect to timeslot positions.
+ */
+function normalizeDates(startDate, endDate, { min, showMultiDayTimes }) {
+  if (!showMultiDayTimes) {
+    return [startDate, endDate];
+  }
+
+  const current = new Date(min); // today at midnight
+  const c = new Date(current);
+  const s = new Date(startDate);
+  const e = new Date(endDate);
+
+  // Use noon to compare dates to avoid DST issues.
+  s.setHours(12, 0, 0, 0);
+  e.setHours(12, 0, 0, 0);
+  c.setHours(12, 0, 0, 0);
+
+  // Current day is at the start, but it spans multiple days,
+  // so we correct the end.
+  if (+c === +s && c < e) {
+    return [startDate, dates.endOf(startDate, 'day')];
+  }
+
+  // Current day is in between start and end dates,
+  // so we make it span all day.
+  if (c > s && c < e) {
+    return [current, dates.endOf(current, 'day')];
+  }
+
+  // Current day is at the end of a multi day event,
+  // so we make it start at midnight, and end normally.
+  if (c > s && +c === +e) {
+    return [current, endDate];
+  }
+
+  return [startDate, endDate];
+}
+
 export class Event {
   constructor(data, props) {
     const { startAccessor, endAccessor, min, totalMin } = props;
@@ -64,7 +103,7 @@ export class Event {
    */
   get width() {
     const noOverlap = this._width;
-    const overlap = Math.min(100, this._width * 1.7);
+    const overlap = Math.min(100, this._width * 1.1);
 
     // Containers can always grow.
     if (this.rows) {
@@ -79,7 +118,9 @@ export class Event {
     // Leaves can grow unless they're the last item in a row.
     const { leaves } = this.row;
     const index = leaves.indexOf(this);
-    return index === leaves.length - 1 ? noOverlap : overlap;
+    const __return = index === leaves.length - 1 ? noOverlap : overlap;
+
+    return __return;
   }
 
   get xOffset() {
@@ -100,41 +141,4 @@ export class Event {
   }
 }
 
-/**
- * Return start and end dates with respect to timeslot positions.
- */
-function normalizeDates(startDate, endDate, { min, showMultiDayTimes }) {
-  if (!showMultiDayTimes) {
-    return [startDate, endDate];
-  }
 
-  const current = new Date(min); // today at midnight
-  const c = new Date(current);
-  const s = new Date(startDate);
-  const e = new Date(endDate);
-
-  // Use noon to compare dates to avoid DST issues.
-  s.setHours(12, 0, 0, 0);
-  e.setHours(12, 0, 0, 0);
-  c.setHours(12, 0, 0, 0);
-
-  // Current day is at the start, but it spans multiple days,
-  // so we correct the end.
-  if (+c === +s && c < e) {
-    return [startDate, dates.endOf(startDate, 'day')];
-  }
-
-  // Current day is in between start and end dates,
-  // so we make it span all day.
-  if (c > s && c < e) {
-    return [current, dates.endOf(current, 'day')];
-  }
-
-  // Current day is at the end of a multi day event,
-  // so we make it start at midnight, and end normally.
-  if (c > s && +c === +e) {
-    return [current, endDate];
-  }
-
-  return [startDate, endDate];
-}

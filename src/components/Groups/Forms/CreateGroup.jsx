@@ -10,8 +10,6 @@ import strings from 'lang';
 /* components */
 import { TextField, RaisedButton } from 'material-ui';
 import Error from 'components/Error/index';
-/* css */
-import styles from './index.css';
 
 export const FORM_NAME_CREATE_EVENT = 'createGroup';
 
@@ -52,8 +50,7 @@ class CreateGroupForm extends React.Component {
     return (
       <div>
         {this.state.error && <Error text={this.state.error} />}
-
-        <div className={styles.formGroup}>
+        <div>
           <TextField
             name="name"
             type="text"

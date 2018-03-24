@@ -14,7 +14,6 @@ import Error from 'components/Error/index';
 import Spinner from 'components/Spinner/index';
 import MapWithSearchBox from 'components/Visualizations/GoogleMap/MapWithSearchBox';
 /* css */
-import styles from './index.css';
 
 export const FORM_NAME_CREATE_EVENT = 'createHotspot';
 
@@ -83,7 +82,7 @@ class CreateHotspotForm extends React.Component {
 
         <MapWithSearchBox onChanged={this.onPlaceChanged} />
 
-        <div className={styles.formGroup}>
+        <div>
           {/* input name */}
           <TextField
             type="text"

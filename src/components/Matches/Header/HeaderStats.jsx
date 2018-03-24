@@ -9,7 +9,7 @@ import strings from 'lang';
 import styled from 'styled-components';
 import constants from 'components/constants';
 
-import EventsHeaderButtons from './EventsHeaderButtons';
+import EventsHeaderButtons from './HeaderButtons';
 
 const CompactContainer = styled.div`
     composes: container;
@@ -78,10 +78,10 @@ const EventStat = styled(CardTitle)`
 
 export const EventsHeaderStats = (propsVar) => {
   const {
-    events = [],
+    matches = [],
   } = propsVar;
-  const totalEvents = events.length;
-  const upComingEvents = events.filter(o => o.status === 1).length;
+  const totalEvents = matches.length;
+  const upComingEvents = matches.length ? matches.filter(o => o.status === 1).length : 0;
 
   return (<div>
     <CompactContainer>

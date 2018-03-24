@@ -170,6 +170,7 @@ export function fxDispatch(type, payload, transform) {
 
 
 export function fxActionGet(type, path, params = {}, transform) {
+  console.log('get', type);
   const host = FX_API;
   const v = FX_VERSION;
   return (dispatch) => {

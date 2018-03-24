@@ -34,7 +34,7 @@ class LoginForm extends React.Component {
           const data = o.payload.data;
           data.user_type = data.type;
           delete data.type;
-          if (data.user_type === 1) {
+          if (false && data.user_type === 1) {
             that.setState({
               loginError: true,
               message: 'Permission denied!',
@@ -63,7 +63,7 @@ class LoginForm extends React.Component {
                 that.props.dispatchUserMetadata({ access_token: data.access_token, account_hotspot: h.payload, account_user: data.user });
                 that.props.history.push('');
               });
-            } else if (data.user_type === 3) {
+            } else if (data.user_type === 3 || data.user_type === 1) {
               that.props.dispatchUserMetadata({ access_token: data.access_token, account_user: data.user });
               that.props.history.push('');
             } else {

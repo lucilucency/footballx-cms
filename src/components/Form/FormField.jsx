@@ -202,6 +202,7 @@ class FormField extends React.Component {
             underlineFocusStyle={{ borderColor: colorBlue }}
             errorStyle={{ color: colorRed }}
             onClose={() => this.setState({ errorText: '' })}
+            listStyle={{ maxHeight: '50vh', overflow: 'auto' }}
           />
           <ChipList name={name} chipList={chipList} deleteChip={deleteChip} history={history} />
         </div>);

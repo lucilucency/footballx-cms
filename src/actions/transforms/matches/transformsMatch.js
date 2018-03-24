@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import _ from 'lodash';
 
-function transformMatches(data) {
+function transformsMatch(data) {
   const matches = data.matches;
   const matchClubs = data.clubs;
 
@@ -21,4 +21,4 @@ function transformMatches(data) {
   return data;
 }
 
-export default transformMatches;
+export default transformsMatch;

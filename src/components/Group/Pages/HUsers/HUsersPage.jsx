@@ -2,12 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { getGroupHUsers } from 'actions';
-import Table from 'components/Table';
-import Container from 'components/Container';
+import Table from 'components/Table/index';
+import Container from 'components/Container/index';
 import { transformations } from 'utils';
-import CreateGroupHUserForm from 'components/Group/Forms/CreateGroupHUser';
-
 import strings from 'lang';
+import CreateGroupHUserForm from 'components/Group/Forms/CreateGroupHUser';
 
 const HUsersColumns = [{
   displayName: strings.th_account,

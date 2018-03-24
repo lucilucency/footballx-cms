@@ -1,3 +1,4 @@
+/* eslint-disable no-tabs */
 import PropTypes from 'prop-types';
 import React from 'react';
 import uncontrollable from 'uncontrollable';
@@ -1266,7 +1267,7 @@ class Calendar extends React.Component {
       event: PropTypes.node,
       showMore: PropTypes.func,
     }),
-  }
+  };
 
   static defaultProps = {
     elementProps: {},

@@ -273,13 +273,13 @@ class MonthView extends React.Component {
 
     this._weekCount = weeks.length;
 
-    return (<MonthStyled className={cn('rbc-month-view', className)}>
+    return (<div className={cn('rbc-month-view', className)}>
       <div className="rbc-row rbc-month-header">
         {this.renderHeaders(weeks[0], weekdayFormat, culture)}
       </div>
       {weeks.map(this.renderWeek)}
       {this.props.popup && this.renderOverlay()}
-    </MonthStyled>);
+    </div>);
   }
 
   renderWeek = (week, weekIdx) => {

@@ -3,45 +3,26 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
-import { getMatchesLeague } from 'actions';
+import { getMatches } from 'actions';
 import strings from 'lang';
+import queryString from 'querystring';
+import moment from 'moment';
+import { isEmpty } from 'lodash';
+import leagueDatasource from 'fxconstants/build/leaguesObj.json';
+
 import Table from 'components/Table';
 import { transformations, subTextStyle } from 'utils';
-import { IconTrophy } from 'components/Icons';
 import TabBar from 'components/TabBar';
 import Clubs from 'fxconstants/build/clubsObj.json';
 import styled from 'styled-components';
 import constants from 'components/constants';
-
-// import BigCalendar from 'react-big-calendar';
 import BigCalendar from 'components/Calendar';
-import moment from 'moment';
+
+import Header from './Header';
+import FilterForm from './Forms/FilterForm';
 
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
 let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
-
-const events = [{
-  id: 0,
-  title: 'All Day Event very long title',
-  allDay: true,
-  start: new Date(2018, 2, 15, 12),
-  end: new Date(2018, 2, 15, 13),
-}, {
-  id: 1,
-  title: 'Long Event',
-  start: new Date(2018, 2, 7),
-  end: new Date(2018, 2, 7),
-}, {
-  id: 1,
-  title: 'MANU vs MANC',
-  start: new Date(2018, 2, 16, 21, 30),
-  end: new Date(2018, 2, 16, 23),
-}, {
-  id: 1,
-  title: 'ARS vs CHE',
-  start: new Date(),
-  end: new Date(2018, 2, 17, 23),
-}];
 
 const ConfirmedIcon = styled.span`
   composes: badge;
@@ -54,7 +35,8 @@ const getData = (props) => {
   const route = props.match.params.matchId || 'league';
   if (!Number.isInteger(Number(route))) {
     const now = Date.now();
-    props.dispatchLeagueMatches({
+
+    props.dispatchMatches({
       start_time: parseInt(now / 1000) - 86400,
       end_time: parseInt(now / 1000) + 2592000,
     });
@@ -68,7 +50,7 @@ const columns = [{
   displayFn: (row, col, field) => (<div>
     {field}
     <span style={{ ...subTextStyle, display: 'block', marginTop: 1 }}>
-      {row.league_name || strings.th_premier_league}
+      {leagueDatasource[row.league_id] && leagueDatasource[row.league_id].name}
     </span>
   </div>),
 }, {
@@ -82,16 +64,30 @@ const columns = [{
   field: 'home',
   color: constants.green,
   displayFn: row => (<div>
-    {(row.home && row.home.result === 1) && <ConfirmedIcon><IconTrophy /></ConfirmedIcon>}
-    {(row.home && Clubs[row.home.club_id]) && Clubs[row.home.club_id].name}
+    {(row.home && Clubs[row.home]) && Clubs[row.home].name}
   </div>),
 }, {
   displayName: <span>{strings.general_away}</span>,
   field: 'away',
   color: constants.red,
   displayFn: row => (<div>
-    {(row.away && row.away.result === 1) && <ConfirmedIcon><IconTrophy /></ConfirmedIcon>}
-    {(row.away && Clubs[row.away.club_id]) && Clubs[row.away.club_id].name}</div>),
+    {(row.away && Clubs[row.away]) && Clubs[row.away].name}</div>),
+}];
+
+const matchTabs = [{
+  name: strings.matches_league,
+  key: 'league',
+  content: propsVar => (<div>
+    <Table data={propsVar.matches} columns={columns} loading={propsVar.loading} />
+  </div>),
+  route: '/matches/league',
+}, {
+  name: strings.matches_national,
+  key: 'national',
+  content: propsVar => (<div>
+    <Table data={propsVar.matches} columns={columns} loading={propsVar.loading} />
+  </div>),
+  route: '/matches/national',
 }];
 
 class RequestLayer extends React.Component {
@@ -105,95 +101,112 @@ class RequestLayer extends React.Component {
     }
   }
 
+  __renderMatch = (row) => {
+    const Wrapper = styled.div`
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      position: relative;
+      margin-top: -1px;
+      height: 100%;
+      align-items: center;
+      min-width: 80px;
+      font-size: 80%;
+      //max-width: 140px;
+      
+      > div {
+        flex: 1;
+        justify-content: left;
+      }
+      
+      > div:first-child * {
+        float: right;
+      }
+      
+      > div:last-child * {
+        float: left;
+      }
+      
+      img {
+        margin-right: 7px;
+        margin-left: 7px;
+        position: relative;
+        height: 1em;
+        box-shadow: 0 0 5px ${constants.defaultPrimaryColor};
+        vertical-align: middle;
+        
+        @media only screen and (max-width: 660px) {
+          margin-right: 3px;
+        }
+      }
+    `;
+    return (<Wrapper>
+      <div>
+        <img
+          src={Clubs[row.home] && Clubs[row.home].icon}
+          alt=""
+        />
+        <span>{Clubs[row.home] && Clubs[row.home].short_name}</span>
+      </div>
+      <div>
+        <img
+          src={Clubs[row.away] && Clubs[row.away].icon}
+          alt=""
+        />
+        <span>{Clubs[row.away] && Clubs[row.away].short_name}</span>
+      </div>
+    </Wrapper>);
+  };
+
   render() {
     if (!this.props.user) {
       window.location.href = '/login';
     }
 
-    const matchTabs = [{
-      name: strings.matches_league,
-      key: 'league',
-      content: propsVar => (<div>
-        <Table data={propsVar.matchesLeague} columns={columns} loading={propsVar.loading} />
-      </div>),
-      route: '/matches/league',
-    }, {
-      name: strings.matches_national,
-      key: 'national',
-      content: propsVar => (<div>
-        <Table data={propsVar.matchesNation} columns={columns} loading={propsVar.loading} />
-      </div>),
-      route: '/matches/national',
-    }];
+    // filter local
+    let { matches } = this.props;
+    const filter = queryString.parse(location.search.replace('?', ''));
+    if (!isEmpty(filter)) {
+      const keys = Object.keys(filter);
+      keys.forEach((key) => {
+        let value = filter[key];
+
+        if (typeof value !== 'object') {
+          value = [value];
+        }
+
+        matches = matches.filter((match) => {
+          if (match && match[key]) {
+            if (key === 'place') {
+              return match.hotspot_address.indexOf(filter[key]) !== -1;
+            }
+            if (typeof match[key] !== 'object') {
+              return value.indexOf(match[key].toString()) !== -1;
+            }
+            return value.some(o => match[key].indexOf(o) !== -1);
+          }
+          return false;
+        });
+      });
+    }
 
     const route = this.props.match.params.matchId || 'league';
-
-    // if (Number.isInteger(Number(route))) {
-    //   return <Match {...this.props} matchId={route} />;
-    // }
-
     const tab = matchTabs.find(o => o.key === route);
-    const __renderMatch = row => {
-      const imageContainer = styled.div`
-        position: relative;
-        display: flex;
-        justify-content: center;
-      `;
-      const Wrapper = styled.div`
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        position: relative;
-        margin-top: -1px;
-        height: 100%;
-        align-items: center;
-        min-width: 80px;
-        font-size: 80%;
-        
-        img {
-          margin-right: 7px;
-          margin-left: 7px;
-          position: relative;
-          height: 20px;
-          box-shadow: 0 0 5px ${constants.defaultPrimaryColor};
-          vertical-align: middle;
-          
-          @media only screen and (max-width: 660px) {
-            margin-right: 3px;
-          }
-        }
-      `;
-      return (<Wrapper>
-        <div className="imageContainer">
-          <span>{Clubs[row.home.club_id] && Clubs[row.home.club_id].short_name}</span>
-          <img
-            src={Clubs[row.home.club_id] && Clubs[row.home.club_id].icon}
-            alt=""
-            className="image"
-          />
-        </div>
-        <div className="imageContainer">
-          <img
-            src={Clubs[row.away.club_id] && Clubs[row.away.club_id].icon}
-            alt=""
-            className="image"
-          />
-          <span>{Clubs[row.away.club_id] && Clubs[row.away.club_id].short_name}</span>
-        </div>
-      </Wrapper>);
-    };
 
     return (<div>
       <Helmet title={strings.title_matches} />
       <div>
+        <Header location={location} matches={matches} />
+        <FilterForm />
+      </div>
+      <div style={{ marginTop: 20 }}>
         <div>
           <BigCalendar
             selectable
-            events={this.props.matchesLeague.map(row => {
+            events={matches && matches.length ? matches.map((row) => {
               const startDate = new Date(row.date * 1000);
-              const endDate = new Date(row.date * 1000 + 5400000);
-              // const title = <span>{`${Clubs[row.home.club_id] && Clubs[row.home.club_id].short_name} vs ${Clubs[row.away.club_id] && Clubs[row.away.club_id].short_name}`}</span>;
-              const title = __renderMatch(row);
+              const endDate = new Date((row.date * 1000) + 5400000);
+              const title = this.__renderMatch(row);
 
               return {
                 id: row.id,
@@ -201,7 +214,7 @@ class RequestLayer extends React.Component {
                 start: startDate,
                 end: endDate,
               };
-            })}
+            }) : []}
             defaultView="month"
             // views={allViews}
             step={60}
@@ -217,8 +230,8 @@ class RequestLayer extends React.Component {
             }
           />
         </div>
-        <TabBar info={route} tabs={matchTabs} />
-        {tab && tab.content(this.props)}
+        {/*<TabBar info={route} tabs={matchTabs} />*/}
+        {/*{tab && tab.content({ matches, loading: this.props.loading })}*/}
       </div>
     </div>);
   }
@@ -231,19 +244,20 @@ RequestLayer.propTypes = {
     }),
   }),
   user: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-  // matchesLeague: PropTypes.array,
+  matches: PropTypes.array, // eslint-disable-line react/forbid-prop-types
   // matchesNation: PropTypes.array,
 };
 
 const mapStateToProps = state => ({
-  loading: state.app.matchesLeague.loading,
+  loading: state.app.matches.loading,
+  matches: state.app.matches.data || [],
   matchesLeague: state.app.matchesLeague.data.matches,
   matchesNation: state.app.matchesNation.data,
   user: state.app.metadata.data.user,
 });
 
 const mapDispatchToProps = dispatch => ({
-  dispatchLeagueMatches: params => dispatch(getMatchesLeague(params)),
+  dispatchMatches: params => dispatch(getMatches(params)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RequestLayer);

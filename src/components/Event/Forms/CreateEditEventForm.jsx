@@ -58,8 +58,6 @@ const initialState = props => ({
     notes: {},
     is_fan2friend_minigame: {},
   },
-  disabled: true,
-  cardLabelName: {},
   payload: {},
   submitResults: {
     data: [],
@@ -99,7 +97,6 @@ class CreateEventForm extends React.Component {
     };
     bindAll([
       'getFormData',
-      'isDisabled',
       'submit',
       'closeDialog',
       'onDragHomeColor',
@@ -351,31 +348,6 @@ class CreateEventForm extends React.Component {
         match_date: { $set: o.date },
         match_id: { $set: o.value },
       }),
-    });
-  }
-
-  isDisabled() {
-    let _cardLabelName = {};
-    if (!this.state.cardLabelName.value) {
-      _cardLabelName = {
-        value: null,
-        errorText: null,
-      };
-    } else {
-      _cardLabelName = {
-        value: this.state.cardLabelName.value,
-        isValid: true,
-      };
-    }
-
-    this.setState({
-      cardLabelName: _cardLabelName,
-    }, function () {
-      if (this.state.cardLabelName.isValid) {
-        this.setState({
-          disabled: false,
-        });
-      }
     });
   }
 

@@ -4,12 +4,12 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import XLSX from 'xlsx';
 import { getGroupImportedMembers } from 'actions';
-import { subTextStyle, renderDialog } from 'utils';
+import { subTextStyle, renderDialog, bindAll } from 'utils';
 import strings from 'lang';
-import IconPrint from 'material-ui/svg-icons/action/print';
-import Table, { TableLink } from 'components/Table';
-import Container from 'components/Container';
-// import QRCode from 'qrcode.react';
+import groups from 'fxconstants/build/groupsObj.json';
+// import IconPrint from 'material-ui/svg-icons/action/print';
+import Table, { TableLink } from 'components/Table/index';
+import Container from 'components/Container/index';
 import XUsersImportForm from './MembersImportForm';
 
 const groupMembers = {};
@@ -24,6 +24,7 @@ const fileHeader = {
   size: strings.th_membership_t_shirt_size,
   joined_year: strings.th_membership_joined_year,
   is_purchase: strings.th_membership_is_purchase,
+  is_activated: strings.th_membership_is_activated,
   membership_code: strings.th_membership_code,
 };
 
@@ -89,38 +90,12 @@ const getData = (props) => {
   props.getGroupMembers(props.groupId);
 };
 
-const downloadMembers = () => {
-  const data = [
-    [fileHeader.name, fileHeader.email, fileHeader.phone, fileHeader.dob, fileHeader.city, fileHeader.address, fileHeader.membership_code, ''],
-  ];
-
-  for (const id in groupMembers) {
-    const o = groupMembers[id];
-    if (o) {
-      const fileName = `${o.name}_${o.membership_code}.png`;
-      const a = document.createElement('a');
-      a.download = fileName;
-      a.href = groupMembers[id].canvas.toDataURL('image/png').replace(/^data:image\/[^;]/, 'data:application/octet-stream');
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-
-      data.push([o.name, o.email, o.phone, o.dob, o.city, o.address, o.membership_code, fileName]);
-    }
-  }
-
-  const ws = XLSX.utils.aoa_to_sheet(data);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'SheetJS');
-  XLSX.writeFile(wb, 'Group Membership QR.xlsx');
-};
-
 class RequestLayer extends React.Component {
   static propTypes = {
     location: PropTypes.shape({ key: PropTypes.string }),
     groupId: PropTypes.number,
     groupMembers: PropTypes.shape([]),
-    routeParams: PropTypes.shape({ subInfo: PropTypes.string }),
+    // routeParams: PropTypes.shape({ subInfo: PropTypes.string }),
   };
 
   constructor(props) {
@@ -130,9 +105,9 @@ class RequestLayer extends React.Component {
       createPackageFormData: {},
     };
 
-    // bindAll([
-    //   'downloadMembers',
-    // ], this);
+    bindAll([
+      'export2xlsx',
+    ], this);
   }
 
   componentDidMount() {
@@ -151,48 +126,40 @@ class RequestLayer extends React.Component {
     }
   }
 
+  export2xlsx() {
+    const groupName = groups[this.props.groupId] && groups[this.props.groupId].short_name;
+    const data = [
+      [fileHeader.name, fileHeader.nickname, fileHeader.city, fileHeader.address, fileHeader.phone, fileHeader.email, fileHeader.membership_code, fileHeader.is_activated],
+    ];
+
+    this.props.groupMembers.data.length && this.props.groupMembers.data.forEach((member) => {
+      data.push([member.name, member.nickname, member.city, member.address, member.phone, member.email, member.membership_code, member.xuser_id ? 'true' : 'false']);
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'SheetJS');
+    XLSX.writeFile(wb, `${groupName}-old-members.xlsx`);
+  }
+
   render() {
     const props = this.props;
-    const { routeParams } = this.props;
-    const subInfo = routeParams.subInfo === 'printing';
-
-    const PrintingMembersTableCols = [{
-      displayName: strings.th_name,
-      field: 'name',
-      displayFn: (row, col, field) => (<div>
-        {row.xuser_id ?
-          <TableLink to={`/xuser/${row.xuser_id}`}>{field && field.toUpperCase()}</TableLink> :
-          <b>{field && field.toUpperCase()}</b>
-        }
-      </div>),
-    }, {
-      displayName: strings.th_membership_code,
-      field: 'membership_code',
-      displayFn: (row, col, field) => (<span style={{ textDecoration: row.xuser_id ? 'line-through' : 'none' }}>
-        {field}
-      </span>),
-    }];
-
 
     return (<div>
       <Container
         title={strings.title_group_memberships}
         error={props.groupMembers.error}
         loading={this.props.groupMembers.loading}
-        actions={!subInfo ? [{
-          title: 'View Members QRCode',
-          icon: <IconPrint />,
-          link: `${props.location.pathname}/printing`,
-        }] : [{
-          title: 'Download Members QRCode',
-          icon: <IconPrint />,
-          onClick: downloadMembers,
+        actions={[{
+          title: 'Export data',
+          onClick: this.export2xlsx,
         }]}
       >
         <Table
-          // paginated={!subInfo}
+          paginated
+          pageLength={100}
           hidePaginatedTop
-          columns={subInfo ? PrintingMembersTableCols : MembersTableCols(props.browser)}
+          columns={MembersTableCols(props.browser)}
           data={this.props.groupMembers.data}
           error={false}
           loading={this.props.groupMembers.loading}

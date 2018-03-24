@@ -146,6 +146,8 @@ class DayColumn extends React.Component {
   }
 
   renderEvents = () => {
+    console.log('propsEvent', this.props);
+
     const {
       components: { event: EventComponent },
       culture,
@@ -203,6 +205,7 @@ class DayColumn extends React.Component {
       const continuesAfter = startsAfter(end, max);
 
       const title = get(event, titleAccessor);
+
       const tooltip = get(event, tooltipAccessor);
       let label;
       if (_continuesPrior && _continuesAfter) {

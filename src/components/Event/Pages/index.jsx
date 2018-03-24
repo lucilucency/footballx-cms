@@ -6,7 +6,7 @@ import MatchLogPage from './Records';
 const pages = [{
   name: strings.tab_hotspot_overview,
   key: 'overview',
-  content: props => (<OverviewPage props={props} />),
+  content: props => (<OverviewPage {...props} />),
 
 }, {
   name: strings.tab_records,

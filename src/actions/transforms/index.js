@@ -7,7 +7,8 @@ import transformGroupMembers from './groupMember/transformGroupMembers';
 import transformCreateEvent from './events/transformCreateEvent';
 import transformEditEvent from './events/transformEditEvent';
 
-import transformMatches from './matches/transformMatches';
+import transformsMatch from './matches/transformsMatch';
+import transformsMatchEvent from './matches/transformsMatchEvent';
 
 import transformHUser from './husers/transformHUser';
 
@@ -17,7 +18,9 @@ export {
   transformEditEvent,
   transformCreateEvent,
 
-  transformMatches,
+  transformsMatch,
+  transformsMatchEvent,
+
   transformHUser,
 
   transformGroupMember,

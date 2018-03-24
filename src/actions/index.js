@@ -29,8 +29,8 @@ export const cuserLogin = (username, password) => fxActionAuth('auth', 'cuser/lo
 /* huser */
 export const getHUserHotspot = accountId => fxActionGet('hotspot', `huser/${accountId}/hotspot`);
 /* matches */
-export const getMatchesLeague = params => fxActionGet('matchesLeague', 'matches', params, transform.transformMatches);
-export const getNationalMatches = params => fxActionGet('nationalMatches', 'matches', params, transform.transformMatches);
+export const getMatches = params => fxActionGet('matches', 'matches/calendar', params, transform.transformsMatchEvent);
+export const getMatchesLeague = params => fxActionGet('matchesLeague', 'matches', params, transform.transformsMatch);
 /* hotspot */
 export const getHotspots = () => fxActionGet('hotspots', 'hotspots');
 export const createHotspot = params => fxActionPost('ADD/hotspots', 'hotspot', params);

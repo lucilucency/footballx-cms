@@ -5,7 +5,7 @@ import { subTextStyle } from 'utils/style';
 import strings from 'lang';
 import constants from 'components/constants';
 import { colors } from 'material-ui/styles';
-import { TableLink } from 'components/Table';
+import { TableLink } from 'components/Table/index';
 
 const groupEventsColumns = (browser = {}) => [{
   displayName: strings.th_match,

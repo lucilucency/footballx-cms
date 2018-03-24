@@ -101,10 +101,11 @@ class Overview extends React.Component {
   }
 
   render() {
+    console.log('===========', this.props);
     const { event, eventXUsers, user } = this.props;
     const eventData = event.data;
     const eventId = eventData.event_id;
-    let xusers = eventXUsers.data;
+    let xusers = eventXUsers;
 
     xusers = xusers.sort((a, b) => {
       const aDate = new Date(a.event_updated_at);
@@ -124,15 +125,15 @@ class Overview extends React.Component {
       <OverviewContainer>
         <XUsersContainer>
           <Container
-            title={`${strings.heading_xmember} (${this.props.eventXUsers.data.filter(o => o.event_status === 'checkin').length} | ${this.props.eventXUsers.data.length})`}
+            title={`${strings.heading_xmember} (${eventXUsers.filter(o => o.event_status === 'checkin').length} | ${eventXUsers.length})`}
             titleTo={`/events/${eventId}/xusers`}
-            loading={eventXUsers.loading}
+            loading={event.loading}
             error={false}
           >
             <Table
               columns={eventXUsersColumns(user, event.data)}
               data={xusers}
-              loading={eventXUsers.loading}
+              loading={event.loading}
               error={false}
               paginated={false}
               pageLength={30}
@@ -182,7 +183,6 @@ class Overview extends React.Component {
 const mapStateToProps = state => ({
   user: state.app.metadata.data.user,
   event: state.app.event,
-  eventXUsers: state.app.eventXUsers,
 });
 
 export default connect(mapStateToProps, null)(Overview);

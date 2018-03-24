@@ -1,10 +1,10 @@
 import React from 'react';
 import strings from 'lang';
-import OverviewPage from './OverviewPage';
-import EventsPage from './EventsPage';
-import HUsersPage from './HUsersPage';
-import MembersPage from './MembersPage';
-import XUsersPage from './XUsersPage';
+import OverviewPage from './Overview/OverviewPage';
+import EventsPage from './Events/EventsPage';
+import HUsersPage from './HUsers/HUsersPage';
+import MembersPage from './ImportedMembers/MembersPage';
+import XUsersPage from './XUsers/XUsersPage';
 
 const pages = [{
   name: strings.tab_hotspot_overview,
