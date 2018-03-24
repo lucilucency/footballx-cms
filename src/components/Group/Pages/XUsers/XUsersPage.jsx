@@ -4,9 +4,12 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import XLSX from 'xlsx';
 import { getGroupXUsers } from 'actions';
-import { subTextStyle, renderDialog, transformations, toDateString } from 'utils';
+import { subTextStyle, renderDialog, transformations, toDateString, bindAll } from 'utils';
 import strings from 'lang';
+import groups from 'fxconstants/build/groupsObj.json';
+
 import IconPrint from 'material-ui/svg-icons/action/print';
+import IconDownload from 'material-ui/svg-icons/file/file-download';
 import Table from 'components/Table/index';
 import Container from 'components/Container/index';
 import styled from 'styled-components';
@@ -132,6 +135,10 @@ class RequestLayer extends React.Component {
       openDialog: false,
       createPackageFormData: {},
     };
+
+    bindAll([
+      'export2xlsx',
+    ], this);
   }
 
   componentDidMount() {
@@ -153,6 +160,22 @@ class RequestLayer extends React.Component {
     }
   }
 
+  export2xlsx() {
+    const groupName = groups[this.props.groupId] && groups[this.props.groupId].short_name;
+    const data = [
+      [fileHeader.name, fileHeader.nickname, fileHeader.phone, fileHeader.email, fileHeader.membership_code, fileHeader.is_activated],
+    ];
+
+    this.props.groupXUsersData.length && this.props.groupXUsersData.forEach((member) => {
+      data.push([member.fullname, member.nickname, member.phone, member.email, member.membership_code, member.is_activated ? 'true' : 'false']);
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'SheetJS');
+    XLSX.writeFile(wb, `${groupName}-xusers.xlsx`);
+  }
+
   render() {
     const props = this.props;
     const { routeParams, groupXUsersData, loading, error } = this.props;
@@ -164,11 +187,15 @@ class RequestLayer extends React.Component {
         error={error}
         loading={loading}
         actions={!printing ? [{
-          title: 'View Members QRCode',
+          title: 'View & Download Not QRCode of not activated members',
           icon: <IconPrint />,
           link: `${props.location.pathname}/printing`,
+        }, {
+          title: 'Export to XLSX',
+          icon: <IconDownload />,
+          onClick: this.export2xlsx,
         }] : [{
-          title: 'Download Members QRCode',
+          title: 'Download',
           icon: <IconPrint />,
           onClick: downloadMembers,
         }]}

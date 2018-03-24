@@ -7,7 +7,7 @@ import { getGroupImportedMembers } from 'actions';
 import { subTextStyle, renderDialog, bindAll } from 'utils';
 import strings from 'lang';
 import groups from 'fxconstants/build/groupsObj.json';
-// import IconPrint from 'material-ui/svg-icons/action/print';
+import IconDownload from 'material-ui/svg-icons/file/file-download';
 import Table, { TableLink } from 'components/Table/index';
 import Container from 'components/Container/index';
 import XUsersImportForm from './MembersImportForm';
@@ -151,7 +151,8 @@ class RequestLayer extends React.Component {
         error={props.groupMembers.error}
         loading={this.props.groupMembers.loading}
         actions={[{
-          title: 'Export data',
+          title: 'Export to XLSX',
+          icon: <IconDownload />,
           onClick: this.export2xlsx,
         }]}
       >
@@ -165,9 +166,9 @@ class RequestLayer extends React.Component {
           loading={this.props.groupMembers.loading}
         />
       </Container>
-      {props.user.user_type === 1 && <Container title={strings.title_group_import_membership}>
+      {props.user.user_type === 1 ? <Container title={strings.title_group_imported_members}>
         <XUsersImportForm groupId={this.props.groupId} groupMembers={this.props.groupMembers.data} />
-      </Container>}
+      </Container> : null}
       {renderDialog(this.state.dialogConstruct, this.state.openDialog)}
     </div>);
   }

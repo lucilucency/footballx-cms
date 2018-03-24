@@ -165,7 +165,8 @@
   "form_general_success": "Success",
   "form_general_fail": "Fail",
   "form_general_submit": "Submit",
-
+  "form_general_dialog_title": "Processing",
+  "form_general_dialog_desc": "Results",
 
   "form_create_event": "Create Event",
   "form_create_event_cancel": "Cancel Create Event",
@@ -646,6 +647,7 @@
   "title_group_husers": "Managers",
   "title_group_memberships": "Memberships",
   "title_group_import_membership": "Import members",
+  "title_group_imported_members": "Imported members",
 
   "tooltip_select_hotspots": "Select hotspots",
   "tooltip_level": "Level achieved by hero",

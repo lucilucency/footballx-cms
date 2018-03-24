@@ -10,7 +10,6 @@ import { createEvent as defaultCreateEvent, editEvent as defaultEditEvent, getHo
 import util from 'util';
 /* data */
 import strings from 'lang';
-import * as data from 'components/Event/Event.config';
 import Clubs from 'fxconstants/build/clubsObj.json';
 /* components */
 import {
@@ -26,14 +25,8 @@ import {
 import Checkbox from 'material-ui/Checkbox';
 import IconFail from 'material-ui/svg-icons/content/clear';
 import IconSuccess from 'material-ui/svg-icons/navigation/check';
-import DateTimePicker from 'material-ui-datetimepicker';
-import DatePickerDialog from 'material-ui/DatePicker/DatePickerDialog';
-import TimePickerDialog from 'material-ui/TimePicker/TimePickerDialog';
 import Error from 'components/Error';
 import Spinner from 'components/Spinner';
-import { SketchPicker } from 'react-color';
-import FormField from 'components/Form/FormField';
-import { AutoCompleteValidator, SelectValidator } from 'react-material-ui-form-validator';
 import { ValidatorForm } from 'react-form-validator-core';
 /* css */
 import styled, { css } from 'styled-components';
@@ -354,6 +347,58 @@ class CreateEditHotspotForm extends React.Component {
       errorText={this.state.event.notes.error}
     />);
 
+    const __renderHotspotName = () => (<TextField
+      type="text"
+      hintText={strings.tooltip_hotspot_name}
+      floatingLabelText={strings.tooltip_hotspot_name}
+      onChange={(e, value) => this.setState({
+        formData: update(this.state.formData, {
+          name: { $set: { value } },
+        }),
+      })}
+      fullWidth
+      value={this.state.formData.name && this.state.formData.name.value}
+    />);
+
+    const __renderHotspotAddress = () => (<TextField
+      type="text"
+      hintText={strings.tooltip_hotspot_address}
+      floatingLabelText={strings.tooltip_hotspot_address}
+      onChange={(event, value) => this.setState({
+        formData: update(this.state.formData, {
+          address: { $set: { value } },
+        }),
+      })}
+      fullWidth
+      value={this.state.formData.address && this.state.formData.address.value}
+    />);
+
+    const __renderHotspotPhone = () => (<TextField
+      type="text"
+      hintText={strings.tooltip_hotspot_phone}
+      floatingLabelText={strings.tooltip_hotspot_phone}
+      onChange={(event, value) => this.setState({
+        formData: update(this.state.formData, {
+          phone: { $set: { value } },
+        }),
+      })}
+      fullWidth
+      value={this.state.formData.phone && this.state.formData.phone.value}
+    />);
+
+    const __renderHotspotWifi = () => (<TextField
+      type="text"
+      hintText={strings.tooltip_hotspot_wifi}
+      floatingLabelText={strings.tooltip_hotspot_wifi}
+      onChange={(event, value) => this.setState({
+        formData: update(this.state.formData, {
+          wifi: { $set: { value } },
+        }),
+      })}
+      fullWidth
+      value={this.state.formData.wifi && this.state.formData.wifi.value}
+    />);
+
     return (<div style={{ display: (!toggle || showForm) ? 'inline' : 'none' }}>
       <ValidatorForm
         onSubmit={this.submit}
@@ -363,26 +408,11 @@ class CreateEditHotspotForm extends React.Component {
         {this.state.error && <Error text={this.state.error} />}
 
         <div>
-          {!this.props.isEditing && !this.props.hotspotId && this.props.dataSourceHotspots && __renderHotspotSelector()}
-          {!this.props.isEditing && !this.props.matchId && this.props.dataSourceMatches && __renderMatchSelector()}
-          {!this.props.isEditing && this.state.event.match.home && __renderMatchPreview()}
-          {!this.props.isEditing && !this.props.groupId && this.props.dataSourceGroups && __renderGroupSelector()}
           <Row>
-            <Col flex={6}>{__renderSeatsInput()}</Col>
-            <Col flex={6}>{__renderPriceInput()}</Col>
-            <Col flex={6}>{__renderDepositInput()}</Col>
-            <Col flex={6}>{__renderDiscountInput()}</Col>
-          </Row>
-          <Row>
-            <Col flex={6}>{__renderIsChargedCheckbox()}</Col>
-          </Row>
-          <Row>
-            <Col flex={3}>{__renderStartTimeRegisterPicker()}</Col>
-            <Col flex={3}>{__renderEndTimeRegisterPicker()}</Col>
-          </Row>
-          <Row>
-            <Col flex={3}>{__renderStartTimeCheckinPicker()}</Col>
-            <Col flex={3}>{__renderEndTimeCheckinPicker()}</Col>
+            <Col flex={6}>{__renderHotspotName()}</Col>
+            <Col flex={6}>{__renderHotspotAddress()}</Col>
+            <Col flex={6}>{__renderHotspotPhone()}</Col>
+            <Col flex={6}>{__renderHotspotWifi()}</Col>
           </Row>
 
           {__renderNotesInput()}
@@ -394,7 +424,7 @@ class CreateEditHotspotForm extends React.Component {
       </ValidatorForm>
 
       <Dialog
-        title={strings.form_create_events_dialog_desc}
+        title={strings.form_general_dialog_title}
         actions={<FlatButton
           label="Close"
           primary
