@@ -71,17 +71,15 @@ const EventHeaderWrapper = styled.div`
 }
 `;
 
-const EventsHeader = () => {
-  return (<EventHeaderWrapper>
-    <div className={'container'}>
-      <div className={'row topContainer'}>
-        <div className={'eventInfo'}>
-          <EventsHeaderButtons compact />
-        </div>
+const EventsHeader = () => (<EventHeaderWrapper>
+  <div className={'container'}>
+    <div className={'row topContainer'}>
+      <div className={'eventInfo'}>
+        <EventsHeaderButtons compact />
       </div>
     </div>
-  </EventHeaderWrapper>);
-};
+  </div>
+</EventHeaderWrapper>);
 
 const mapStateToProps = state => ({
   small: state.browser.greaterThan.small,

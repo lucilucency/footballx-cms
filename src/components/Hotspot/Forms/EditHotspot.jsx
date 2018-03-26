@@ -16,11 +16,9 @@ import styled, { css } from 'styled-components';
 
 const FormContainer = styled.div`
     transition: max-height 1s;
-    padding: 15px;
     box-sizing: border-box;
     overflow: hidden;
     padding: 0 15px;
-    box-sizing: border-box;
     ${props => (props.show ? css`
         max-height: 2000px;
     ` : css`

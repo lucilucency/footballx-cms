@@ -149,7 +149,7 @@ const HotspotHeader = (propsVar) => {
         </ImageContainer>
         <HotspotInfo>
           <li>
-            <span data="name">{hotspotData.name}</span>
+            <span data="name">{hotspotData.name}</span> {hotspotData.short_name && <small>({hotspotData.short_name})</small>}
           </li>
           <li>
             <span data="address">{hotspotData.address}</span>

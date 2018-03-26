@@ -10,8 +10,9 @@ import {
 import strings from 'lang';
 import TabBar from 'components/TabBar';
 import Spinner from 'components/Spinner';
+import EditHotspotForm from 'components/Hotspot/Forms/CreateEditHotspotForm';
 import CreateEventForm from './Forms/CreateHotspotEvent';
-import EditHotspotForm from './Forms/EditHotspot';
+// import EditHotspotForm from './Forms/EditHotspot';
 import HotspotHeader from './Header/index';
 import hotspotPages from './HotspotPages';
 
@@ -89,7 +90,7 @@ class RequestLayer extends React.Component {
           <div>
             <HotspotHeader {...this.props} hotspotId={hotspotId} isOwner={isOwner} />
             <CreateEventForm hotspotId={hotspotId} />
-            <EditHotspotForm hotspot={hotspot} />
+            <EditHotspotForm hotspot={hotspot} isEditing showForm={this.props.showFormEditHotspot} />
             <TabBar info={info} tabs={hotspotPages(hotspotId)} />
           </div>
           <div style={{ marginTop: -15 }}>
@@ -107,6 +108,7 @@ const mapStateToProps = state => ({
   loading: state.app.hotspot.loading,
   hotspot: state.app.hotspot.data || {},
   user: state.app.metadata.data,
+  showFormEditHotspot: state.app.formEditHotspot.show,
 });
 
 const mapDispatchToProps = dispatch => ({

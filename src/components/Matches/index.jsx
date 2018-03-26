@@ -22,7 +22,7 @@ import Header from './Header';
 import FilterForm from './Forms/FilterForm';
 
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
-let allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k])
+const allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k]);
 
 const ConfirmedIcon = styled.span`
   composes: badge;
@@ -37,8 +37,8 @@ const getData = (props) => {
     const now = Date.now();
 
     props.dispatchMatches({
-      start_time: parseInt(now / 1000) - 86400,
-      end_time: parseInt(now / 1000) + 2592000,
+      start_time: parseInt(now / 1000) - 2592000,
+      end_time: parseInt(now / 1000) + 5184000,
     });
   }
 };
@@ -230,8 +230,8 @@ class RequestLayer extends React.Component {
             }
           />
         </div>
-        {/*<TabBar info={route} tabs={matchTabs} />*/}
-        {/*{tab && tab.content({ matches, loading: this.props.loading })}*/}
+        {/* <TabBar info={route} tabs={matchTabs} /> */}
+        {/* {tab && tab.content({ matches, loading: this.props.loading })} */}
       </div>
     </div>);
   }

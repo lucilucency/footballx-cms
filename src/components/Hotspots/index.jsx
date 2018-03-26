@@ -12,7 +12,7 @@ import TabBar from 'components/TabBar';
 /* css */
 import { subTextStyle } from 'utils/style';
 
-import CreateHotspotForm from './Forms/CreateHotspot';
+import CreateHotspotForm from '../Hotspot/Forms/CreateEditHotspotForm';
 
 const hotspotsTableTh = [{
   displayName: strings.th_hotspot,
