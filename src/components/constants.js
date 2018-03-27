@@ -56,7 +56,7 @@ export default {
   linearTransition: 'all 300ms linear',
 
   /* calendar */
-  'out-of-range-color': lighten('#333', 40),
+  'out-of-range-color': lighten('#333', 0.2),
   'out-of-range-bg-color': lighten('#333', 0.9),
   'calendar-border': '#DDD',
   'cell-border': '#DDD',
@@ -67,8 +67,8 @@ export default {
   'date-selection-bg-color': 'rgba(0,0,0, .10)',
   // 'event-bg': '#3174ad',
   // 'event-bg': 'rgba(210, 92, 92, 0.2)',
-  'event-bg': 'rgb(56, 42, 49)',
-  'event-border': darken('#3174ad', 10),
+  'event-bg': 'rgb(49, 49, 62)',
+  'event-border': darken('#2ba4a9', 0.2),
   'event-color': '#fff',
   'event-border-radius': '5px',
   'event-padding': '2px 5px',

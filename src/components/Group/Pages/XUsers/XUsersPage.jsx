@@ -7,7 +7,7 @@ import { getGroupXUsers } from 'actions';
 import { subTextStyle, renderDialog, transformations, toDateString, bindAll } from 'utils';
 import strings from 'lang';
 import groups from 'fxconstants/build/groupsObj.json';
-
+import { IconFacebook } from 'components/Icons';
 import IconPrint from 'material-ui/svg-icons/action/print';
 import IconDownload from 'material-ui/svg-icons/file/file-download';
 import Table from 'components/Table/index';
@@ -43,6 +43,12 @@ const MembersTableCols = browser => ([{
   field: 'nickname',
   displayFn: transformations.th_xuser_image,
   sortFn: true,
+}, {
+  displayName: '',
+  field: 'facebook_id',
+  displayFn: (row, col, field) => (<div>
+    <a href={`https://www.facebook.com/${field}`} target="_blank"><IconFacebook width={24} height={24} /></a>
+  </div>),
 }, {
   displayName: strings.th_address,
   field: 'code',

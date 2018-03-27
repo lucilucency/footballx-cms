@@ -109,10 +109,16 @@ class RequestLayer extends React.Component {
       position: relative;
       margin-top: -1px;
       //height: 100%;
+      height: 1.5em;
       align-items: center;
       font-size: 80%;
       //min-width: 80px;
       //max-width: 140px;
+      transition: transform .2s;
+      
+      :hover {
+        transform: scale(1.5);
+      }
       
       span {
         @media only screen and (max-width: 660px) {
@@ -140,6 +146,7 @@ class RequestLayer extends React.Component {
       img {
         margin-right: 7px;
         margin-left: 7px;
+        margin-top: 2px;
         position: relative;
         height: 1em;
         box-shadow: 0 0 5px ${constants.defaultPrimaryColor};
@@ -227,10 +234,10 @@ class RequestLayer extends React.Component {
               };
             }) : []}
             defaultView="month"
-            // views={allViews}
-            step={60}
+            views={['month', 'day', 'agenda']}
+            // step={60}
             showMultiDayTimes
-            // scrollToTime={new Date(1970, 1, 1, 6)}
+            // scrollToTime={new Date(2018, 2, 31)}
             defaultDate={new Date()}
             onSelectEvent={event => console.log(event)}
             onSelectSlot={slotInfo =>

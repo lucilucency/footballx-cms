@@ -3,6 +3,7 @@ import React from 'react';
 import classes from 'dom-helpers/class';
 import getWidth from 'dom-helpers/query/width';
 import scrollbarSize from 'dom-helpers/util/scrollbarSize';
+import { toDateString } from 'utils/time';
 
 import localizer from './localizer';
 import message from './utils/messages';
@@ -113,8 +114,8 @@ class Agenda extends React.Component {
           isSelected(event, selected),
         )
         : {};
-      const dateLabel =
-        idx === 0 && localizer.format(day, agendaDateFormat, culture);
+      // const dateLabel = idx === 0 && localizer.format(day, agendaDateFormat, culture);
+      const dateLabel = idx === 0 && toDateString(day);
       const first =
         idx === 0 ? (
           <td rowSpan={events.length} className="rbc-agenda-date-cell">

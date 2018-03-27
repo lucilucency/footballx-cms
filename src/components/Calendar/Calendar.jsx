@@ -36,7 +36,7 @@ const CalendarStyled = styled.div`
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  min-height: 80vh;
+  min-height: 65vh;
   //background-color: white;
   color: rgb(245, 245, 245);
   padding: 5px;
@@ -159,12 +159,14 @@ const CalendarStyled = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(0, 0, 0, 0.1);
   z-index: ${constants['event-zindex']};
-  font-weight: bold;
-  font-size: 85%;
+  font-weight: 200;
+  font-size: 80%;
   height: auto;
   line-height: normal;
+  text-align: center;
+  padding-bottom: 1px;
 }
 
 .rbc-month-header {
@@ -310,21 +312,27 @@ const CalendarStyled = styled.div`
   flex-direction: column;
   flex: 1 0 0;
   overflow: auto;
+  
+  .rbc-agenda-content {
+    overflow-x: hidden;
+  }
 
   table {
     width: 100%;
     border: 1px solid ${constants['cell-border']};
+    border-collapse: collapse;
 
     tbody > tr > td {
       padding: 5px 10px;
       vertical-align: top;
-
+      font-size: 90%;
     }
 
     .rbc-agenda-time-cell {
       padding-left: 15px;
       padding-right: 15px;
       text-transform: lowercase;
+      font-size: 90%;
     }
 
     tbody > tr > td + td {
@@ -530,7 +538,7 @@ const CalendarStyled = styled.div`
 
 .rbc-timeslot-group {
   border-bottom: 1px solid ${constants['cell-border']};
-  min-height: 6vh;
+  min-height: 5vh;
   display: flex;
   flex-flow: column nowrap;
 }
@@ -567,7 +575,8 @@ const CalendarStyled = styled.div`
     min-height: 20px;
     //flex-flow: column wrap;
     flex-direction: column;
-    //align-items: flex-start;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
     position: absolute;
   }
@@ -576,7 +585,7 @@ const CalendarStyled = styled.div`
     flex: none;
     //padding-right: 5px;
     width: auto;
-    font-size: 60%;
+    font-size: 80%;
   }
 
   .rbc-event-content {
@@ -584,7 +593,7 @@ const CalendarStyled = styled.div`
     //flex: 1 1 0;
     word-wrap: break-word;
     //line-height: 1;
-    height: 100%;
+    //height: 100%;
     //min-height: 1em;
   }
 

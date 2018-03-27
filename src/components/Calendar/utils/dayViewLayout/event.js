@@ -1,7 +1,7 @@
 import { accessor as get } from '../accessors';
 import dates from '../dates';
 
-const OVER_LAP = 1.03;
+const OVER_LAP = 0.98;
 
 export function startsBefore(date, min) {
   return dates.lt(dates.merge(min, date), min, 'minutes');
