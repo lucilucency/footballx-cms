@@ -463,7 +463,7 @@ const CalendarStyled = styled.div`
   flex: 1 0 0%;
   align-items: flex-start;
   width: 100%;
-  border-top: 2px solid ${constants['calendar-border']};
+  //border-top: 2px solid ${constants['calendar-border']};
   overflow-y: auto;
   position: relative;
 
@@ -565,25 +565,27 @@ const CalendarStyled = styled.div`
     display: flex;
     max-height: 100%;
     min-height: 20px;
-    flex-flow: column wrap;
-    align-items: flex-start;
+    //flex-flow: column wrap;
+    flex-direction: column;
+    //align-items: flex-start;
     overflow: hidden;
     position: absolute;
   }
 
   .rbc-event-label {
     flex: none;
-    padding-right: 5px;
+    //padding-right: 5px;
     width: auto;
+    font-size: 60%;
   }
 
   .rbc-event-content {
     width: 100%;
-    flex: 1 1 0;
+    //flex: 1 1 0;
     word-wrap: break-word;
-    line-height: 1;
+    //line-height: 1;
     height: 100%;
-    min-height: 1em;
+    //min-height: 1em;
   }
 
   .rbc-time-slot {
@@ -624,6 +626,113 @@ button[disabled].rbc-btn {
 button.rbc-input::-moz-focus-inner {
   border: 0;
   padding: 0;
+}
+
+/* toolbar.less*/
+.rbc-toolbar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 16px;
+  
+  @media only screen and (max-width: 660px) {
+    flex-direction: column-reverse;
+  } 
+  
+  .rbc-toolbar-label {
+    flex-grow:1;
+    padding: 0 10px;
+    text-align: center;
+  }
+
+  & button {
+    color: ${constants['btn-color']};
+    display: inline-block;
+    margin: 0;
+    text-align: center;
+    vertical-align: middle;
+    background: none;
+    background-image: none;
+    border: 1px solid ${constants['btn-border']};
+    padding: .375rem 1rem;
+    border-radius: 4px;
+    line-height: normal;
+    white-space: nowrap;
+
+    &:active,
+    &.rbc-active {
+      background-image: none;
+      box-shadow: inset 0 3px 5px rgba(0,0,0,.125);
+      background-color: ${darken(constants['btn-bg'], 0.1)};
+      border-color: ${lighten('rgb(19, 147, 249)', 0.2)};
+      filter: drop-shadow(0 0 5px rgb(19, 147, 249));
+
+      &:hover,
+      &:focus {
+        color: ${constants['btn-color']};
+        background-color: ${darken(constants['btn-bg'], 0.17)};
+        border-color: ${darken(constants['btn-border'], 0.25)};
+      }
+    }
+
+    &:focus {
+      color: ${constants['btn-color']};
+      background-color: ${darken(constants['btn-bg'], 0.1)};
+      border-color: ${darken(constants['btn-border'], 0.12)};
+    }
+
+    &:hover {
+      color: ${constants['btn-color']};
+      background-color: ${darken(constants['btn-bg'], 0.1)}
+          border-color: ${darken(constants['btn-border'], 0.12)}
+    }
+  }
+
+
+  .rbc-btn-group {
+    display: inline-block;
+    white-space: nowrap;
+  
+    > button:first-child:not(:last-child) {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  
+    > button:last-child:not(:first-child) {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  
+    .rbc-rtl & > button:first-child:not(:last-child) {
+      border-radius: 4px;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  
+    .rbc-rtl & > button:last-child:not(:first-child) {
+      border-radius: 4px;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  
+    > button:not(:first-child):not(:last-child) {
+      border-radius: 0;
+    }
+  
+    button + button {
+      margin-left: -1px;
+    }
+  
+    .rbc-rtl & button + button {
+      margin-left: 0;
+      margin-right: -1px;
+    }
+  
+    & + &,
+    & + button {
+      margin-left: 10px;
+    }
+  }
 }
 
 `;

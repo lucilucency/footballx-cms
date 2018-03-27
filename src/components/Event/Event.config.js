@@ -45,17 +45,20 @@ export const depositArr = [{
   text: '0',
   value: 0,
 }, {
-  text: '5000',
-  value: 5000,
+  text: '10',
+  value: 10,
 }, {
-  text: '10000',
-  value: 10000,
+  text: '20',
+  value: 20,
 }, {
-  text: '15000',
-  value: 15000,
+  text: '50',
+  value: 50,
 }, {
-  text: '20000',
-  value: 20000,
+  text: '75',
+  value: 75,
+}, {
+  text: '100',
+  value: 100,
 }];
 
 export const seatsArr = [{

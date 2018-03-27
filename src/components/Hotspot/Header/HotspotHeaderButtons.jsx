@@ -75,7 +75,7 @@ class HotspotHeaderButtons extends React.Component {
         onClick={toggleShowFormEditHotspot}
         icon={<IconEdit />}
         text={strings.form_edit_hotspot_open}
-        textToggle={strings.form_edit_hotspot_cancel}
+        textToggle={strings.form_edit_hotspot_close}
       />}
       {this.props.user && <ShowFormToggle
         show={showFormCreateEvent}

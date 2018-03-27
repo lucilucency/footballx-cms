@@ -1,10 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 /* components */
-import Avatar from 'material-ui/Avatar';
-import Badge from 'material-ui/Badge';
+import { IconButton, Avatar, Badge } from 'material-ui';
 import Spinner from 'components/Spinner';
 import IconValidated from 'material-ui/svg-icons/action/check-circle';
+import IconCafe from 'material-ui/svg-icons/maps/local-cafe';
+import IconBeer from 'material-ui/svg-icons/maps/local-drink';
+import IconStadium from 'material-ui/svg-icons/maps/local-activity';
 /* data */
 import strings from 'lang';
 import constants from 'components/constants';
@@ -34,22 +36,22 @@ const ImageContainer = styled.div`
     flex-direction: column;
     justify-content: center;
 `;
-const RegistrationBadge = styled(IconValidated)`
-    width: 18px;
-    height: 18px;
-    position: relative;
+const ValidatedHotspot = styled(IconValidated)`
+  width: 18px;
+  height: 18px;
+  position: relative;
 
-    &[data-hint-position="top"] {
-        &::before {
-            top: -7px;
-            margin-left: 3px;
-        }
-
-        &::after {
-        margin-bottom: 7px;
-        margin-left: -7px;
-        }
+  &[data-hint-position="top"] {
+    &::before {
+        top: -7px;
+        margin-left: 3px;
     }
+
+    &::after {
+    margin-bottom: 7px;
+    margin-left: -7px;
+    }
+  }
 `;
 const HotspotInfo = styled.div`
     padding-top: 1em;
@@ -90,12 +92,26 @@ const AvatarStyled = styled(Avatar)`
     }
 `;
 
-const getRegistrationBadge = registered => registered && (
-  <RegistrationBadge
-    data-hint={strings.tooltip_registered_user}
-    data-hint-position="top"
-  />
-);
+const getHotspotIcon = (type) => {
+  switch (type) {
+    case 1:
+      return (<IconButton tooltip={strings.enum_hotspot_type_1}>
+        <IconCafe />
+      </IconButton>);
+    case 2:
+      return (<IconButton tooltip={strings.enum_hotspot_type_2}>
+        <IconBeer />
+      </IconButton>);
+    case 3:
+      return (<IconButton tooltip={strings.enum_hotspot_type_3}>
+        <IconStadium />
+      </IconButton>);
+    default:
+      return (<IconButton tooltip={strings.enum_hotspot_type_1}>
+        <IconCafe />
+      </IconButton>);
+  }
+};
 
 
 const HotspotHeader = (propsVar) => {
@@ -133,7 +149,10 @@ const HotspotHeader = (propsVar) => {
       <TopContainer>
         <ImageContainer>
           <Badge
-            badgeContent={getRegistrationBadge(isOwner)}
+            badgeContent={<ValidatedHotspot
+              data-hint={strings.tooltip_registered_user}
+              data-hint-position="top"
+            />}
             badgeStyle={badgeStyle}
             style={{
               margin: 0,
@@ -149,7 +168,9 @@ const HotspotHeader = (propsVar) => {
         </ImageContainer>
         <HotspotInfo>
           <li>
-            <span data="name">{hotspotData.name}</span> {hotspotData.short_name && <small>({hotspotData.short_name})</small>}
+            <span data="name">{hotspotData.name}</span>
+            {hotspotData.short_name && <small>({hotspotData.short_name})</small>}
+            {getHotspotIcon(hotspotData.type)}
           </li>
           <li>
             <span data="address">{hotspotData.address}</span>

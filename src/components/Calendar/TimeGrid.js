@@ -200,7 +200,7 @@ export default class TimeGrid extends Component {
 
     return (
       <div className="rbc-time-view">
-        {this.renderHeader(range, allDayEvents, width, resources)}
+        {/*{this.renderHeader(range, allDayEvents, width, resources)}*/}
 
         <div ref="content" className="rbc-time-content">
           <TimeColumn

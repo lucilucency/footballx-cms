@@ -1,6 +1,8 @@
 import { accessor as get } from '../accessors';
 import dates from '../dates';
 
+const OVER_LAP = 1.03;
+
 export function startsBefore(date, min) {
   return dates.lt(dates.merge(min, date), min, 'minutes');
 }
@@ -103,7 +105,7 @@ export class Event {
    */
   get width() {
     const noOverlap = this._width;
-    const overlap = Math.min(100, this._width * 1.1);
+    const overlap = Math.min(100, this._width * OVER_LAP);
 
     // Containers can always grow.
     if (this.rows) {

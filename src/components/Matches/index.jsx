@@ -108,11 +108,21 @@ class RequestLayer extends React.Component {
       justify-content: center;
       position: relative;
       margin-top: -1px;
-      height: 100%;
+      //height: 100%;
       align-items: center;
-      min-width: 80px;
       font-size: 80%;
+      //min-width: 80px;
       //max-width: 140px;
+      
+      span {
+        @media only screen and (max-width: 660px) {
+          display: none;
+        }
+        
+        @media only screen and (max-width: 900px) {
+          font-size: 0.6em;
+        }
+      }
       
       > div {
         flex: 1;
@@ -137,6 +147,7 @@ class RequestLayer extends React.Component {
         
         @media only screen and (max-width: 660px) {
           margin-right: 3px;
+          height: 1.1em;
         }
       }
     `;

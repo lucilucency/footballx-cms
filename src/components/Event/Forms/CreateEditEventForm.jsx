@@ -666,8 +666,8 @@ class CreateEventForm extends React.Component {
       openOnFocus
       errorText={this.state.event.price.error}
       fullWidth
-      validators={['required']}
-      errorMessages={[strings.validate_is_required]}
+      validators={['required', 'minNumber:0']}
+      errorMessages={[strings.validate_is_required, util.format(strings.validate_minimum, 0)]}
     />);
     const __renderDiscountInput = () => (<AutoCompleteValidator
       name="discount"
@@ -720,8 +720,8 @@ class CreateEventForm extends React.Component {
       openOnFocus
       errorText={this.state.event.deposit.error}
       fullWidth
-      validators={['required', 'minNumber:0']}
-      errorMessages={[strings.validate_is_required, util.format(strings.validate_minimum, 0)]}
+      validators={['required', 'minNumber:0', 'maxNumber:100']}
+      errorMessages={[strings.validate_is_required, util.format(strings.validate_minimum, 0), util.format(strings.validate_maximum, 100)]}
     />);
     const __renderIsChargedCheckbox = () => (<Checkbox
       label={strings.event_is_charged}
