@@ -1,15 +1,13 @@
-/* eslint-disable react/forbid-prop-types,max-len */
+/* eslint-disable react/forbid-prop-types,max-len,no-confusing-arrow */
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import update from 'immutability-helper';
 import PropTypes from 'prop-types';
-import { toDateTimeString, Row, Col, bindAll } from 'utils';
+import { Row, Col, bindAll, FormWrapper } from 'utils';
 import { createHotspot as defaultCreateFn, editHotspot as defaultEditFn } from 'actions';
 import strings from 'lang';
-import Clubs from 'fxconstants/build/clubsObj.json';
 import constants from 'components/constants';
-import styled, { css } from 'styled-components';
 /* components */
 import {
   AutoComplete,
@@ -17,7 +15,6 @@ import {
   FlatButton,
   List,
   ListItem,
-  RaisedButton,
   TextField,
 } from 'material-ui';
 import IconFail from 'material-ui/svg-icons/content/clear';
@@ -26,21 +23,7 @@ import CircularProgress from 'material-ui/CircularProgress';
 
 import Error from 'components/Error/index';
 import Spinner from 'components/Spinner/index';
-import { ValidatorForm } from 'react-form-validator-core';
 import MapWithSearchBox from 'components/Visualizations/GoogleMap/MapWithSearchBox';
-
-const FormWrapper = styled.div`
-  margin-top: 20px;
-  transition: max-height 1s;
-  box-sizing: border-box;
-  overflow: hidden;i
-  padding: 0 15px;
-  ${props => ((props.showForm) ? css`
-      max-height: 2000px;
-  ` : css`
-      max-height: 0;
-  `)}
-`;
 
 const initialState = ({
   formData: {
@@ -62,17 +45,21 @@ const initialState = ({
 
 class CreateEditHotspotForm extends React.Component {
   static propTypes = {
-    showForm: PropTypes.bool,
+    display: PropTypes.bool,
     toggle: PropTypes.bool,
+    mode: PropTypes.string,
     loading: PropTypes.bool,
     callback: PropTypes.func,
-    // isEditing: PropTypes.bool,
+    style: PropTypes.shape({}),
 
     dsHotspotType: PropTypes.array,
   };
 
   static defaultProps = {
+    display: true,
     toggle: false,
+    mode: 'create',
+    loading: false,
   };
 
   constructor(props) {
@@ -94,7 +81,7 @@ class CreateEditHotspotForm extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (newProps.isEditing) {
+    if (newProps.mode === 'edit') {
       const __type = () => {
         const __find = newProps.dsHotspotType.find(o => o.value === Number(newProps.hotspot.type));
         return __find && __find.text;
@@ -175,7 +162,7 @@ class CreateEditHotspotForm extends React.Component {
           }),
         });
         const submitData = this.getFormData();
-        if (that.props.isEditing) {
+        if (that.props.mode === 'edit') {
           resolve(editFn(that.props.hotspot.id, submitData));
         } else {
           resolve(createFn(submitData, this.state.payload));
@@ -231,11 +218,13 @@ class CreateEditHotspotForm extends React.Component {
   }
 
   render() {
+    const props = this.props;
     const {
+      display,
       toggle,
-      loading = false,
-      showForm = true,
-    } = this.props;
+      loading,
+      style = {},
+    } = props;
 
     const __renderHotspotName = () => (<TextField
       type="text"
@@ -330,41 +319,63 @@ class CreateEditHotspotForm extends React.Component {
       listStyle={{ maxHeight: 300, overflow: 'auto' }}
     />);
 
-    return (<FormWrapper {...{ toggle, showForm }}>
-      <ValidatorForm
-        onSubmit={this.submit}
-        // onError={errors => console.log(errors)}
-      >
-        {loading && <Spinner />}
-        {this.state.error && <Error text={this.state.error} />}
+    const actions = [
+      null && <FlatButton
+        type="reset"
+        key="reset"
+        label="Reset"
+        secondary
+        style={{ float: 'left' }}
+      />,
+      <FlatButton
+        label={strings.form_general_close}
+        key="cancel"
+        primary
+        onClick={() => this.props.callback ? this.props.callback() : props.history.push('/hotspots')}
+      />,
+      <FlatButton
+        key="submit"
+        type="submit"
+        label={strings.form_general_submit}
+        primary
+      />,
+    ];
 
-        <MapWithSearchBox
-          onChanged={this.onPlaceChanged}
-          marker={{
-            lat: this.state.formData.lat.value,
-            lng: this.state.formData.lon.value,
-          }}
-        />
+    return (<FormWrapper
+      {...{ toggle, display }}
+      onSubmit={this.submit}
+      // onError={errors => console.log(errors)}
+      {...style}
+    >
+      {loading && <Spinner />}
+      {this.state.error && <Error text={this.state.error} />}
 
-        <div>
-          <Row>
-            {__renderHotspotAddress()}
-          </Row>
-          <Row>
-            <Col flex={6}>{__renderHotspotName()}</Col>
-            <Col flex={6}>{__renderHotspotShortName()}</Col>
-          </Row>
-          <Row>
-            <Col flex={6}>{__renderHotspotType()}</Col>
-            <Col flex={6}>{__renderHotspotPhone()}</Col>
-            <Col flex={6}>{__renderHotspotWifi()}</Col>
-          </Row>
-        </div>
-        <RaisedButton
-          type="submit"
-          label={strings.form_general_submit}
-        />
-      </ValidatorForm>
+      <MapWithSearchBox
+        onChanged={this.onPlaceChanged}
+        marker={this.props.mode === 'edit' && {
+          lat: Number(this.state.formData.lat.value),
+          lng: Number(this.state.formData.lon.value),
+        }}
+      />
+
+      <div>
+        <Row>
+          {__renderHotspotAddress()}
+        </Row>
+        <Row>
+          <Col flex={6}>{__renderHotspotName()}</Col>
+          <Col flex={6}>{__renderHotspotShortName()}</Col>
+        </Row>
+        <Row>
+          <Col flex={6}>{__renderHotspotType()}</Col>
+          <Col flex={6}>{__renderHotspotPhone()}</Col>
+          <Col flex={6}>{__renderHotspotWifi()}</Col>
+        </Row>
+      </div>
+
+      <div className="actions">
+        {actions}
+      </div>
 
       <Dialog
         title={strings.form_general_dialog_title}
@@ -373,13 +384,8 @@ class CreateEditHotspotForm extends React.Component {
           primary
           keyboardFocused
           onClick={() => {
-            const props = this.props;
             this.closeDialog();
-            if (this.props.callback) {
-              return this.props.callback();
-            }
-
-            return props.history.push(`/hotspot/${this.state.formData.hotspot_id.value}`);
+            return this.props.callback ? this.props.callback() : props.history.push(`/hotspot/${this.state.formData.hotspot_id.value}`);
           }}
         />}
         modal={false}
@@ -388,6 +394,7 @@ class CreateEditHotspotForm extends React.Component {
       >
         <List>
           {this.state.submitResults.data.map(r => (<ListItem
+            key={r.submitAction}
             primaryText={r.submitAction}
             leftIcon={r.submitting ? <CircularProgress size={24} /> : r.error ?
               <IconFail color={constants.colorRed} title={strings.form_general_fail} />
@@ -404,9 +411,8 @@ class CreateEditHotspotForm extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = () => ({
   currentQueryString: window.location.search,
-  // showForm: state.app.formCreateEvent.show,
   dsHotspotType: [{
     text: strings.enum_hotspot_type_1,
     value: 1,

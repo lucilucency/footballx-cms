@@ -4,8 +4,11 @@ export const formActions = {
   TOGGLE_SHOW_FORM,
 };
 
-export const toggleShowForm = (formName, state) => ({
-  type: TOGGLE_SHOW_FORM,
-  formName,
-  state,
-});
+export const toggleShowForm = (formName, state) => {
+  console.log('toggleShowForm', formName, state);
+  return {
+    type: TOGGLE_SHOW_FORM,
+    formName,
+    state,
+  };
+};

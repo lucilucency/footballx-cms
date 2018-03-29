@@ -6,11 +6,11 @@ import PropTypes from 'prop-types';
 import socket from 'socketClient';
 import TabBar from 'components/TabBar';
 import {
-  getEvent, getEventXUsers, addEventXUser, dispatchNewXUserCheckin,
+  getEvent, getEventXUsers, addEventXUser, dispatchNewXUserCheckin, toggleShowForm
 } from 'actions';
 import EventHeader from './EventHeader';
 import pages from './Pages/index';
-import EditEventForm from './Forms/EditEvent';
+import EditEventForm from './Forms/CreateEditEventForm';
 import SendNotificationForm from './Forms/SendNotification';
 
 class RequestLayer extends React.Component {
@@ -73,7 +73,8 @@ class RequestLayer extends React.Component {
   }
 
   render() {
-    const { event, user, match } = this.props;
+    const props = this.props;
+    const { event, user, match, showEditEventForm, toggleShowForm } = props;
     let { eventXUsers } = this.props;
     const userData = user.user;
     if (!userData) {
@@ -131,7 +132,13 @@ class RequestLayer extends React.Component {
         <EventHeader
           event={this.props.event}
         />
-        <EditEventForm event={this.props.event.data} />
+        <EditEventForm
+          mode="edit"
+          toggle
+          display={showEditEventForm}
+          event={this.props.event.data}
+          callback={() => toggleShowForm}
+        />
         <SendNotificationForm event={this.props.event.data} />
         <TabBar
           info={info}
@@ -151,6 +158,7 @@ const mapStateToProps = state => ({
   user: state.app.metadata.data,
   event: state.app.event,
   eventXUsers: state.app.eventXUsers.data,
+  showEditEventForm: state.app.formEditEvent.show,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -158,6 +166,7 @@ const mapDispatchToProps = dispatch => ({
   getEventXUsers: eventId => dispatch(getEventXUsers(eventId)),
   addEventXUser: payload => dispatch(addEventXUser(payload)),
   dispatchNewXUserCheckin: payload => dispatch(dispatchNewXUserCheckin(payload)),
+  toggleShowForm: () => dispatch(toggleShowForm('editEvent')),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RequestLayer);

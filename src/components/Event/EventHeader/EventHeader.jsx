@@ -219,33 +219,11 @@ class EventHeader extends React.Component {
       'handleOpenDialog',
       'handleCloseDialog',
     ], this);
-
-
-    // this.url = 'http://streaming.tdiradio.com:8000/house.mp3';
-    // this.url = '/assets/audio/XoSoMienBacNhacChuong-VA-4937390.mp3';
-    // this.audio = new Audio(this.url);
-    // this.togglePlay = this.togglePlay.bind(this);
   }
 
   componentDidMount() {
 
   }
-
-  // togglePlay() {
-  //   this.setState({ play: !this.state.play }, () => {
-  //     if (this.state.play) {
-  //       const playPromise = this.audio.play();
-  //       if (playPromise !== null) {
-  //         playPromise.catch(() => { this.audio.play(); });
-  //       }
-  //     } else {
-  //       const playPromise = this.audio.pause();
-  //       if (playPromise !== null) {
-  //         playPromise.catch(() => { this.audio.pause(); });
-  //       }
-  //     }
-  //   });
-  // }
 
   handleOpenDialog() {
     this.setState({ openDialog: true });
@@ -380,7 +358,7 @@ class EventHeader extends React.Component {
             </HostedGroup>
             <Match>
               <div>
-                <p><img src={Clubs[eventData.home] && Clubs[eventData.home].icon} alt="" width={128} height={128} /></p>
+                <p><img src={Clubs[eventData.home] && Clubs[eventData.home].icon} alt="" width={128} /></p>
               </div>
               <div className={'matchInfo'}>
                 <span style={{ fontSize: constants.fontSizeMedium }}>

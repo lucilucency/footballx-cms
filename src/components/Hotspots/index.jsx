@@ -4,15 +4,13 @@ import Helmet from 'react-helmet';
 import PropTypes from 'prop-types';
 /* actions & helpers */
 import { getHotspots } from 'actions';
+import { subTextStyle } from 'utils';
 /* data & components */
 import strings from 'lang';
 import Table, { TableLink } from 'components/Table';
-import Hotspot from 'components/Hotspot';
 import TabBar from 'components/TabBar';
-/* css */
-import { subTextStyle } from 'utils/style';
-
-import CreateHotspotForm from '../Hotspot/Forms/CreateEditHotspotForm';
+import Hotspot from 'components/Hotspot';
+import CreateHotspotForm from 'components/Hotspot/Forms/CreateEditHotspotForm';
 
 const hotspotsTableTh = [{
   displayName: strings.th_hotspot,
@@ -77,7 +75,7 @@ class RequestLayer extends React.Component {
       name: strings.tab_hotspots_add,
       key: 'add',
       content: () => (<div>
-        <CreateHotspotForm />
+        <CreateHotspotForm style={{ paddingBottom: 20 }} />
       </div>),
       route: '/hotspots/add',
     }].filter(o => o);

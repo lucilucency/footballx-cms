@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom';
 import update from 'immutability-helper';
 import PropTypes from 'prop-types';
 /* actions & helpers */
-import { toDateTimeString, Row, Col, bindAll } from 'utils';
+import { toDateTimeString, Row, Col, bindAll, FormWrapper } from 'utils';
 import { createEvent as defaultCreateEvent, editEvent as defaultEditEvent, getHotspots, getGroups, getMatchesLeague } from 'actions';
 import util from 'util';
 /* data */
@@ -34,7 +34,6 @@ import Spinner from 'components/Spinner';
 import { SketchPicker } from 'react-color';
 import FormField from 'components/Form/FormField';
 import { AutoCompleteValidator, SelectValidator } from 'react-material-ui-form-validator';
-import { ValidatorForm } from 'react-form-validator-core';
 /* css */
 import styled, { css } from 'styled-components';
 import constants from 'components/constants';
@@ -67,23 +66,29 @@ const initialState = props => ({
 
 class CreateEventForm extends React.Component {
   static propTypes = {
-    showForm: PropTypes.bool,
+    mode: PropTypes.string,
+    display: PropTypes.bool,
+    toggle: PropTypes.bool,
     loading: PropTypes.bool,
     callback: PropTypes.func,
 
     hotspotId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     groupId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     matchId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+
     dataSourceGroups: PropTypes.array,
     dataSourceHotspots: PropTypes.array,
     dataSourceMatches: PropTypes.array,
-
     dispatchLeagueMatches: PropTypes.func,
     dispatchHotspots: PropTypes.func,
     dispatchGroups: PropTypes.func,
+  };
 
-    toggle: PropTypes.bool,
-    isEditing: PropTypes.bool,
+  static defaultProps = {
+    mode: 'create',
+    display: true,
+    toggle: false,
+    loading: false,
   };
 
   constructor(props) {
@@ -121,7 +126,7 @@ class CreateEventForm extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (newProps.isEditing) {
+    if (newProps.mode === 'edit') {
       const __group = newProps.event.group_id ? { value: newProps.event.group_id, text: newProps.dataSourceGroups.find(o => o.value === newProps.event.group_id) && newProps.dataSourceGroups.find(o => o.value === newProps.event.group_id).text } : {};
       this.setState({
         event: {
@@ -159,7 +164,7 @@ class CreateEventForm extends React.Component {
   }
 
   // componentWillUpdate(nextProps) {
-  // if (this.props.showForm !== nextProps.showForm) {
+  // if (this.props.display !== nextProps.display) {
   //   this.clearState();
   // }
   // }
@@ -261,7 +266,7 @@ class CreateEventForm extends React.Component {
         });
         const eventData = this.getFormData();
         eventData.hotspot_id = o;
-        return this.props.isEditing ? doEditEvent(this.state.event.event_id, eventData) : doCreateEvent(eventData, this.state.payload);
+        return this.props.mode === 'edit' ? doEditEvent(this.state.event.event_id, eventData) : doCreateEvent(eventData, this.state.payload);
       })).then((results) => {
         const resultsReport = event.hotspots.map((hotspotId, index) => {
           const hotspotName = !that.props.hotspotId ? that.props.dataSourceHotspots.find(o => o.value === hotspotId).textShort : event.match.text;
@@ -352,11 +357,13 @@ class CreateEventForm extends React.Component {
   }
 
   render() {
+    const props = this.props;
     const {
       toggle = true,
       loading = false,
-      showForm,
-    } = this.props;
+      display,
+      mode,
+    } = props;
 
     const ClubImageContainer = styled.div`
             position: relative;
@@ -834,44 +841,64 @@ class CreateEventForm extends React.Component {
       errorText={this.state.event.notes.error}
     />);
 
-    return (<div style={{ display: (!toggle || showForm) ? 'inline' : 'none' }}>
-      <ValidatorForm
-        onSubmit={this.submit}
-        // onError={errors => console.log(errors)}
-      >
-        {loading && <Spinner />}
-        {this.state.error && <Error text={this.state.error} />}
+    const actions = [
+      null && <FlatButton
+        type="reset"
+        key="reset"
+        label="Reset"
+        secondary
+        style={{ float: 'left' }}
+      />,
+      <FlatButton
+        label={strings.form_general_close}
+        key="cancel"
+        primary
+        onClick={() => (this.props.callback ? this.props.callback() : props.history.push('/hotspots'))}
+      />,
+      <FlatButton
+        key="submit"
+        type="submit"
+        label={strings.form_general_submit}
+        primary
+      />,
+    ];
 
-        <div>
-          {!this.props.isEditing && !this.props.hotspotId && this.props.dataSourceHotspots && __renderHotspotSelector()}
-          {!this.props.isEditing && !this.props.matchId && this.props.dataSourceMatches && __renderMatchSelector()}
-          {!this.props.isEditing && this.state.event.match.home && __renderMatchPreview()}
-          {!this.props.isEditing && !this.props.groupId && this.props.dataSourceGroups && __renderGroupSelector()}
-          <Row>
-            <Col flex={6}>{__renderSeatsInput()}</Col>
-            <Col flex={6}>{__renderPriceInput()}</Col>
-            <Col flex={6}>{__renderDepositInput()}</Col>
-            <Col flex={6}>{__renderDiscountInput()}</Col>
-          </Row>
-          <Row>
-            <Col flex={6}>{__renderIsChargedCheckbox()}</Col>
-          </Row>
-          <Row>
-            <Col flex={3}>{__renderStartTimeRegisterPicker()}</Col>
-            <Col flex={3}>{__renderEndTimeRegisterPicker()}</Col>
-          </Row>
-          <Row>
-            <Col flex={3}>{__renderStartTimeCheckinPicker()}</Col>
-            <Col flex={3}>{__renderEndTimeCheckinPicker()}</Col>
-          </Row>
+    return (<FormWrapper
+      {...{ toggle, display }}
+      onSubmit={this.submit}
+      // onError={errors => console.log(errors)}
+    >
+      {loading && <Spinner />}
+      {this.state.error && <Error text={this.state.error} />}
 
-          {__renderNotesInput()}
-        </div>
-        <RaisedButton
-          type="submit"
-          label={strings.form_general_submit}
-        />
-      </ValidatorForm>
+      <div>
+        {!(mode === 'edit') && !this.props.hotspotId && this.props.dataSourceHotspots && __renderHotspotSelector()}
+        {!(mode === 'edit') && !this.props.matchId && this.props.dataSourceMatches && __renderMatchSelector()}
+        {!(mode === 'edit') && this.state.event.match.home && __renderMatchPreview()}
+        {!(mode === 'edit') && !this.props.groupId && this.props.dataSourceGroups && __renderGroupSelector()}
+        <Row>
+          <Col flex={6}>{__renderSeatsInput()}</Col>
+          <Col flex={6}>{__renderPriceInput()}</Col>
+          <Col flex={6}>{__renderDepositInput()}</Col>
+          <Col flex={6}>{__renderDiscountInput()}</Col>
+        </Row>
+        <Row>
+          <Col flex={6}>{__renderIsChargedCheckbox()}</Col>
+        </Row>
+        <Row>
+          <Col flex={3}>{__renderStartTimeRegisterPicker()}</Col>
+          <Col flex={3}>{__renderEndTimeRegisterPicker()}</Col>
+        </Row>
+        <Row>
+          <Col flex={3}>{__renderStartTimeCheckinPicker()}</Col>
+          <Col flex={3}>{__renderEndTimeCheckinPicker()}</Col>
+        </Row>
+        {__renderNotesInput()}
+      </div>
+
+      <div className="actions">
+        {actions}
+      </div>
 
       <Dialog
         title={strings.form_create_events_dialog_desc}
@@ -881,15 +908,9 @@ class CreateEventForm extends React.Component {
           keyboardFocused
           onClick={() => {
             this.closeDialog();
-            if (this.props.callback) {
-              return this.props.callback();
-            }
-            return true;
-            // if (toggle) {
-            //   this.props.toggleShowForm(false);
-            // } else {
-            //   this.props.history.push('/events');
-            // }
+            return this.props.callback ?
+              this.props.callback() : mode === 'edit' ?
+                props.history.push(`/hotspot/${this.state.formData.event_id.value}`) : props.history.push('/events');
           }}
         />}
         modal={false}
@@ -910,14 +931,13 @@ class CreateEventForm extends React.Component {
           />))}
         </List>
       </Dialog>
-    </div>
-    );
+    </FormWrapper>);
   }
 }
 
 const mapStateToProps = state => ({
   currentQueryString: window.location.search,
-  // showForm: state.app.formCreateEvent.show,
+  // display: state.app.formCreateEvent.show,
   dataSourceHotspots: state.app.hotspots.data.map(o => ({
     text: `${o.name} - ${o.address}`,
     value: Number(o.id),

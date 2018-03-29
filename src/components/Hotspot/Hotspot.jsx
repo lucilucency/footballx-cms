@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import {
   getHotspot,
   getHotspotEvents,
+  toggleShowForm,
 } from 'actions';
 import strings from 'lang';
 import TabBar from 'components/TabBar';
@@ -59,7 +60,8 @@ class RequestLayer extends React.Component {
   }
 
   render() {
-    const { location, match, hotspot, user, history } = this.props;
+    const props = this.props;
+    const { location, match, hotspot, user, history, toggleShowFormEditHotspot, showFormEditHotspot } = props;
     const route = this.props.match.params.hotspotId;
 
     const userData = user.user;
@@ -90,7 +92,13 @@ class RequestLayer extends React.Component {
           <div>
             <HotspotHeader {...this.props} hotspotId={hotspotId} isOwner={isOwner} />
             <CreateEventForm hotspotId={hotspotId} />
-            <EditHotspotForm hotspot={hotspot} isEditing showForm={this.props.showFormEditHotspot} />
+            <EditHotspotForm
+              mode="edit"
+              toggle
+              display={showFormEditHotspot}
+              hotspot={hotspot}
+              callback={toggleShowFormEditHotspot}
+            />
             <TabBar info={info} tabs={hotspotPages(hotspotId)} />
           </div>
           <div style={{ marginTop: -15 }}>
@@ -114,6 +122,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   getHotspot: hotspotId => dispatch(getHotspot(hotspotId)),
   getHotspotEvents: (hotspotId, params) => dispatch(getHotspotEvents(hotspotId, params)),
+  toggleShowFormEditHotspot: () => dispatch(toggleShowForm('editHotspot')),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RequestLayer));

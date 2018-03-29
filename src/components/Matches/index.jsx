@@ -263,14 +263,11 @@ RequestLayer.propTypes = {
   }),
   user: PropTypes.object, // eslint-disable-line react/forbid-prop-types
   matches: PropTypes.array, // eslint-disable-line react/forbid-prop-types
-  // matchesNation: PropTypes.array,
 };
 
 const mapStateToProps = state => ({
   loading: state.app.matches.loading,
   matches: state.app.matches.data || [],
-  matchesLeague: state.app.matchesLeague.data.matches,
-  matchesNation: state.app.matchesNation.data,
   user: state.app.metadata.data.user,
 });
 

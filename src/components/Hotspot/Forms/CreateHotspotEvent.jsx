@@ -19,12 +19,15 @@ class CreateHotspotEventForm extends React.Component {
 
   render() {
     return (<CreateEventForm
-      hotspotId={Number(this.props.hotspotId)}
-      dispatch={this.props.createHotspotEvent}
+      display={this.props.showForm}
+      toggle
+      mode="create"
       callback={() => {
         this.props.toggleShowForm(false);
       }}
-      showForm={this.props.showForm}
+
+      hotspotId={Number(this.props.hotspotId)}
+      dispatch={this.props.createHotspotEvent}
     />);
   }
 }

@@ -4,18 +4,17 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import update from 'immutability-helper';
 import PropTypes from 'prop-types';
-import { Row, Col, bindAll } from 'utils';
-import { editLeagueClub as defaultEditFn, ajaxPut } from 'actions';
+import { bindAll, FormWrapper } from 'utils';
+import { editLeagueClub as defaultEditFn } from 'actions';
 import strings from 'lang';
 import constants from 'components/constants';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 /* components */
 import {
   Dialog,
   FlatButton,
   List,
   ListItem,
-  RaisedButton,
   TextField,
 } from 'material-ui';
 import IconFail from 'material-ui/svg-icons/content/clear';
@@ -24,20 +23,6 @@ import CircularProgress from 'material-ui/CircularProgress';
 
 import Error from 'components/Error/index';
 import Spinner from 'components/Spinner/index';
-import { ValidatorForm } from 'react-form-validator-core';
-
-const FormWrapper = styled.div`
-  margin-top: 20px;
-  transition: max-height 1s;
-  box-sizing: border-box;
-  overflow: hidden;
-  padding: 0 15px;
-  ${props => ((props.showForm) ? css`
-      max-height: 2000px;
-  ` : css`
-      max-height: 0;
-  `)}
-`;
 
 const initialState = ({
   formData: {
@@ -56,19 +41,21 @@ const initialState = ({
 
 class EditClubForm extends React.Component {
   static propTypes = {
-    showForm: PropTypes.bool,
+    display: PropTypes.bool,
     toggle: PropTypes.bool,
+    mode: PropTypes.string,
     loading: PropTypes.bool,
     callback: PropTypes.func,
-    mode: PropTypes.string,
 
     club: PropTypes.object,
     dsHotspotType: PropTypes.array,
   };
 
   static defaultProps = {
+    display: true,
     toggle: false,
     mode: 'edit',
+    loading: false,
   };
 
   constructor(props) {
@@ -152,7 +139,6 @@ class EditClubForm extends React.Component {
       });
 
       Promise.all([doSubmit]).then((results) => {
-        console.log('results', results);
         const resultsReport = [];
         if (results[0].type.indexOf('OK') === 0) {
           resultsReport.push({
@@ -171,7 +157,6 @@ class EditClubForm extends React.Component {
               }),
             });
           }
-
         } else {
           resultsReport.push({
             submitAction: 'Edit team failed',
@@ -198,11 +183,8 @@ class EditClubForm extends React.Component {
   }
 
   render() {
-    const {
-      toggle,
-      loading = false,
-      showForm = true,
-    } = this.props;
+    const props = this.props;
+    const { toggle, loading, display } = props;
 
     const __renderClubName = () => (<TextField
       type="text"
@@ -213,7 +195,6 @@ class EditClubForm extends React.Component {
           name: { $set: { value } },
         }),
       })}
-      fullWidth
       value={this.state.formData.name && this.state.formData.name.value}
     />);
 
@@ -226,7 +207,6 @@ class EditClubForm extends React.Component {
           short_name: { $set: { value } },
         }),
       })}
-      fullWidth
       value={this.state.formData.short_name && this.state.formData.short_name.value}
     />);
 
@@ -239,13 +219,12 @@ class EditClubForm extends React.Component {
           icon: { $set: { value } },
         }),
       })}
-      fullWidth
       value={this.state.formData.icon && this.state.formData.icon.value}
     />);
 
-
     const IMG = styled.img`
       max-width: 100%;
+      max-height: 20vh;
       box-shadow: 0 0 5px ${constants.defaultPrimaryColor};
       background-color: rgba(255,255,255,0.1);
     `;
@@ -262,35 +241,49 @@ class EditClubForm extends React.Component {
           popularity: { $set: { value } },
         }),
       })}
-      fullWidth
+
       value={this.state.formData.popularity && this.state.formData.popularity.value}
     />);
 
-    return (<FormWrapper {...{ toggle, showForm }}>
-      <ValidatorForm
-        onSubmit={this.submit}
-        // onError={errors => console.log(errors)}
-      >
-        {loading && <Spinner />}
-        {this.state.error && <Error text={this.state.error} />}
+    const actions = [
+      null && <FlatButton
+        key="reset"
+        type="reset"
+        label="Reset"
+        secondary
+        style={{ float: 'left' }}
+      />,
+      <FlatButton
+        key="cancel"
+        label={strings.form_general_close}
+        primary
+        onClick={this.props.callback}
+      />,
+      <FlatButton
+        key="submit"
+        type="submit"
+        label={strings.form_general_submit}
+        primary
+      />,
+    ];
 
-        <div>
-          <Row>
-            <Col flex={6}>{__renderClubName()}</Col>
-            <Col flex={6}>{__renderClubShortName()}</Col>
-            <Col flex={6}>{__renderClubPopularity()}</Col>
-          </Row>
-          <Row>
-            <Col flex={9}>{__renderClubIconText()}</Col>
-            <Col flex={3}>{__renderClubIcon()}</Col>
-          </Row>
-        </div>
-        <RaisedButton
-          type="submit"
-          label={strings.form_general_submit}
-        />
-      </ValidatorForm>
-
+    return (<FormWrapper
+      {...{ toggle, display }}
+      onSubmit={this.submit}
+      // onError={errors => console.log(errors)}
+    >
+      {loading && <Spinner />}
+      {this.state.error && <Error text={this.state.error} />}
+      <div>
+        {__renderClubName()}
+        {__renderClubShortName()}
+        {__renderClubPopularity()}
+        {__renderClubIconText()}
+        {__renderClubIcon()}
+      </div>
+      <div className="actions">
+        {actions}
+      </div>
       <Dialog
         title={strings.form_general_dialog_title}
         actions={<FlatButton
@@ -303,13 +296,12 @@ class EditClubForm extends React.Component {
             if (this.props.callback) {
               return this.props.callback();
             }
-
-            return props.history.push(`/hotspot/${this.state.formData.club_id.value}`);
+            return props.history.push('/clubs');
           }}
         />}
         modal={false}
         open={this.state.submitResults.show}
-        onRequestClose={this.closeDialog}
+        // onRequestClose={this.closeDialog}
       >
         <List>
           {this.state.submitResults.data.map(r => (<ListItem

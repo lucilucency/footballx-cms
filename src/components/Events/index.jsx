@@ -9,7 +9,7 @@ import queryString from 'querystring';
 /* components */
 import Event from 'components/Event';
 import TabBar from 'components/TabBar';
-import CreateEventsForm from './Forms/CreateEvents';
+import CreateEventsForm from 'components/Event/Forms/CreateEditEventForm';
 import EventsHeader from './Header';
 import FilterForm from './Forms/FilterForm';
 import Overview from './Pages/Overview';

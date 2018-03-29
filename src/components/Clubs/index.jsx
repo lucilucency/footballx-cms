@@ -1,18 +1,19 @@
+/* eslint-disable no-trailing-spaces,react/forbid-prop-types */
 import React from 'react';
 import Helmet from 'react-helmet';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import strings from 'lang';
 import leagues from 'fxconstants/build/leaguesArr.json';
 import { transformations, getOrdinal, renderDialog, bindAll } from 'utils';
-import { ajaxGet, getLeagueClubs } from 'actions';
-import styled, { css } from 'styled-components';
+import { getLeagueClubs } from 'actions';
+import styled from 'styled-components';
 import constants from 'components/constants';
 
 import Table from 'components/Table';
 import Container from 'components/Container';
-import { IconButton } from 'material-ui';
+import { IconButton, FlatButton } from 'material-ui';
 import IconEdit from 'material-ui/svg-icons/editor/mode-edit';
+
 import EditClubForm from './Forms/EditClubForm';
 
 const LeagueContainer = styled(Container)`
@@ -30,27 +31,32 @@ const clubsColumns = (context, leagueID) => [null && {
   displayName: strings.th_no,
   displayFn: (row, col, field, index) => getOrdinal(index + 1),
 }, {
-  displayName: strings.th_popularity,
-  field: 'popularity',
-  sortFn: true,
-}, {
   displayName: strings.th_team,
   field: 'id',
   sortClick: 'name',
   displayFn: transformations.th_club_image,
 }, {
+  displayName: strings.th_popularity,
+  field: 'popularity',
+  sortFn: true,
+}, {
   field: 'id',
   displayName: '',
-  displayFn: (row, col, field) => (<IconButton
-    tooltip={strings.edit}
-    onClick={() => {
-      context.setState({
-        selectedClub: { ...row, leagueID },
-      }, context.handleOpenEditClubForm);
-    }}
-  >
-    <IconEdit color={constants.colorMutedLight} />
-  </IconButton>),
+  displayFn: row => (<div style={{ float: 'right' }}>
+    <IconButton
+      tooltip={strings.edit}
+      onClick={() => {
+        context.setState({
+          selectedClub: { ...row, leagueID },
+        }, context.handleOpenEditClubForm);
+      }}
+      iconStyle={{ width: 18, height: 18 }}
+    >
+      <IconEdit
+        color={constants.colorMutedLight}
+      />
+    </IconButton>
+  </div>),
 }];
 
 // const getLeagueClubs = league => new Promise((resolve) => {
@@ -66,11 +72,8 @@ const clubsColumns = (context, leagueID) => [null && {
 
 class Clubs extends React.Component {
   static propTypes = {
-    match: PropTypes.shape({
-      params: PropTypes.shape({
-        clubId: PropTypes.number,
-      }),
-    }),
+    leagues: React.PropTypes.array,
+    getLeagueClubs: React.PropTypes.func,
   };
 
   static initialState = {
@@ -111,10 +114,15 @@ class Clubs extends React.Component {
         title: strings.heading_edit_team,
         view: <EditClubForm
           club={this.state.selectedClub}
-          callback={() => {
-            this.handleCloseDialog();
-          }}
+          callback={this.handleCloseDialog}
         />,
+        // actions: [
+        //   <FlatButton
+        //     label="Close"
+        //     secondary
+        //     onClick={this.handleCloseDialog}
+        //   />,
+        // ],
       },
     }, () => {
       this.handleOpenDialog();
@@ -122,8 +130,6 @@ class Clubs extends React.Component {
   }
 
   render() {
-    console.log('clubsProps', this.props);
-
     return (
       <div>
         <Helmet title={strings.title_clubs} />
@@ -140,7 +146,7 @@ class Clubs extends React.Component {
           })}
         </div>
 
-        {renderDialog(this.state.dialogConstruct, this.state.openDialog, this.handleCloseDialog)}
+        {renderDialog(this.state.dialogConstruct, this.state.openDialog)}
       </div>
     );
   }
@@ -150,19 +156,19 @@ Clubs.propTypes = {
 
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   const leaguesReducer = leagues.reduce((__prev, league) => {
     const prev = __prev;
     const clubs = state.app[`league[${league.name}]`].data;
     prev.push({
-      league, clubs
+      league, clubs,
     });
     return prev;
   }, []);
 
   return {
     leagues: leaguesReducer,
-  }
+  };
 };
 
 const mapDispatchToProps = dispatch => ({
