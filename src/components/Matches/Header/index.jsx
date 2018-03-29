@@ -2,9 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import constants from 'components/constants';
-
-import { EventsHeaderStats } from './HeaderStats';
-
+// import { EventsHeaderStats } from './HeaderStats';
 import EventsHeaderButtons from './HeaderButtons';
 
 const EventHeaderWrapper = styled.div`

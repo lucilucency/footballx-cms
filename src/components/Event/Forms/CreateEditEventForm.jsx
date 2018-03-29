@@ -20,7 +20,6 @@ import {
   List,
   ListItem,
   MenuItem,
-  RaisedButton,
   TextField,
 } from 'material-ui';
 import Checkbox from 'material-ui/Checkbox';

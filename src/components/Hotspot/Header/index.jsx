@@ -7,6 +7,8 @@ import IconValidated from 'material-ui/svg-icons/action/check-circle';
 import IconCafe from 'material-ui/svg-icons/maps/local-cafe';
 import IconBeer from 'material-ui/svg-icons/maps/local-drink';
 import IconStadium from 'material-ui/svg-icons/maps/local-activity';
+import IconPhone from 'material-ui/svg-icons/communication/phone';
+import IconLocation from 'material-ui/svg-icons/communication/location-on';
 /* data */
 import strings from 'lang';
 import constants from 'components/constants';
@@ -173,10 +175,10 @@ const HotspotHeader = (propsVar) => {
             {getHotspotIcon(hotspotData.type)}
           </li>
           <li>
-            <span data="address">{hotspotData.address}</span>
+            <span data="address"><IconLocation style={{ width: 15, height: 15 }} color={constants.blue200} /> {hotspotData.address}</span>
           </li>
           {hotspotData.phone && <li>
-            <span>Tel.: {hotspotData.phone}</span>
+            <span><IconPhone style={{ width: 15, height: 15 }} color={constants.blue200} /> {hotspotData.phone}</span>
           </li>}
           {hotspotData.wifi && <li>
             <span>Wifi Password: {hotspotData.wifi}</span>

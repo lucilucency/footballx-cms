@@ -8,28 +8,14 @@ import strings from 'lang';
 import queryString from 'querystring';
 import moment from 'moment';
 import { isEmpty } from 'lodash';
-import leagueDatasource from 'fxconstants/build/leaguesObj.json';
-
-import Table from 'components/Table';
-import { transformations, subTextStyle } from 'utils';
-import TabBar from 'components/TabBar';
 import Clubs from 'fxconstants/build/clubsObj.json';
 import styled from 'styled-components';
 import constants from 'components/constants';
 import BigCalendar from 'components/Calendar';
-
 import Header from './Header';
 import FilterForm from './Forms/FilterForm';
 
 BigCalendar.setLocalizer(BigCalendar.momentLocalizer(moment));
-const allViews = Object.keys(BigCalendar.Views).map(k => BigCalendar.Views[k]);
-
-const ConfirmedIcon = styled.span`
-  composes: badge;
-  & svg {
-      fill: var(--colorGolden);
-  }
-`;
 
 const getData = (props) => {
   const route = props.match.params.matchId || 'league';
@@ -42,53 +28,6 @@ const getData = (props) => {
     });
   }
 };
-
-const columns = [{
-  displayName: strings.th_match_id,
-  field: 'id',
-  sortFn: true,
-  displayFn: (row, col, field) => (<div>
-    {field}
-    <span style={{ ...subTextStyle, display: 'block', marginTop: 1 }}>
-      {leagueDatasource[row.league_id] && leagueDatasource[row.league_id].name}
-    </span>
-  </div>),
-}, {
-  displayName: strings.th_time,
-  tooltip: strings.tooltip_time,
-  field: 'date',
-  sortFn: true,
-  displayFn: transformations.start_time,
-}, {
-  displayName: <span>{strings.general_home}</span>,
-  field: 'home',
-  color: constants.green,
-  displayFn: row => (<div>
-    {(row.home && Clubs[row.home]) && Clubs[row.home].name}
-  </div>),
-}, {
-  displayName: <span>{strings.general_away}</span>,
-  field: 'away',
-  color: constants.red,
-  displayFn: row => (<div>
-    {(row.away && Clubs[row.away]) && Clubs[row.away].name}</div>),
-}];
-
-const matchTabs = [{
-  name: strings.matches_league,
-  key: 'league',
-  content: propsVar => (<div>
-    <Table data={propsVar.matches} columns={columns} loading={propsVar.loading} />
-  </div>),
-  route: '/matches/league',
-}, {
-  name: strings.matches_national,
-  key: 'national',
-  content: propsVar => (<div>
-    <Table data={propsVar.matches} columns={columns} loading={propsVar.loading} />
-  </div>),
-  route: '/matches/national',
-}];
 
 class RequestLayer extends React.Component {
   componentDidMount() {
@@ -207,9 +146,6 @@ class RequestLayer extends React.Component {
         });
       });
     }
-
-    const route = this.props.match.params.matchId || 'league';
-    const tab = matchTabs.find(o => o.key === route);
 
     return (<div>
       <Helmet title={strings.title_matches} />

@@ -10,7 +10,7 @@ import { toDateTimeString, bindAll, renderDialog } from 'utils';
 /* components */
 import Table, { TableLink } from 'components/Table';
 import Container from 'components/Container/index';
-import { FlatButton, Dialog } from 'material-ui';
+import { FlatButton } from 'material-ui';
 import IconPrint from 'material-ui/svg-icons/action/print';
 
 import PackageViewer from './PackageViewer';

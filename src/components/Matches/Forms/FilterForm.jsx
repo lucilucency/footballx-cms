@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import queryString from 'querystring';
 /* actions & helpers */
-import { getHotspots } from 'actions';
 import { toggleShowForm } from 'actions/dispatchForm';
 /* components */
 import FormField from 'components/Form/FormField';
@@ -47,19 +46,15 @@ const setShowFormState = (props) => {
 
 class FilterForm extends React.Component {
   static propTypes = {
-    getHotspots: PropTypes.func,
-    hotspots: PropTypes.shape([]),
   };
   constructor() {
     super();
     this.state = {
-      hotspots: [],
     };
   }
 
   componentDidMount() {
     setShowFormState(this.props);
-    this.props.getHotspots();
   }
 
   render() {
@@ -100,12 +95,10 @@ FilterForm.propTypes = {
 const mapStateToProps = state => ({
   showForm: state.app.formFilter.show,
   // currentQueryString: window.location.search,
-  hotspots: state.app.hotspots.data || [],
 });
 
 const mapDispatchToProps = dispatch => ({
   toggleShowForm: () => dispatch(toggleShowForm('filter')),
-  getHotspots: () => dispatch(getHotspots()),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(FilterForm));

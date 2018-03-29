@@ -9,8 +9,6 @@ import strings from 'lang';
 import styled from 'styled-components';
 import constants from 'components/constants';
 
-import EventsHeaderButtons from './HeaderButtons';
-
 const CompactContainer = styled.div`
     composes: container;
     flex-direction: column;

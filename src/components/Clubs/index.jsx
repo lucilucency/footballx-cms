@@ -11,7 +11,7 @@ import constants from 'components/constants';
 
 import Table from 'components/Table';
 import Container from 'components/Container';
-import { IconButton, FlatButton } from 'material-ui';
+import { IconButton } from 'material-ui';
 import IconEdit from 'material-ui/svg-icons/editor/mode-edit';
 
 import EditClubForm from './Forms/EditClubForm';

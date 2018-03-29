@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import socket from 'socketClient';
 import TabBar from 'components/TabBar';
 import {
-  getEvent, getEventXUsers, addEventXUser, dispatchNewXUserCheckin, toggleShowForm
+  getEvent, getEventXUsers, addEventXUser, dispatchNewXUserCheckin, toggleShowForm,
 } from 'actions';
 import EventHeader from './EventHeader';
 import pages from './Pages/index';

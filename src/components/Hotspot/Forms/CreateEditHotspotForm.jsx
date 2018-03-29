@@ -128,6 +128,7 @@ class CreateEditHotspotForm extends React.Component {
       name: formData.name.value,
       short_name: formData.short_name.value,
       address: formData.address.value,
+      phone: formData.phone.value,
       lon: formData.lon.value,
       lat: formData.lat.value,
       wifi: formData.wifi.value,
