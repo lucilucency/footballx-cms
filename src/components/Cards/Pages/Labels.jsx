@@ -64,15 +64,13 @@ class CardLabelsPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      openEditor: false,
+      openDialog: false,
     };
     bindAll([
-      'openEditor',
+      'openAddCardLabelForm',
       'handleOpenDialog',
       'handleCloseDialog',
-      'renderDialog',
     ], this);
-    // this.openEditor = this.openEditor.bind(this);
   }
 
   componentDidMount() {
@@ -87,17 +85,23 @@ class CardLabelsPage extends React.Component {
     this.setState({ openDialog: false, dialogConstruct: {} });
   }
 
-  openEditor() {
-    this.setState({ openEditor: true });
-  }
-
-  renderDialog(dialogConstruct = {}, trigger) {
-    return renderDialog(dialogConstruct, trigger);
+  openAddCardLabelForm() {
+    this.setState({
+      dialogConstruct: {
+        title: strings.heading_create_card_label,
+        view: <LabelCreateForm
+          callback={() => {
+            this.handleCloseDialog();
+          }}
+        />,
+      },
+    }, () => {
+      this.handleOpenDialog();
+    });
   }
 
   render() {
     const { cardLabels } = this.props;
-    window.abc = cardLabels.data;
 
     return (<div>
       <Container
@@ -113,20 +117,7 @@ class CardLabelsPage extends React.Component {
           key: 'add',
           title: 'New Card Label',
           icon: <IconAdd />,
-          onClick: () => {
-            this.setState({
-              dialogConstruct: {
-                title: strings.heading_create_card_label,
-                view: <LabelCreateForm
-                  callback={() => {
-                    this.handleCloseDialog();
-                  }}
-                />,
-              },
-            }, () => {
-              this.handleOpenDialog();
-            });
-          },
+          onClick: this.openAddCardLabelForm,
         }]}
       >
         <Table
@@ -154,7 +145,7 @@ class CardLabelsPage extends React.Component {
           pageLength={30}
         />
       </Container>
-      {this.renderDialog(this.state.dialogConstruct, this.state.openDialog)}
+      {renderDialog(this.state.dialogConstruct, this.state.openDialog, this.handleCloseDialog)}
     </div>);
   }
 }

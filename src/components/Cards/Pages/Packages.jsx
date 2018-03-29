@@ -6,7 +6,7 @@ import {
 /* actions & helpers */
 import { getCardPackages, confirmPrintedPackage } from 'actions';
 import strings from 'lang';
-import { toDateTimeString, bindAll } from 'utils';
+import { toDateTimeString, bindAll, renderDialog } from 'utils';
 /* components */
 import Table, { TableLink } from 'components/Table';
 import Container from 'components/Container/index';
@@ -69,7 +69,6 @@ class PackagesPage extends React.Component {
     bindAll([
       'handleOpenDialog',
       'handleCloseDialog',
-      'renderDialog',
       'handleViewPackage',
       'handleCreatePackage',
       'handleConfirmPrinted',
@@ -169,28 +168,6 @@ class PackagesPage extends React.Component {
     });
   }
 
-  renderDialog(dialogConstruct = {}, trigger) {
-    const defaultDialogCons = {
-      title: 'Example Dialog',
-      actions: [],
-      view: <h1>Welcome!</h1>,
-    };
-    const { title, actions, view } = Object.assign(defaultDialogCons, dialogConstruct);
-
-    return (
-      <Dialog
-        title={title}
-        actions={actions}
-        modal={false}
-        open={trigger}
-        onRequestClose={this.handleCloseDialog}
-        autoScrollBodyContent
-      >
-        {view}
-      </Dialog>
-    );
-  }
-
   render() {
     const { cardPackages } = this.props;
 
@@ -210,7 +187,7 @@ class PackagesPage extends React.Component {
           pageLength={30}
         />
       </Container>
-      {this.renderDialog(this.state.dialogConstruct, this.state.openDialog)}
+      {renderDialog(this.state.dialogConstruct, this.state.openDialog, this.handleCloseDialog)}
     </div>);
   }
 }

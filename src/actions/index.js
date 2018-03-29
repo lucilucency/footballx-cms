@@ -1,6 +1,7 @@
 import * as transform from 'actions/transforms';
 import { action, fxActionPost, fxActionGet, fxActionPut, fxActionDelete, fxActionAuth, fxDispatch } from 'actions/dispatchAction';
 import queryString from 'querystring';
+import leagues from 'fxconstants/build/leaguesObj.json';
 
 const __blankTransforms = () => ([]);
 
@@ -28,6 +29,9 @@ export const huserLogin = (username, password) => fxActionAuth('auth', 'huser/lo
 export const cuserLogin = (username, password) => fxActionAuth('auth', 'cuser/login', { username, password });
 /* huser */
 export const getHUserHotspot = accountId => fxActionGet('hotspot', `huser/${accountId}/hotspot`);
+/* club & league */
+export const getLeagueClubs = leagueID => fxActionGet(`league[${leagues[leagueID] && leagues[leagueID].name}]`, `league/${leagueID}/clubs`);
+export const editLeagueClub = (leagueID, clubID, params) => fxActionPut(`EDIT_ARR/league[${leagues[leagueID] && leagues[leagueID].name}]`, `club/${clubID}`, params);
 /* matches */
 export const getMatches = params => fxActionGet('matches', 'matches/calendar', params, transform.transformsMatchEvent);
 export const getMatchesLeague = params => fxActionGet('matchesLeague', 'matches', params, transform.transformsMatch);
@@ -64,7 +68,6 @@ export const getEvent = eventId => fxActionGet('event', `event/${eventId}`, {}, 
 export const getEventXUsers = (eventId, params) => fxActionGet('eventXUsers', `event/${eventId}/xusers`, params);
 export const addEventXUser = payload => fxDispatch('ADD/eventXUsers', payload);
 export const dispatchNewXUserCheckin = payload => fxDispatch('eventXUser', payload);
-
 
 export const createEvent = params => fxActionPost('ADD/events', 'event', params, transform.transformCreateEvent);
 export const editEvent = (eventId, params) => fxActionPut('EDIT/event', `event/${eventId}`, params, transform.transformEditEvent);

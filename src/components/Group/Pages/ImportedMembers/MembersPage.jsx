@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import XLSX from 'xlsx';
 import { getGroupImportedMembers } from 'actions';
-import { subTextStyle, renderDialog, bindAll } from 'utils';
+import { subTextStyle, bindAll } from 'utils';
 import strings from 'lang';
 import groups from 'fxconstants/build/groupsObj.json';
 import IconDownload from 'material-ui/svg-icons/file/file-download';
@@ -169,7 +169,6 @@ class RequestLayer extends React.Component {
       {props.user.user_type === 1 ? <Container title={strings.title_group_imported_members}>
         <XUsersImportForm groupId={this.props.groupId} groupMembers={this.props.groupMembers.data} />
       </Container> : null}
-      {renderDialog(this.state.dialogConstruct, this.state.openDialog)}
     </div>);
   }
 }

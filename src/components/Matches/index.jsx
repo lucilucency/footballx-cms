@@ -34,11 +34,11 @@ const ConfirmedIcon = styled.span`
 const getData = (props) => {
   const route = props.match.params.matchId || 'league';
   if (!Number.isInteger(Number(route))) {
-    const now = Date.now();
+    const now = parseInt(Date.now() / 1000);
 
     props.dispatchMatches({
-      start_time: parseInt(now / 1000) - 2592000,
-      end_time: parseInt(now / 1000) + 5184000,
+      start_time: now,
+      end_time: now + 5184000,
     });
   }
 };
@@ -126,7 +126,7 @@ class RequestLayer extends React.Component {
         }
         
         @media only screen and (max-width: 900px) {
-          font-size: 0.6em;
+          font-size: 0.8em;
         }
       }
       

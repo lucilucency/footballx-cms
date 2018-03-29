@@ -30,7 +30,7 @@ const initialState = {
   cardLabelName: {},
   cardLabelValue: {},
   cardLabelCost: {},
-  cardLabelXPoint: {},
+  cardLabelSubscription: {},
   cardLabelPrefix: {},
   cardLabelAmount: {},
 
@@ -77,7 +77,7 @@ class LabelCreateForm extends React.Component {
     const name = this.state.cardLabelName.value;
     const value = this.state.cardLabelValue.value;
     const cost = this.state.cardLabelCost.value;
-    const subscription = this.state.cardLabelXPoint.value;
+    const subscription = this.state.cardLabelSubscription.value;
     const prefix = this.state.cardLabelPrefix.value;
     const number_card = this.state.cardLabelAmount.value;
 
@@ -221,11 +221,11 @@ class LabelCreateForm extends React.Component {
     />);
 
     const __renderCardLabelXPoint = () => (<TextField
-      hintText={strings.hint_card_label_xpoint}
-      floatingLabelText={strings.filter_card_label_xpoint}
+      hintText={strings.hint_card_label_subscription}
+      floatingLabelText={strings.filter_card_label_subscription}
       type="number"
-      errorText={this.state.cardLabelXPoint.errorText}
-      onChange={e => this.changeValue(e, 'cardLabelXPoint', toNumber)}
+      errorText={this.state.cardLabelSubscription.errorText}
+      onChange={e => this.changeValue(e, 'cardLabelSubscription', toNumber)}
       fullWidth
     />);
 

@@ -2,14 +2,24 @@ import { combineReducers } from 'redux';
 import fxReducer from 'reducers/fxReducer';
 import request from 'reducers/request';
 import form from 'reducers/form';
+import leagues from 'fxconstants/build/leaguesArr.json';
+
+
+const leaguesReducer = leagues.reduce((__prev, cur) => {
+  const prev = __prev;
+  prev[`league[${cur.name}]`] = fxReducer(`league[${cur.name}]`, []);
+  return prev;
+}, {});
 
 export default combineReducers({
   metadata: fxReducer('metadata'),
   auth: fxReducer('auth', {}),
 
+  clubs: fxReducer('clubs', []),
+  // leagues: fxReducer('leagues', []),
+  ...leaguesReducer,
   matches: fxReducer('matches', []),
   matchesLeague: fxReducer('matchesLeague', { matches: [] }),
-  matchesNation: fxReducer('matchesNation'),
 
   groups: fxReducer('groups', []),
   group: fxReducer('group', []),

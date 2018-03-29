@@ -84,6 +84,10 @@ const dates = {
     );
   },
 
+  smaller(dateA, dateB) {
+    return dateA < dateB;
+  },
+
   isJustDate(date) {
     return (
       dates.hours(date) === 0 &&

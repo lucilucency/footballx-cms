@@ -57,9 +57,9 @@ export default {
 
   /* calendar */
   'out-of-range-color': lighten('#333', 0.2),
-  'out-of-range-bg-color': lighten('#333', 0.9),
-  'calendar-border': '#DDD',
-  'cell-border': '#DDD',
+  'out-of-range-bg-color': '#171822',
+  'calendar-border': '#5d5d5d',
+  'cell-border': '#5d5d5d',
   'border-color': '#CCC',
   'segment-width': percentage(1 / 7),
   'time-selection-color': 'white',

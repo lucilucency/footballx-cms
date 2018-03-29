@@ -151,8 +151,8 @@ export const transformations = {
     <div>
       <TableClubImage
         image={row.icon}
-        title={<TableLink to={`/clubs/${field}`}>{row.name}</TableLink>}
-        subtitle={row.name}
+        title={<TableLink to={`/club/${field}`}>{row.name}</TableLink>}
+        subtitle={row.short_name}
         clubName={row.name}
       />
     </div>
@@ -204,12 +204,16 @@ export const transformations = {
   winPercent: (row, col, field) => `${(field * 100).toFixed(2)}%`,
 };
 
-export function renderDialog(dialogConstruct = {}, trigger) {
+export function renderDialog(dialogConstruct = {}, triggerOpen, triggerClose) {
+  const __blankFn = () => {
+    console.log('Do close dialog');
+  };
+
   const defaultDialogCons = {
     title: null,
     actions: [],
     view: <h1>Welcome!</h1>,
-    onRequestClose: () => { console.log('Do close dialog'); },
+    onRequestClose: triggerClose || __blankFn,
     contentStyle: {},
     modal: false,
   };
@@ -220,7 +224,7 @@ export function renderDialog(dialogConstruct = {}, trigger) {
     <Dialog
       title={title}
       actions={actions}
-      open={trigger}
+      open={triggerOpen}
       onRequestClose={onRequestClose}
       // autoScrollBodyContent
       modal={modal}

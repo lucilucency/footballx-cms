@@ -61,6 +61,7 @@ const Styled = styled.div`
     position: relative;
     height: 29px;
     box-shadow: 0 0 5px ${constants.defaultPrimaryColor};
+    background-color: rgba(255,255,255,0.1);
     
     @media only screen and (max-width: 660px) {
       margin-right: 3px;

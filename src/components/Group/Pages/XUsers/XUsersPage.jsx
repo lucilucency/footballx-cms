@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import XLSX from 'xlsx';
 import { getGroupXUsers } from 'actions';
-import { subTextStyle, renderDialog, transformations, toDateString, bindAll } from 'utils';
+import { subTextStyle, transformations, toDateString, bindAll } from 'utils';
 import strings from 'lang';
 import groups from 'fxconstants/build/groupsObj.json';
 import { IconFacebook } from 'components/Icons';
@@ -215,8 +215,6 @@ class RequestLayer extends React.Component {
           loading={loading}
         />
       </Container>
-
-      {renderDialog(this.state.dialogConstruct, this.state.openDialog)}
     </div>);
   }
 }

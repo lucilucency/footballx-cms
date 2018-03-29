@@ -464,7 +464,7 @@ class EventHeader extends React.Component {
             />}
           </ButtonContainer>
 
-          {renderDialog(this.state.dialogConstruct, this.state.openDialog)}
+          {renderDialog(this.state.dialogConstruct, this.state.openDialog, this.handleCloseDialog)}
         </div>
       );
     }

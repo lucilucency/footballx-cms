@@ -77,13 +77,13 @@ export default (type, initialData) => (state = {
         error: false,
       };
     case `OK/EDIT_ARR/${type}`:
-      console.log(type);
-      console.log(state.data);
-      console.log(action);
+      // console.log('reducer type', type);
+      // console.log('state.data', state.data);
+      // console.log('action', action);
       return {
         ...state,
         loading: false,
-        data: update(state.data, { $merge: action.payload }),
+        data: update(state.data, { $merge: [action.payload] }),
         error: false,
       };
     case `FAIL/EDIT_ARR/${type}`:

@@ -70,7 +70,6 @@ const groupEventsColumns = (browser = {}) => [{
   displayName: strings.th_note,
   tooltip: strings.tooltip_note,
   field: 'notes',
-  sortFn: true,
   displayFn: (row, col, field) => (<div>
     <div className={subTextStyle.subText}>{field}</div>
   </div>),

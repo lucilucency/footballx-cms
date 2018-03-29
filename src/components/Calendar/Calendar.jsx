@@ -73,7 +73,7 @@ const CalendarStyled = styled.div`
 }
 
 .rbc-off-range-bg {
-  //background: ${constants['out-of-range-bg-color']};
+  background: ${constants['out-of-range-bg-color']};
 }
 
 .rbc-header {
