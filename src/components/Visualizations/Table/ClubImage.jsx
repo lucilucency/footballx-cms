@@ -56,18 +56,6 @@ const Styled = styled.div`
     }
   }
   
-  .image {
-    margin-right: 7px;
-    position: relative;
-    height: 29px;
-    box-shadow: 0 0 5px ${constants.defaultPrimaryColor};
-    background-color: rgba(255,255,255,0.1);
-    
-    @media only screen and (max-width: 660px) {
-      margin-right: 3px;
-    }
-  }
-  
   .badge {
     display: inline-block;
   
@@ -82,6 +70,18 @@ const Styled = styled.div`
     position: relative;
     display: flex;
     justify-content: center;
+    
+    .image {
+      margin-right: 7px;
+      position: relative;
+      height: 29px;
+      box-shadow: 0 0 5px ${constants.defaultPrimaryColor};
+      background-color: rgba(255,255,255,0.1);
+      
+      @media only screen and (max-width: 660px) {
+        margin-right: 3px;
+      }
+    }
   }
   
   .playerSlot {

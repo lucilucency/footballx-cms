@@ -147,7 +147,7 @@ export const transformations = {
 
   start_time: (row, col, field) => <div>{timeHelper.toDateTimeString(field * 1000)}</div>,
   start_time_from_now: (row, col, field) => <FromNowTooltip timestamp={field} />,
-  th_club_image: (row, col, field) => (
+  th_club_image: row => (
     <div>
       <TableClubImage
         image={row.icon}

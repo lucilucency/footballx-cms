@@ -74,20 +74,33 @@ const HostedGroup = styled.div`
   }
 `;
 
-const Match = styled.div`
+const MatchInfo = styled.div`
   box-sizing: border-box;
   flex-basis: 33.33%;
   max-width: 33.33%;
   display: flex;
   justify-content: center;
   text-align: center;
+  margin-bottom: 20px;
   
   @media only screen and (max-width: 1023px) {
-      flex-basis: 100%;
-      max-width: 100%;
+    flex-basis: 100%;
+    max-width: 100%;
   }
   
-  .matchInfo {
+  .club-image {
+    width: 128px;
+    height: 128px;
+    padding: 2px;
+    //box-shadow: 0 0 5px ${constants.defaultPrimaryColor};
+    //background-color: rgba(255,255,255,0.1);
+    
+    img {
+      height: 100%;
+    }
+  }
+    
+  .info {
     margin: 0 20px;
   
     @media only screen and (max-width: 400px) {
@@ -356,11 +369,11 @@ class EventHeader extends React.Component {
                 </small>}
               </div>}
             </HostedGroup>
-            <Match>
-              <div>
-                <p><img src={Clubs[eventData.home] && Clubs[eventData.home].icon} alt="" width={128} /></p>
+            <MatchInfo>
+              <div className="club-image" style={{ boxShadow: `0 0 5px ${eventData.home_color}` }}>
+                <img src={Clubs[eventData.home] && Clubs[eventData.home].icon} alt="" />
               </div>
-              <div className={'matchInfo'}>
+              <div className="info">
                 <span style={{ fontSize: constants.fontSizeMedium }}>
                   {eventData.match_date * 1000 < Date.now() ? strings.match_ended : strings.match_ongoing}
                 </span>
@@ -371,10 +384,10 @@ class EventHeader extends React.Component {
                   {toDateTimeString(eventData.match_date * 1000)}
                 </span>
               </div>
-              <div>
-                <p><img src={Clubs[eventData.away] && Clubs[eventData.away].icon} alt="" width={128} height={128} /></p>
+              <div className="club-image" style={{ boxShadow: `0 0 5px ${eventData.away_color}` }}>
+                <img src={Clubs[eventData.away] && Clubs[eventData.away].icon} alt="" />
               </div>
-            </Match>
+            </MatchInfo>
             <EventInfo>
               <ul>
                 <li>

@@ -364,46 +364,53 @@ class CreateEventForm extends React.Component {
       mode,
     } = props;
 
-    const ClubImageContainer = styled.div`
-            position: relative;
-            display: flex;
-            justify-content: space-around;
-            flex-direction: row;
-        `;
-    const ClubColorPicker = styled.div`
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            text-align: center;
-        `;
+    const MatchWrapper = styled.div`
+      position: relative;
+      display: flex;
+      justify-content: space-around;
+      flex-direction: row;
+    `;
+    const ClubWrapper = styled.div`
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      
+      img {
+        box-shadow: 0 0 5px ${constants.defaultPrimaryColor};
+        background-color: rgba(255,255,255,0.1);
+        width: 100px;
+        height: 100px;
+      }
+    `;
     const ColorPreviewBox = styled.div`
-            width: 36px;
-            height: 14px;
-            border-radius: 2px;
-            ${props => props.color && css`
-                background: ${props.color}
-            `}
-        `;
+      width: 36px;
+      height: 14px;
+      border-radius: 2px;
+      ${props => props.color && css`
+          background: ${props.color}
+      `}
+    `;
     const Swatch = styled.div`
-            margin-top: 20px;
-            padding: 0.3em;
-            background: #fff;
-            border-radius: 1px;
-            box-shadow: 0 0 0 1px rgba(0,0,0,.1);
-            display: inline-block;
-            cursor: pointer;
-        `;
+      margin-top: 20px;
+      padding: 0.3em;
+      background: #fff;
+      border-radius: 1px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,.1);
+      display: inline-block;
+      cursor: pointer;
+    `;
     const PopOver = styled.div`
-            position: absolute;
-            z-index: 2;
-        `;
+      position: absolute;
+      z-index: 2;
+    `;
     const Cover = styled.div`
-            position: fixed;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-        `;
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    `;
 
     const __renderHotspotSelector = () => (<SelectValidator
       name="hotspots"
@@ -489,13 +496,11 @@ class CreateEventForm extends React.Component {
       errorMessages={[strings.validate_is_required]}
     />);
     const __renderMatchPreview = () => (<div>
-      <ClubImageContainer>
-        <ClubColorPicker>
+      <MatchWrapper>
+        <ClubWrapper>
           <img
             src={Clubs[this.state.event.match.home.club_id] && Clubs[this.state.event.match.home.club_id].icon}
             alt=""
-            width={100}
-            height={100}
           />
           <div>
             <Swatch onClick={() => {
@@ -530,9 +535,9 @@ class CreateEventForm extends React.Component {
               />
             </PopOver> : null}
           </div>
-        </ClubColorPicker>
+        </ClubWrapper>
 
-        <ClubColorPicker>
+        <ClubWrapper>
           <h3 style={{
             textAlign: 'center',
             height: 100,
@@ -573,14 +578,12 @@ class CreateEventForm extends React.Component {
               />
             </PopOver> : null}
           </div>
-        </ClubColorPicker>
+        </ClubWrapper>
 
-        <ClubColorPicker>
+        <ClubWrapper>
           <img
             src={Clubs[this.state.event.match.away.club_id] && Clubs[this.state.event.match.away.club_id].icon}
             alt=""
-            width={100}
-            height={100}
           />
           <div>
             <Swatch onClick={() => {
@@ -615,8 +618,8 @@ class CreateEventForm extends React.Component {
               />
             </PopOver> : null}
           </div>
-        </ClubColorPicker>
-      </ClubImageContainer>
+        </ClubWrapper>
+      </MatchWrapper>
     </div>);
     const __renderSeatsInput = () => (<AutoCompleteValidator
       name="seats"

@@ -9,7 +9,7 @@ import transform from 'lodash/transform';
 import mapValues from 'lodash/mapValues';
 import styled from 'styled-components';
 import constants from 'components/constants';
-import { lighten, darken, percentage } from 'utils';
+import { lighten, darken, toDateString } from 'utils';
 
 import {
   accessor,
@@ -40,6 +40,10 @@ const CalendarStyled = styled.div`
   //background-color: white;
   color: rgb(245, 245, 245);
   padding: 5px;
+  
+  @media only screen and (max-width: 660px) {
+    min-height: 540px;
+  }
 }
 
 .rbc-calendar *,
@@ -472,7 +476,7 @@ const CalendarStyled = styled.div`
   align-items: flex-start;
   width: 100%;
   //border-top: 2px solid ${constants['calendar-border']};
-  overflow-y: auto;
+  //overflow-y: auto;
   position: relative;
 
   > .rbc-time-gutter {
@@ -538,7 +542,7 @@ const CalendarStyled = styled.div`
 
 .rbc-timeslot-group {
   border-bottom: 1px solid ${constants['cell-border']};
-  min-height: 5vh;
+  min-height: 4vh;
   display: flex;
   flex-flow: column nowrap;
 }
@@ -1399,7 +1403,7 @@ class Calendar extends React.Component {
     drilldownView: views.DAY,
 
     titleAccessor: 'title',
-    tooltipAccessor: 'title',
+    tooltipAccessor: 'tooltip',
     allDayAccessor: 'allDay',
     startAccessor: 'start',
     endAccessor: 'end',
@@ -1410,7 +1414,7 @@ class Calendar extends React.Component {
 
     longPressThreshold: 250,
     getNow: () => new Date(),
-  }
+  };
 
   getViews = () => {
     const views = this.props.views;
@@ -1430,13 +1434,13 @@ class Calendar extends React.Component {
     }
 
     return VIEWS;
-  }
+  };
 
   getView = () => {
     const views = this.getViews();
 
     return views[this.props.view];
-  }
+  };
 
   getDrilldownView = (date) => {
     const { view, drilldownView, getDrilldownView } = this.props;
@@ -1483,7 +1487,8 @@ class Calendar extends React.Component {
     );
 
     const CalToolbar = components.toolbar || Toolbar;
-    const label = View.title(current, { formats, culture, length });
+    // const label = View.title(current, { formats, culture, length });
+    const label = toDateString(current);
 
     return (<CalendarStyled>
       <div

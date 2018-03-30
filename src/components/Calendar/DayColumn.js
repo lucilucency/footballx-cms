@@ -252,7 +252,7 @@ class DayColumn extends React.Component {
               'rbc-event-continues-day-after': _continuesAfter,
             })}
           >
-            <div className="rbc-event-label">{label}</div>
+            {/*<div className="rbc-event-label">{label}</div>*/}
             <div className="rbc-event-content">
               {EventComponent ? (
                 <EventComponent event={event} title={title} />

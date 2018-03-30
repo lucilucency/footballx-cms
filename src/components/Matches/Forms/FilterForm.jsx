@@ -19,7 +19,7 @@ const FormGroup = styled.div`
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: left;
+    justify-content: center;
     
     @media only screen and (max-width: 660px) {
       justify-content: center;

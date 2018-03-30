@@ -1,7 +1,7 @@
 import { accessor as get } from '../accessors';
 import dates from '../dates';
 
-const OVER_LAP = 0.98;
+const OVER_LAP = 0.99;
 
 export function startsBefore(date, min) {
   return dates.lt(dates.merge(min, date), min, 'minutes');
@@ -36,8 +36,10 @@ function normalizeDates(startDate, endDate, { min, showMultiDayTimes }) {
 
   // Current day is at the start, but it spans multiple days,
   // so we correct the end.
+  // event finish in tomorrow
   if (+c === +s && c < e) {
     return [startDate, dates.endOf(startDate, 'day')];
+    // return [startDate, endDate];
   }
 
   // Current day is in between start and end dates,
@@ -65,6 +67,7 @@ export class Event {
     );
     this.startSlot = positionFromDate(startDate, min, totalMin);
     this.endSlot = positionFromDate(endDate, min, totalMin);
+
     this.start = +startDate;
     this.end = +endDate;
     this.top = this.startSlot / totalMin * 100;

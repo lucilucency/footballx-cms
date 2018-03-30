@@ -3,19 +3,13 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import constants from 'components/constants';
 // import { EventsHeaderStats } from './HeaderStats';
-import EventsHeaderButtons from './HeaderButtons';
+import EventsHeaderButtons from './Buttons';
 
-const EventHeaderWrapper = styled.div`
+const HeaderStyled = styled.div`
 .container {
   display: flex;
   flex-direction: column;
   justify-content: center;
-}
-
-.playerName {
-  color: rgba(245, 245, 245, 0.870588);
-  font-size: 28px;
-  text-align: center;
 }
 
 .hotspotAddress {
@@ -46,18 +40,10 @@ const EventHeaderWrapper = styled.div`
   fill: ${constants.colorMutedLight} !important;
 }
 
-.row {
-  display: flex;
-  flex-direction: row;
-}
-
 .topContainer {
+  display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.topButtons {
-  margin-left: auto;
 }
 
 .eventInfo {
@@ -69,15 +55,15 @@ const EventHeaderWrapper = styled.div`
 }
 `;
 
-const EventsHeader = () => (<EventHeaderWrapper>
+const EventsHeader = () => (<HeaderStyled>
   <div className={'container'}>
-    <div className={'row topContainer'}>
+    <div className={'topContainer'}>
       <div className={'eventInfo'}>
         <EventsHeaderButtons compact />
       </div>
     </div>
   </div>
-</EventHeaderWrapper>);
+</HeaderStyled>);
 
 const mapStateToProps = state => ({
   small: state.browser.greaterThan.small,

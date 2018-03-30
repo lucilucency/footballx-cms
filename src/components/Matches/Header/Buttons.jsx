@@ -11,33 +11,33 @@ import strings from 'lang';
 import styled from 'styled-components';
 
 const HeaderButtons = styled.div`
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    font-size: 14px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  font-size: 14px;
+  justify-content: center;
+
+  @media only screen and (max-width: 660px) {
     justify-content: center;
 
-    @media only screen and (max-width: 660px) {
-        justify-content: center;
-
-        & a {
-            min-width: 50px !important;
-        }
-
-        & button {
-            min-width: 50px !important;
-        }
-    
-        & * {
-            font-size: 0 !important;
-            padding: 0 !important;
-            margin: auto !important;
-        }
-    
-        & span {
-            margin: 0 !important;
-        }
+    & a {
+      min-width: 50px !important;
     }
+
+    & button {
+      min-width: 50px !important;
+    }
+
+    & * {
+      font-size: 0 !important;
+      padding: 0 !important;
+      margin: auto !important;
+    }
+
+    & span {
+      margin: 0 !important;
+    }
+  }
 `;
 
 
@@ -59,7 +59,7 @@ class HotspotHeaderButtons extends React.Component {
       toggleShowFormFilter = () => {},
     } = this.props;
     return (<HeaderButtons>
-      <div
+      {null && <div
         data-hint={strings.app_refresh}
         data-hint-position="top"
       >
@@ -72,7 +72,7 @@ class HotspotHeaderButtons extends React.Component {
           }}
           label={strings.app_refresh_label}
         />
-      </div>
+      </div>}
       <ShowFormToggle show={showFormFilter} onClick={toggleShowFormFilter} textToggle={strings.form_filter_close} />
     </HeaderButtons>);
   }

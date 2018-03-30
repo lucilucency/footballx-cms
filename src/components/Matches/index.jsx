@@ -41,7 +41,7 @@ class RequestLayer extends React.Component {
   }
 
   __renderMatch = (row) => {
-    const Wrapper = styled.div`
+    const Styled = styled.div`
       display: flex;
       flex-direction: row;
       justify-content: center;
@@ -54,34 +54,27 @@ class RequestLayer extends React.Component {
       //min-width: 80px;
       //max-width: 140px;
       transition: transform .2s;
-      
       :hover {
         transform: scale(1.5);
       }
-      
       span {
         @media only screen and (max-width: 660px) {
           display: none;
         }
-        
         @media only screen and (max-width: 900px) {
           font-size: 0.8em;
         }
       }
-      
       > div {
         flex: 1;
         justify-content: left;
       }
-      
       > div:first-child * {
         float: right;
       }
-      
       > div:last-child * {
         float: left;
       }
-      
       img {
         margin-right: 7px;
         margin-left: 7px;
@@ -97,7 +90,7 @@ class RequestLayer extends React.Component {
         }
       }
     `;
-    return (<Wrapper>
+    return (<Styled>
       <div>
         <img
           src={Clubs[row.home] && Clubs[row.home].icon}
@@ -112,7 +105,7 @@ class RequestLayer extends React.Component {
         />
         <span>{Clubs[row.away] && Clubs[row.away].short_name}</span>
       </div>
-    </Wrapper>);
+    </Styled>);
   };
 
   render() {
@@ -161,10 +154,12 @@ class RequestLayer extends React.Component {
               const startDate = new Date(row.date * 1000);
               const endDate = new Date((row.date * 1000) + 5400000);
               const title = this.__renderMatch(row);
+              const tooltip = `${Clubs[row.home] && Clubs[row.home].name} vs ${Clubs[row.away] && Clubs[row.away].name}`;
 
               return {
                 id: row.id,
                 title,
+                tooltip,
                 start: startDate,
                 end: endDate,
               };
@@ -173,15 +168,12 @@ class RequestLayer extends React.Component {
             views={['month', 'day', 'agenda']}
             // step={60}
             showMultiDayTimes
-            // scrollToTime={new Date(2018, 2, 31)}
+            scrollToTime={new Date()}
             defaultDate={new Date()}
             onSelectEvent={event => console.log(event)}
-            onSelectSlot={slotInfo =>
-              alert(
-                `selected slot: \n\nstart ${slotInfo.start.toLocaleString()} ` +
-                `\nend: ${slotInfo.end.toLocaleString()}` +
-                `\naction: ${slotInfo.action}`)
-            }
+            onSelectSlot={(slotInfo) => {
+              console.log(slotInfo);
+            }}
           />
         </div>
         {/* <TabBar info={route} tabs={matchTabs} /> */}
