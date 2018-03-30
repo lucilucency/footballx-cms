@@ -733,7 +733,7 @@
   "tooltip_hero_id": "The hero played by player",
   "tooltip_hits": "Number of damage instances to heroes caused by this ability/item",
   "tooltip_hotspot_address": "Address of a hotspot",
-  "tooltip_hotspot_name": "Name of hotspot",
+  "tooltip_hotspot_name": "Name / Short Name",
   "tooltip_hotspot_phone": "Phone number",
   "tooltip_hotspot_short_name": "Short-name of hotspot",
   "tooltip_hotspot_wifi": "Wifi password",

@@ -13,20 +13,22 @@ import Hotspot from 'components/Hotspot';
 import CreateHotspotForm from 'components/Hotspot/Forms/CreateEditHotspotForm';
 
 const hotspotsTableTh = [{
-  displayName: strings.th_hotspot,
+  displayName: strings.th_name,
+  tooltip: strings.tooltip_hotspot_name,
   field: 'id',
   sortFn: true,
   displayFn: (row, col, field) => (<div>
     <TableLink to={`/hotspot/${field}`}>{row.name}</TableLink>
     <span className={subTextStyle.subText} style={{ display: 'block', marginTop: 1 }}>
-      {row.phone}
+      {row.short_name}
     </span>
   </div>),
 }, {
+  displayName: strings.th_phone,
+  field: 'phone',
+}, {
   displayName: strings.th_address,
-  tooltip: strings.tooltip_duration,
   field: 'address',
-  sortFn: true,
 }];
 
 const getData = (props) => {

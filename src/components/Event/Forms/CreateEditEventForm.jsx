@@ -446,6 +446,7 @@ class CreateEventForm extends React.Component {
     >
       {this.__renderHotspotSelectorItems()}
     </SelectValidator>);
+    // eslint-disable-next-line no-unused-vars
     const __renderHotspotSelector2 = () => (<FormField
       name="hotspots"
       label={strings.tooltip_select_hotspots}
@@ -865,7 +866,7 @@ class CreateEventForm extends React.Component {
         label={strings.form_general_close}
         key="cancel"
         primary
-        onClick={() => (this.props.callback ? this.props.callback() : props.history.push('/hotspots'))}
+        onClick={() => (this.props.callback ? this.props.callback() : props.history.push('/events'))}
       />,
       <FlatButton
         key="submit"
@@ -886,7 +887,7 @@ class CreateEventForm extends React.Component {
       {this.state.error && <Error text={this.state.error} />}
 
       <div>
-        {!(mode === 'edit') && !this.props.hotspotId && this.props.dataSourceHotspots && __renderHotspotSelector2()}
+        {!(mode === 'edit') && !this.props.hotspotId && this.props.dataSourceHotspots && __renderHotspotSelector()}
         {!(mode === 'edit') && !this.props.matchId && this.props.dataSourceMatches && __renderMatchSelector()}
         {!(mode === 'edit') && this.state.event.match.home && __renderMatchPreview()}
         {!(mode === 'edit') && !this.props.groupId && this.props.dataSourceGroups && __renderGroupSelector()}

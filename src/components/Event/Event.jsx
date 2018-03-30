@@ -137,7 +137,7 @@ class RequestLayer extends React.Component {
           toggle
           display={showEditEventForm}
           event={this.props.event.data}
-          callback={() => toggleShowForm}
+          callback={toggleShowForm}
         />
         <SendNotificationForm event={this.props.event.data} />
         <TabBar
