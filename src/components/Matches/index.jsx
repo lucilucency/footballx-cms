@@ -47,7 +47,6 @@ class RequestLayer extends React.Component {
       justify-content: center;
       position: relative;
       margin-top: -1px;
-      //height: 100%;
       height: 1.5em;
       align-items: center;
       font-size: 80%;
@@ -55,7 +54,7 @@ class RequestLayer extends React.Component {
       //max-width: 140px;
       transition: transform .2s;
       :hover {
-        transform: scale(1.5);
+        transform: scale(1.1);
       }
       span {
         @media only screen and (max-width: 660px) {

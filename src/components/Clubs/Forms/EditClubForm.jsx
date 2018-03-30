@@ -43,17 +43,18 @@ class EditClubForm extends React.Component {
   static propTypes = {
     display: PropTypes.bool,
     toggle: PropTypes.bool,
-    mode: PropTypes.string,
+    popup: PropTypes.bool,
+    // mode: PropTypes.string,
     loading: PropTypes.bool,
     callback: PropTypes.func,
 
     club: PropTypes.object,
-    dsHotspotType: PropTypes.array,
   };
 
   static defaultProps = {
     display: true,
     toggle: false,
+    popup: false,
     mode: 'edit',
     loading: false,
   };
@@ -184,7 +185,7 @@ class EditClubForm extends React.Component {
 
   render() {
     const props = this.props;
-    const { toggle, loading, display } = props;
+    const { toggle, loading, display, popup } = this.props;
 
     const __renderClubName = () => (<TextField
       type="text"
@@ -268,7 +269,9 @@ class EditClubForm extends React.Component {
     ];
 
     return (<FormWrapper
-      {...{ toggle, display }}
+      data-toggle={toggle}
+      data-popup={popup}
+      data-display={display}
       onSubmit={this.submit}
       // onError={errors => console.log(errors)}
     >
@@ -291,7 +294,6 @@ class EditClubForm extends React.Component {
           primary
           keyboardFocused
           onClick={() => {
-            const props = this.props;
             this.closeDialog();
             if (this.props.callback) {
               return this.props.callback();

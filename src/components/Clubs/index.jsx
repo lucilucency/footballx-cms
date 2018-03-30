@@ -114,6 +114,7 @@ class Clubs extends React.Component {
       dialogConstruct: {
         title: strings.heading_edit_team,
         view: <EditClubForm
+          popup
           club={this.state.selectedClub}
           callback={this.handleCloseDialog}
         />,

@@ -35,20 +35,20 @@ export const FormWrapper = styled(ValidatorForm)`
   margin-top: 20px;
   transition: max-height 1s;
   box-sizing: border-box;
-  ${props => ((props.display) ? css`
+  ${props => ((props['data-display']) ? css`
       max-height: 2000px;
   ` : css`
       max-height: 0;
   `)}
   
-  ${props => (props.toggle && css`
+  ${props => (props['data-toggle'] && css`
     overflow: hidden;
     padding: 0 15px;
  `)}
 
   .actions {
     text-align: right;
-    ${props => (props.popup && css`
+    ${props => (props['data-popup'] && css`
       margin: 24px -24px -24px -24px;
       padding: 8px;
    `)}

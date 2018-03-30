@@ -20,7 +20,6 @@ import {
   List,
   ListItem,
   MenuItem,
-  TextField,
 } from 'material-ui';
 import Checkbox from 'material-ui/Checkbox';
 import IconFail from 'material-ui/svg-icons/content/clear';
@@ -32,7 +31,7 @@ import Error from 'components/Error';
 import Spinner from 'components/Spinner';
 import { SketchPicker } from 'react-color';
 import FormField from 'components/Form/FormField';
-import { AutoCompleteValidator, SelectValidator } from 'react-material-ui-form-validator';
+import { AutoCompleteValidator, SelectValidator, TextValidator } from 'react-material-ui-form-validator';
 /* css */
 import styled, { css } from 'styled-components';
 import constants from 'components/constants';
@@ -68,6 +67,7 @@ class CreateEventForm extends React.Component {
     mode: PropTypes.string,
     display: PropTypes.bool,
     toggle: PropTypes.bool,
+    popup: PropTypes.bool,
     loading: PropTypes.bool,
     callback: PropTypes.func,
 
@@ -87,6 +87,7 @@ class CreateEventForm extends React.Component {
     mode: 'create',
     display: true,
     toggle: false,
+    popup: false,
     loading: false,
   };
 
@@ -358,11 +359,12 @@ class CreateEventForm extends React.Component {
   render() {
     const props = this.props;
     const {
-      toggle = true,
-      loading = false,
       display,
+      toggle,
+      popup,
+      loading,
       mode,
-    } = props;
+    } = this.props;
 
     const MatchWrapper = styled.div`
       position: relative;
@@ -412,6 +414,7 @@ class CreateEventForm extends React.Component {
       left: 0;
     `;
 
+    // eslint-disable-next-line no-unused-vars
     const __renderHotspotSelector = () => (<SelectValidator
       name="hotspots"
       fullWidth
@@ -443,16 +446,21 @@ class CreateEventForm extends React.Component {
     >
       {this.__renderHotspotSelectorItems()}
     </SelectValidator>);
-    // eslint-disable-next-line no-unused-vars
-    const __renderHotspotSelect2 = () => (<FormField
+    const __renderHotspotSelector2 = () => (<FormField
       name="hotspots"
-      label={strings.filter_notification_user}
+      label={strings.tooltip_select_hotspots}
       dataSource={this.props.dataSourceHotspots.map(o => ({ text: o.text, value: o.value }))}
       fullWidth
-      // onChange={this.handleSelectHotspot.bind(this)}
+      onChange={(data) => {
+        this.setState({
+          event: update(this.state.event, {
+            hotspots: { $set: data.selectedElements },
+          }),
+        });
+      }}
       listStyle={{ maxHeight: 300, overflow: 'auto' }}
     />);
-    const __renderGroupSelector = () => (<AutoComplete
+    const __renderGroupSelector = () => (<AutoCompleteValidator
       name="group"
       hintText={strings.filter_group}
       floatingLabelText={strings.filter_group}
@@ -479,7 +487,7 @@ class CreateEventForm extends React.Component {
       fullWidth
       listStyle={{ maxHeight: 300, overflow: 'auto' }}
     />);
-    const __renderMatchSelector = () => (<AutoComplete
+    const __renderMatchSelector = () => (<AutoCompleteValidator
       name="match"
       hintText={strings.filter_match}
       floatingLabelText={strings.filter_match}
@@ -492,8 +500,8 @@ class CreateEventForm extends React.Component {
       maxSearchResults={100}
       fullWidth
       listStyle={{ maxHeight: 300, overflow: 'auto' }}
-      validators={['required']}
-      errorMessages={[strings.validate_is_required]}
+      // validators={['required']}
+      // errorMessages={[strings.validate_is_required]}
     />);
     const __renderMatchPreview = () => (<div>
       <MatchWrapper>
@@ -826,8 +834,9 @@ class CreateEventForm extends React.Component {
       value={this.state.event.end_time_checkin.text}
       fullWidth
     />);
-    const __renderNotesInput = () => (<TextField
+    const __renderNotesInput = () => (<TextValidator
       type="text"
+      name="notes"
       hintText={strings.tooltip_note}
       floatingLabelText={strings.tooltip_note}
       multiLine
@@ -840,7 +849,8 @@ class CreateEventForm extends React.Component {
         }),
       })}
       fullWidth
-      errorText={this.state.event.notes.error}
+      validators={[]}
+      errorMessages={[]}
     />);
 
     const actions = [
@@ -866,7 +876,9 @@ class CreateEventForm extends React.Component {
     ];
 
     return (<FormWrapper
-      {...{ toggle, display }}
+      data-display={display}
+      data-toggle={toggle}
+      data-popup={popup}
       onSubmit={this.submit}
       // onError={errors => console.log(errors)}
     >
@@ -874,7 +886,7 @@ class CreateEventForm extends React.Component {
       {this.state.error && <Error text={this.state.error} />}
 
       <div>
-        {!(mode === 'edit') && !this.props.hotspotId && this.props.dataSourceHotspots && __renderHotspotSelector()}
+        {!(mode === 'edit') && !this.props.hotspotId && this.props.dataSourceHotspots && __renderHotspotSelector2()}
         {!(mode === 'edit') && !this.props.matchId && this.props.dataSourceMatches && __renderMatchSelector()}
         {!(mode === 'edit') && this.state.event.match.home && __renderMatchPreview()}
         {!(mode === 'edit') && !this.props.groupId && this.props.dataSourceGroups && __renderGroupSelector()}

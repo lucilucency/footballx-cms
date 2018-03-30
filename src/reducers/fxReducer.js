@@ -77,15 +77,34 @@ export default (type, initialData) => (state = {
         error: false,
       };
     case `OK/EDIT_ARR/${type}`:
-      // console.log('reducer type', type);
-      // console.log('state.data', state.data);
-      // console.log('action', action);
+      if (action.payload.id) {
+        const objIndex = state.data.findIndex(o => o.id === action.payload.id);
+
+        const newData = state.data;
+        newData[objIndex] = action.payload;
+
+        return {
+          ...state,
+          loading: false,
+          data: newData,
+          error: false,
+        };
+      }
+      console.error('error in merge payload');
       return {
         ...state,
         loading: false,
-        data: update(state.data, { $merge: [action.payload] }),
-        error: false,
+        error: true,
       };
+      // console.log('reducer type', type);
+      // console.log('state.data', state.data);
+      // console.log('action', action);
+      // return {
+      //   ...state,
+      //   loading: false,
+      //   data: update(state.data, { $merge: [action.payload] }),
+      //   error: false,
+      // };
     case `FAIL/EDIT_ARR/${type}`:
       return {
         ...state,

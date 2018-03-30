@@ -74,8 +74,8 @@ class RequestLayer extends React.Component {
     }, user.user_type === 1 && {
       name: strings.tab_hotspots_add,
       key: 'add',
-      content: () => (<div>
-        <CreateHotspotForm style={{ paddingBottom: 20 }} />
+      content: () => (<div style={{ paddingBottom: 20 }}>
+        <CreateHotspotForm />
       </div>),
       route: '/hotspots/add',
     }].filter(o => o);

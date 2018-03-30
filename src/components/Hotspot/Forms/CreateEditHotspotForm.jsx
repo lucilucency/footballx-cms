@@ -45,20 +45,21 @@ const initialState = ({
 
 class CreateEditHotspotForm extends React.Component {
   static propTypes = {
+    mode: PropTypes.string,
     display: PropTypes.bool,
     toggle: PropTypes.bool,
-    mode: PropTypes.string,
+    popup: PropTypes.bool,
     loading: PropTypes.bool,
     callback: PropTypes.func,
-    style: PropTypes.shape({}),
 
     dsHotspotType: PropTypes.array,
   };
 
   static defaultProps = {
+    mode: 'create',
     display: true,
     toggle: false,
-    mode: 'create',
+    popup: false,
     loading: false,
   };
 
@@ -222,11 +223,12 @@ class CreateEditHotspotForm extends React.Component {
   render() {
     const props = this.props;
     const {
+      mode,
       display,
       toggle,
+      popup,
       loading,
-      style = {},
-    } = props;
+    } = this.props;
 
     const __renderHotspotName = () => (<TextField
       type="text"
@@ -344,17 +346,18 @@ class CreateEditHotspotForm extends React.Component {
     ];
 
     return (<FormWrapper
-      {...{ toggle, display }}
+      data-toggle={toggle}
+      data-popup={popup}
+      data-display={display}
       onSubmit={this.submit}
       // onError={errors => console.log(errors)}
-      {...style}
     >
       {loading && <Spinner />}
       {this.state.error && <Error text={this.state.error} />}
 
       <MapWithSearchBox
         onChanged={this.onPlaceChanged}
-        marker={this.props.mode === 'edit' && {
+        marker={mode === 'edit' && {
           lat: Number(this.state.formData.lat.value),
           lng: Number(this.state.formData.lon.value),
         }}
