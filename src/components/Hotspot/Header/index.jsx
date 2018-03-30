@@ -9,6 +9,7 @@ import IconBeer from 'material-ui/svg-icons/maps/local-drink';
 import IconStadium from 'material-ui/svg-icons/maps/local-activity';
 import IconPhone from 'material-ui/svg-icons/communication/phone';
 import IconLocation from 'material-ui/svg-icons/communication/location-on';
+import IconWifi from 'material-ui/svg-icons/notification/wifi';
 /* data */
 import strings from 'lang';
 import constants from 'components/constants';
@@ -19,26 +20,23 @@ import { HotspotHeaderStats } from './HotspotHeaderStats';
 import HotspotHeaderButtons from './HotspotHeaderButtons';
 
 const LARGE_IMAGE_SIZE = 124;
-const Container = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-`;
-const TopContainer = styled.div`
-    display: flex;
-    flex-direction: row;
 
-    @media only screen and (max-width: 768px) {
-        flex-direction: column;
-        align-items: center;
-    }
+const Header = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  @media only screen and (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 const ImageContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  padding-top: 2em;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 `;
-const ValidatedHotspot = styled(IconValidated)`
+const ValidatedBadge = styled(IconValidated)`
   width: 18px;
   height: 18px;
   position: relative;
@@ -55,43 +53,44 @@ const ValidatedHotspot = styled(IconValidated)`
     }
   }
 `;
-const HotspotInfo = styled.div`
-    padding-top: 1em;
-    width: 100%;
+const InfoContainer = styled.div`
+  padding-top: 1em;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  
+  & li {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    line-height: 1.5em;
     
-    & li {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        flex-wrap: wrap;
-        
-        @media only screen and (max-width: 768px) {
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        & span[data='name'] {
-            color: rgba(245, 245, 245, 0.870588);
-            font-size: 28px;
-            text-align: center;
-        }
-        
-        & span[data='address'] {
-            color: rgba(245, 245, 245, 0.870588);
-            font-size: 18px;
-            text-align: center;
-        }
+    @media only screen and (max-width: 768px) {
+      flex-direction: column;
+      align-items: center;
     }
+    
+    & span[data='name'] {
+      color: rgba(245, 245, 245, 0.870588);
+      font-size: 28px;
+      text-align: center;
+    }
+    
+    & span[data='address'] {
+      color: rgba(245, 245, 245, 0.870588);
+      font-size: 18px;
+      text-align: center;
+    }
+  }
 `;
 const AvatarStyled = styled(Avatar)`
-    box-shadow: 0 0 15px 2px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 15px 2px rgba(0, 0, 0, 0.4);
 
-    @media only screen and (max-width: 768px) {
-        margin-left: 0 !important;
-    }
+  @media only screen and (max-width: 768px) {
+    margin-left: 0 !important;
+  }
 `;
 
 const getHotspotIcon = (type) => {
@@ -146,61 +145,65 @@ const HotspotHeader = (propsVar) => {
     };
   }
 
+  const iconStyle = {
+    width: 15,
+    height: 15,
+    color: constants.colorMutedLight,
+  };
+
   return (
-    <Container>
-      <TopContainer>
-        <ImageContainer>
-          <Badge
-            badgeContent={<ValidatedHotspot
-              data-hint={strings.tooltip_registered_user}
-              data-hint-position="top"
-            />}
-            badgeStyle={badgeStyle}
-            style={{
-              margin: 0,
-              padding: 0,
-            }}
-          >
-            <AvatarStyled
-              src={hotspotData.avatar || '/assets/images/footballx.png'}
-              style={avatarStyle}
-              size={LARGE_IMAGE_SIZE}
-            />
-          </Badge>
-        </ImageContainer>
-        <HotspotInfo>
-          <li>
-            <span data="name">{hotspotData.name}</span>
-            {hotspotData.short_name && <small>({hotspotData.short_name})</small>}
-            {getHotspotIcon(hotspotData.type)}
-          </li>
-          <li>
-            <span data="address"><IconLocation style={{ width: 15, height: 15 }} color={constants.blue200} /> {hotspotData.address}</span>
-          </li>
-          {hotspotData.phone && <li>
-            <span><IconPhone style={{ width: 15, height: 15 }} color={constants.blue200} /> {hotspotData.phone}</span>
-          </li>}
-          {hotspotData.wifi && <li>
-            <span>Wifi Password: {hotspotData.wifi}</span>
-          </li>}
-
-          <HotspotHeaderStats
-            loading={hotspot.loading}
-            error={hotspot.error}
-            compact={!small}
-            events={events.length || 0}
-            registeredXUsers={registeredXUsers}
-            checkedInXUsers={checkedInXUsers}
-            hotspot={hotspot.data}
-          />
-          {(user.user_type === 1 || isOwner) && <HotspotHeaderButtons
-            hotspotId={hotspotId}
-            compact={!small}
+    <Header>
+      <ImageContainer>
+        <Badge
+          badgeContent={<ValidatedBadge
+            data-hint={strings.tooltip_validated}
+            data-hint-position="top"
           />}
+          badgeStyle={badgeStyle}
+          style={{
+            margin: 0,
+            padding: 0,
+          }}
+        >
+          <AvatarStyled
+            src={hotspotData.avatar || '/assets/images/footballx.png'}
+            style={avatarStyle}
+            size={LARGE_IMAGE_SIZE}
+          />
+        </Badge>
+      </ImageContainer>
+      <InfoContainer>
+        <li>
+          <span data="name">{hotspotData.name}</span>
+          {hotspotData.short_name && <small>({hotspotData.short_name})</small>}
+          {getHotspotIcon(hotspotData.type)}
+        </li>
+        <li>
+          <span data="address"><IconLocation style={{ ...iconStyle }} /> {hotspotData.address}</span>
+        </li>
+        {hotspotData.phone && <li>
+          <span><IconPhone style={{ ...iconStyle }} /> {hotspotData.phone}</span>
+        </li>}
+        {hotspotData.wifi && <li>
+          <span><IconWifi style={{ ...iconStyle }} /> {hotspotData.wifi}</span>
+        </li>}
 
-        </HotspotInfo>
-      </TopContainer>
-    </Container>
+        <HotspotHeaderStats
+          loading={hotspot.loading}
+          error={hotspot.error}
+          compact={!small}
+          events={events.length || 0}
+          registeredXUsers={registeredXUsers}
+          checkedInXUsers={checkedInXUsers}
+          hotspot={hotspot.data}
+        />
+        {(user.user_type === 1 || isOwner) && <HotspotHeaderButtons
+          hotspotId={hotspotId}
+          compact={!small}
+        />}
+
+      </InfoContainer>
+    </Header>
   );
 };
 

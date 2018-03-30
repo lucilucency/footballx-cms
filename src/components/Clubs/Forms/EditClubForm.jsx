@@ -234,7 +234,7 @@ class EditClubForm extends React.Component {
 
     const __renderClubPopularity = () => (<TextField
       type="text"
-      hintText={strings.tooltip_team_popularity}
+      hintText={strings.hint_club_popularity}
       floatingLabelText={strings.tooltip_team_popularity}
       onChange={(event, value) => this.setState({
         formData: update(this.state.formData, {

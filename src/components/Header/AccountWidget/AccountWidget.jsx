@@ -6,7 +6,7 @@ import Error from 'components/Error';
 import LoggedIn from './LoggedIn';
 
 const AccountWidget = (propsVar) => {
-  const { loading, error, user, style } = propsVar;
+  const { loading, error, user, style = {} } = propsVar;
   return (
     <div style={style}>
       {error && <Error />}

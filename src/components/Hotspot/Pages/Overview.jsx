@@ -9,12 +9,12 @@ import styled from 'styled-components';
 
 const OverviewWrapper = styled.div`
 .overviewContainer {
-    width: calc(100%);
+  width: calc(100%);
 
-    @media only screen and (max-width: 1080px) {
-        width: 100%;
-        margin-right: 0;
-    }
+  @media only screen and (max-width: 1080px) {
+    width: 100%;
+    margin-right: 0;
+  }
 }
 `;
 

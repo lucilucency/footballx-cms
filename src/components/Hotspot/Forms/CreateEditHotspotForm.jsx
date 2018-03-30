@@ -93,6 +93,7 @@ class CreateEditHotspotForm extends React.Component {
           name: { value: newProps.hotspot.name, text: newProps.hotspot.name && newProps.hotspot.name.toString() },
           short_name: { value: newProps.hotspot.short_name, text: newProps.hotspot.short_name && newProps.hotspot.short_name.toString() },
           address: { value: newProps.hotspot.address, text: newProps.hotspot.address && newProps.hotspot.address.toString() },
+          phone: { value: newProps.hotspot.phone, text: newProps.hotspot.phone && newProps.hotspot.phone.toString() },
           lon: { value: newProps.hotspot.coordinate && parseFloat(newProps.hotspot.coordinate.lon), text: newProps.hotspot.coordinate && newProps.hotspot.coordinate.lon.toString() },
           lat: { value: newProps.hotspot.coordinate && parseFloat(newProps.hotspot.coordinate.lat), text: newProps.hotspot.coordinate && newProps.hotspot.coordinate.lat.toString() },
           wifi: { value: newProps.hotspot.wifi },

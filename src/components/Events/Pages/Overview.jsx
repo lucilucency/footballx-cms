@@ -91,6 +91,7 @@ const tableEventsColumns = browser => [browser.greaterThan.medium && {
 }, {
   displayName: strings.th_xusers_checkin,
   field: 'checkin_total',
+  tooltip: strings.tooltip_xuser_register_checkin,
   sortFn: true,
   displayFn: row => (<div>
     <span className="subText ellipsis" style={{ display: 'block', marginTop: 1 }}>

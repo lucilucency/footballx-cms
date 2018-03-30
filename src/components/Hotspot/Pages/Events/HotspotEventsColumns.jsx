@@ -31,7 +31,6 @@ const hotspotEventsColumns = (browser = {}) => [browser.greaterThan.medium && {
   displayName: strings.th_seats,
   tooltip: strings.tooltip_seats,
   field: 'seats',
-  sortFn: true,
 }, browser.greaterThan.medium && {
   displayName: strings.th_price,
   tooltip: strings.tooltip_price,
@@ -71,20 +70,21 @@ const hotspotEventsColumns = (browser = {}) => [browser.greaterThan.medium && {
   },
 }, {
   displayName: strings.th_note,
-  tooltip: strings.tooltip_note,
   field: 'notes',
-  sortFn: true,
   displayFn: (row, col, field) => (<div>
     <div className={subTextStyle.subText}>{field}</div>
   </div>),
 }, {
-  displayName: strings.th_xusers,
-  tooltip: strings.tooltip_xuser,
+  displayName: strings.th_xusers_checkin,
   field: 'checkin_total',
+  tooltip: strings.tooltip_xuser_register_checkin,
   sortFn: true,
   displayFn: row => (<div>
-    {row.checkin_total} / {row.checkin_total + row.register_total}
+    <span className="subText ellipsis" style={{ display: 'block', marginTop: 1 }}>
+      {row.checkin_total} / {row.checkin_total + row.register_total}
+    </span>
   </div>),
+  relativeBars: true,
 }];
 
 export default hotspotEventsColumns;

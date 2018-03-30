@@ -38,8 +38,9 @@ const clubsColumns = (context, leagueID) => [null && {
 }, {
   displayName: strings.th_popularity,
   field: 'popularity',
+  tooltip: strings.tooltip_popularity,
   sortFn: true,
-}, {
+}, context.props.user_type && context.props.user_type === 1 && {
   field: 'id',
   displayName: '',
   displayFn: row => (<div style={{ float: 'right' }}>
@@ -138,10 +139,10 @@ class Clubs extends React.Component {
             const { league, clubs } = o;
             return (<LeagueContainer
               title={league.name}
-              loading={false}
-              error={false}
+              loading={clubs.loading}
+              error={clubs.error}
             >
-              <Table data={clubs} columns={clubsColumns(this, league.id)} loading={false} error={false} pageLength={10} paginated />
+              <Table data={clubs.data} columns={clubsColumns(this, league.id)} loading={clubs.loading} error={clubs.error} pageLength={10} paginated />
             </LeagueContainer>);
           })}
         </div>
@@ -159,7 +160,7 @@ Clubs.propTypes = {
 const mapStateToProps = (state) => {
   const leaguesReducer = leagues.reduce((__prev, league) => {
     const prev = __prev;
-    const clubs = state.app[`league[${league.name}]`].data;
+    const clubs = state.app[`league[${league.name}]`];
     prev.push({
       league, clubs,
     });
@@ -168,6 +169,7 @@ const mapStateToProps = (state) => {
 
   return {
     leagues: leaguesReducer,
+    user_type: state.app.metadata.data.user && state.app.metadata.data.user.user_type,
   };
 };
 

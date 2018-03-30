@@ -151,9 +151,9 @@ export const transformations = {
     <div>
       <TableClubImage
         image={row.icon}
-        title={<TableLink to={`/club/${field}`}>{row.name}</TableLink>}
+        // title={<TableLink to={`/club/${field}`}>{row.name}</TableLink>}
+        title={row.name}
         subtitle={row.short_name}
-        clubName={row.name}
       />
     </div>
   ),

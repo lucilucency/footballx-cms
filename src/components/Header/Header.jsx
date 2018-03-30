@@ -227,6 +227,11 @@ const SettingsGroup = (propsVar) => {
           icon={<ActionSettings />}
         />
       </Link>
+      <FlatButton
+        fullWidth
+        label={<span className={'label'}>{'Settings'}</span>}
+        containerElement={<Link to="/settings" />}
+      />
       {user ? <Logout /> : null}
     </VerticalAlignDropdown>
   );
