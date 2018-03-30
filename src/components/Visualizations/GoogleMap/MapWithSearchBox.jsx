@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+/* global API_KEY_GOOGLE_MAPS */
 import React from 'react';
 import _ from 'lodash';
 import { compose, withProps, lifecycle, mapProps } from 'recompose';
@@ -10,7 +11,7 @@ import {
 } from 'react-google-maps';
 import { SearchBox } from 'react-google-maps/lib/components/places/SearchBox';
 
-const API_KEY_GOOGLE_MAPS = 'AIzaSyAVuAeRe7X-4rtzJZb00XUohyCVPV_03QE';
+// const API_KEY_GOOGLE_MAPS = 'AIzaSyAVuAeRe7X-4rtzJZb00XUohyCVPV_03QE';
 
 const MapWithSearchBox = compose(
   mapProps(props => ({
@@ -18,7 +19,7 @@ const MapWithSearchBox = compose(
     marker: props.marker,
   })),
   withProps({
-    googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${API_KEY_GOOGLE_MAPS}&v=3.exp&libraries=geometry,drawing,places`,
+    googleMapURL: `https://maps.googleapis.com/maps/api/js?key=${API_KEY_GOOGLE_MAPS}&v=3&libraries=geometry,drawing,places`,
     loadingElement: <div style={{ height: '100%' }} />,
     containerElement: <div style={{ height: '400px' }} />,
     mapElement: <div style={{ height: '100%' }} />,
@@ -90,6 +91,7 @@ const MapWithSearchBox = compose(
     defaultZoom={15}
     center={props.center}
     onBoundsChanged={props.onBoundsChanged}
+    draggable
   >
     {props.marker && !props.markers.length && <Marker
       position={{ lat: props.marker.lat, lng: props.marker.lng }}
