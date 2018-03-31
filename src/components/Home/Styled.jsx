@@ -60,7 +60,7 @@ export const ButtonsDiv = styled.div`
     margin: 10px 5px !important;
 
     @media only screen and (max-width: 375px) {
-      line-height: 20px !important;
+      //line-height: 20px !important;
     }
 
     &:hover {

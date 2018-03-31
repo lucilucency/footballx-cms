@@ -10,10 +10,13 @@ import Clubs from 'fxconstants/build/clubsObj.json';
 import Groups from 'fxconstants/build/groupsObj.json';
 /* components */
 import { FlatButton } from 'material-ui';
-import IconFingerprint from 'material-ui/svg-icons/action/fingerprint';
+// import IconFingerprint from 'material-ui/svg-icons/action/fingerprint';
 import IconEdit from 'material-ui/svg-icons/editor/mode-edit';
 import IconSendNotification from 'material-ui/svg-icons/alert/add-alert';
-import IconCode from 'material-ui/svg-icons/action/code';
+// import IconCode from 'material-ui/svg-icons/action/code';
+import IconCheckin from 'material-ui/svg-icons/maps/beenhere';
+import IconMinigameLottery from 'material-ui/svg-icons/editor/insert-emoticon';
+import IconMinigameScanQR from 'material-ui/svg-icons/action/card-giftcard';
 
 import Spinner from 'components/Spinner';
 import ShowFormToggle from 'components/Form/ShowFormToggle';
@@ -92,8 +95,8 @@ const MatchInfo = styled.div`
     width: 128px;
     height: 128px;
     padding: 2px;
-    //box-shadow: 0 0 5px ${constants.defaultPrimaryColor};
-    //background-color: rgba(255,255,255,0.1);
+    box-shadow: 0 0 5px ${constants.defaultPrimaryColor};
+    background-color: rgba(255,255,255,0.1);
     
     img {
       height: 100%;
@@ -370,7 +373,7 @@ class EventHeader extends React.Component {
               </div>}
             </HostedGroup>
             <MatchInfo>
-              <div className="club-image" style={{ boxShadow: `0 0 5px ${eventData.home_color}` }}>
+              <div className="club-image" style={{ borderBottom: `0 0 5px ${eventData.home_color}` }}>
                 <img src={Clubs[eventData.home] && Clubs[eventData.home].icon} alt="" />
               </div>
               <div className="info">
@@ -384,7 +387,7 @@ class EventHeader extends React.Component {
                   {toDateTimeString(eventData.match_date * 1000)}
                 </span>
               </div>
-              <div className="club-image" style={{ boxShadow: `0 0 5px ${eventData.away_color}` }}>
+              <div className="club-image" style={{ borderBottom: `0 0 5px ${eventData.away_color}` }}>
                 <img src={Clubs[eventData.away] && Clubs[eventData.away].icon} alt="" />
               </div>
             </MatchInfo>
@@ -420,19 +423,19 @@ class EventHeader extends React.Component {
           <ButtonContainer>
             <FlatButton
               onClick={this.openCheckinQRView}
-              icon={<IconFingerprint />}
-              label={strings.form_checkin_qr}
+              icon={<IconCheckin />}
+              label={strings.event_checkin}
             />
             <FlatButton
               onClick={this.openMinigameScanView}
-              icon={<IconCode />}
+              icon={<IconMinigameScanQR />}
               label={strings.form_mini_game_scan_qr}
             />
             <ShowFormToggle
               name={'generateQR'}
               show={showFormGenerateQR}
               onClick={this.openMinigameLottery}
-              icon={<IconCode />}
+              icon={<IconMinigameLottery />}
               text={strings.form_mini_game}
               textToggle={strings.form_mini_game_close}
             />

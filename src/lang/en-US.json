@@ -91,6 +91,7 @@
   "error_four_oh_four_message": "The page you are looking for cannot be found.",
   "error_message": "Whoops! Something went wrong.",
   "event": "Event",
+  "event_checkin": "Checkin",
   "event_generate": "Generate",
   "event_heading_checkin_total": "Checked-in",
   "event_heading_deposit": "Deposit",

@@ -46,6 +46,10 @@ const Styled = styled.div`
     & > span {
       position: relative;
       white-space: nowrap;
+      
+      @media only screen and (max-width: 660px) {
+        display: none !important;
+      }
   
       & a {
         display: inline-block;
@@ -55,6 +59,8 @@ const Styled = styled.div`
       }
     }
   }
+  
+
   
   .badge {
     display: inline-block;
@@ -100,7 +106,7 @@ const TableClubImage = ({
   image,
   title,
   subtitle,
-  accountId,
+  clubID,
   hideText,
   confirmed,
 }) => (
@@ -126,8 +132,8 @@ const TableClubImage = ({
           <IconCheckCircle className="golden" />
         </div>
         }
-        {accountId ?
-          <TableLink to={`/players/${accountId}`}>
+        {clubID ?
+          <TableLink to={`/club/${clubID}`}>
             {title}
           </TableLink>
           : title}
@@ -150,7 +156,7 @@ TableClubImage.propTypes = {
   image: string,
   title: oneOfType([string, object]),
   subtitle: oneOfType([string, node]),
-  accountId: PropTypes.number,
+  clubID: PropTypes.number,
   hideText: bool,
   confirmed: bool,
 };

@@ -88,7 +88,7 @@ const tableEventsColumns = browser => [browser.greaterThan.medium && {
       </span>
     </div>);
   },
-}, {
+}, browser.greaterThan.small && {
   displayName: strings.th_xusers_checkin,
   field: 'checkin_total',
   tooltip: strings.tooltip_xuser_register_checkin,

@@ -35,8 +35,10 @@ const FormGroup = styled.div`
   `)}
 `;
 
-const H2 = styled.h1`
+const H2 = styled.h2`
   text-align: center;
+  width: 100%;
+  display: inline-grid;
   
   ${props => (props.show ? css`
     opacity: 1;
@@ -47,6 +49,10 @@ const H2 = styled.h1`
     transform: scale(10);
     transition: all 0.3s ease-in-out 0.2s;
 `)}
+  
+  @media only screen and (max-width: 660px) {
+    font-size: 24px;
+  }
 `;
 
 const ListWinner = styled.div`
@@ -67,6 +73,10 @@ const Winner = styled(Col)`
 const LeftBar = styled.div`
   display: inline-block;
   width: 50%;
+  
+  @media only screen and (max-width: 660px) {
+    width: 100%;
+  }
   
   & > div {
     margin: auto;
@@ -134,7 +144,7 @@ class CheckinQR extends React.Component {
       browser,
     } = this.props;
 
-    const largeSize = browser.height / 3;
+    const largeSize = Math.max(browser.height / 5, browser.width / 5);
     const smallSize = ((browser.width - 80) / 10) - 20;
 
     const { newXUser } = this.props;
