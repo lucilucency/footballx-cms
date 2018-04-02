@@ -40,7 +40,7 @@ const moment = require('moment');
 
 const initialState = props => ({
   event: {
-    hotspots: props.hotspotId ? [props.hotspotId] : [],
+    hotspots: props.hotspotId ? [props.hotspotId] : null,
     group: props.groupId ? { value: props.groupId } : {},
     match: props.matchId ? { value: props.matchId } : {},
     price: {},
@@ -203,7 +203,7 @@ class CreateEventForm extends React.Component {
       price: event.price.value,
       discount: event.discount.value,
       deposit: event.deposit.value || 0,
-      is_charged: true,
+      is_charged: event.is_charged.value,
       notes: event.notes.value || '',
 
       start_time_register: event.start_time_register.value,
@@ -493,7 +493,7 @@ class CreateEventForm extends React.Component {
       hintText={strings.filter_match}
       floatingLabelText={strings.filter_match}
       // searchText={this.state.event.match && this.state.event.match.text}
-      // value={this.state.event.match.value}
+      value={this.state.event.match.value}
       dataSource={this.props.dataSourceMatches}
       onNewRequest={this.handleSelectMatch}
       filter={AutoComplete.fuzzyFilter}
@@ -501,8 +501,8 @@ class CreateEventForm extends React.Component {
       maxSearchResults={100}
       fullWidth
       listStyle={{ maxHeight: 300, overflow: 'auto' }}
-      // validators={['required']}
-      // errorMessages={[strings.validate_is_required]}
+      validators={['required']}
+      errorMessages={[strings.validate_is_required]}
     />);
     const __renderMatchPreview = () => (<div>
       <MatchWrapper>
@@ -917,8 +917,15 @@ class CreateEventForm extends React.Component {
 
       <Dialog
         title={strings.form_create_events_dialog_desc}
-        actions={<FlatButton
-          label="Close"
+        actions={[<FlatButton
+          label="Retry"
+          secondary
+          keyboardFocused
+          onClick={() => {
+            this.closeDialog();
+          }}
+        />, <FlatButton
+          label="Done"
           primary
           keyboardFocused
           onClick={() => {
@@ -927,10 +934,11 @@ class CreateEventForm extends React.Component {
               this.props.callback() : mode === 'edit' ?
                 props.history.push(`/hotspot/${this.state.formData.event_id.value}`) : props.history.push('/events');
           }}
-        />}
+        />]}
         modal={false}
         open={this.state.submitResults.show}
         onRequestClose={this.closeDialog}
+        autoScrollBodyContent
       >
         <List>
           {this.state.submitResults.data.map(r => (<ListItem
