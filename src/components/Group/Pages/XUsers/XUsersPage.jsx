@@ -14,7 +14,7 @@ import Table from 'components/Table/index';
 import Container from 'components/Container/index';
 import styled from 'styled-components';
 import constants from 'components/constants';
-import MrSuicideGoatQRCode from 'components/MrSuicideGoatQRCode';
+import MrSuicideGoatQRCode from 'components/Visualizations/QRCode';
 
 const groupXUsers = {};
 const fileHeader = {

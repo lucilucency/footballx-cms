@@ -9,9 +9,8 @@ import queryString from 'querystring';
 import moment from 'moment';
 import { isEmpty } from 'lodash';
 import Clubs from 'fxconstants/build/clubsObj.json';
-import styled from 'styled-components';
-import constants from 'components/constants';
 import BigCalendar from 'components/Calendar';
+import CalendarMatch from 'components/Visualizations/Calendar/Match';
 import Header from './Header';
 import FilterForm from './Forms/FilterForm';
 
@@ -39,73 +38,6 @@ class RequestLayer extends React.Component {
       getData(nextProps);
     }
   }
-
-  __renderMatch = (row) => {
-    const Styled = styled.div`
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      position: relative;
-      margin-top: -1px;
-      height: 1.5em;
-      align-items: center;
-      font-size: 80%;
-      //min-width: 80px;
-      //max-width: 140px;
-      transition: transform .2s;
-      :hover {
-        transform: scale(1.1);
-      }
-      span {
-        @media only screen and (max-width: 660px) {
-          display: none;
-        }
-        @media only screen and (max-width: 900px) {
-          font-size: 0.8em;
-        }
-      }
-      > div {
-        flex: 1;
-        justify-content: left;
-      }
-      > div:first-child * {
-        float: right;
-      }
-      > div:last-child * {
-        float: left;
-      }
-      img {
-        margin-right: 7px;
-        margin-left: 7px;
-        margin-top: 2px;
-        position: relative;
-        height: 1em;
-        box-shadow: 0 0 5px ${constants.defaultPrimaryColor};
-        vertical-align: middle;
-        
-        @media only screen and (max-width: 660px) {
-          margin-right: 3px;
-          height: 1.1em;
-        }
-      }
-    `;
-    return (<Styled>
-      <div>
-        <img
-          src={Clubs[row.home] && Clubs[row.home].icon}
-          alt=""
-        />
-        <span>{Clubs[row.home] && Clubs[row.home].short_name}</span>
-      </div>
-      <div>
-        <img
-          src={Clubs[row.away] && Clubs[row.away].icon}
-          alt=""
-        />
-        <span>{Clubs[row.away] && Clubs[row.away].short_name}</span>
-      </div>
-    </Styled>);
-  };
 
   render() {
     if (!this.props.user) {
@@ -152,7 +84,10 @@ class RequestLayer extends React.Component {
             events={matches && matches.length ? matches.map((row) => {
               const startDate = new Date(row.date * 1000);
               const endDate = new Date((row.date * 1000) + 5400000);
-              const title = this.__renderMatch(row);
+              const title = (<CalendarMatch
+                home={row.home}
+                away={row.away}
+              />);
               const tooltip = `${Clubs[row.home] && Clubs[row.home].name} vs ${Clubs[row.away] && Clubs[row.away].name}`;
 
               return {
