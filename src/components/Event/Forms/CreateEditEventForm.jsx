@@ -20,6 +20,9 @@ import {
   List,
   ListItem,
   MenuItem,
+  FontIcon,
+  Chip,
+  Avatar,
 } from 'material-ui';
 import Checkbox from 'material-ui/Checkbox';
 import IconFail from 'material-ui/svg-icons/content/clear';
@@ -32,9 +35,11 @@ import Spinner from 'components/Spinner';
 import { SketchPicker } from 'react-color';
 import FormField from 'components/Form/FormField';
 import { AutoCompleteValidator, SelectValidator, TextValidator } from 'react-material-ui-form-validator';
-/* css */
+import BigSelector from 'components/BigSelector';
 import styled, { css } from 'styled-components';
 import constants from 'components/constants';
+
+import HotspotSelector from './HotspotSelector';
 
 const moment = require('moment');
 
@@ -99,6 +104,21 @@ class CreateEventForm extends React.Component {
       dataSourceMatches: [],
       dataSourceHotspots: [],
       dataSourceGroups: [],
+
+      state4: [
+        {
+          label: 'France',
+          value: {
+            'English short name': 'France',
+            'French short name': 'France (la)',
+            'Alpha-2 code': 'FR',
+            'Alpha-3 code': 'FRA',
+            Numeric: 250,
+            Capital: 'Paris',
+            Continent: 4,
+          },
+        },
+      ],
     };
     bindAll([
       'getFormData',
@@ -252,32 +272,30 @@ class CreateEventForm extends React.Component {
       const doEditEvent = (eventId, eventData) => new Promise((resolve) => {
         resolve(editEventFn(eventId, eventData));
       });
-
       event.hotspots && Promise.all(event.hotspots.map((o) => {
         that.setState({
           submitResults: update(that.state.submitResults, {
             data: {
               $push: [{
-                hotspot_name: !that.props.hotspotId ? that.props.dataSourceHotspots.find(h => h.value === o).textShort : event.match.text,
+                actionName: !that.props.hotspotId ? o.label : event.match.text,
                 submitting: true,
               }],
             },
           }),
         });
         const eventData = this.getFormData();
-        eventData.hotspot_id = o;
+        eventData.hotspot_id = o.value.id;
         return this.props.mode === 'edit' ? doEditEvent(this.state.event.event_id, eventData) : doCreateEvent(eventData, this.state.payload);
       })).then((results) => {
-        const resultsReport = event.hotspots.map((hotspotId, index) => {
-          const hotspotName = !that.props.hotspotId ? that.props.dataSourceHotspots.find(o => o.value === hotspotId).textShort : event.match.text;
+        const resultsReport = event.hotspots.map((o, index) => {
           if (results[index].type.indexOf('OK') === 0) {
             return {
-              hotspot_name: hotspotName,
+              actionName: !that.props.hotspotId ? o.label : event.match.text,
               submitting: false,
             };
           }
           return {
-            hotspot_name: hotspotName,
+            actionName: !that.props.hotspotId ? o.label : event.match.text,
             submitting: false,
             error: results[index].error,
           };
@@ -908,7 +926,24 @@ class CreateEventForm extends React.Component {
           <Col flex={3}>{__renderStartTimeCheckinPicker()}</Col>
           <Col flex={3}>{__renderEndTimeCheckinPicker()}</Col>
         </Row>
-        {__renderNotesInput()}
+        <Row>
+          {__renderNotesInput()}
+        </Row>
+
+        <Row>
+          <HotspotSelector
+            onSelect={(values) => {
+              console.log('values', values);
+              this.setState({
+                event: update(this.state.event, {
+                  hotspots: {
+                    $set: values,
+                  },
+                }),
+              });
+            }}
+          />
+        </Row>
       </div>
 
       <div className="actions">
@@ -942,7 +977,7 @@ class CreateEventForm extends React.Component {
       >
         <List>
           {this.state.submitResults.data.map(r => (<ListItem
-            primaryText={r.hotspot_name}
+            primaryText={r.actionName}
             leftIcon={r.error ?
               <IconFail color={constants.colorRed} title={strings.form_create_event_fail} />
               : <IconSuccess

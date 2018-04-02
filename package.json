@@ -21,6 +21,7 @@
     "url": "http://code.ttab.me/web"
   },
   "dependencies": {
+    "@google/maps": "^0.4.5",
     "abcolor": "^0.5.5",
     "babel-eslint": "^8.2.2",
     "babel-register": "^6.26.0",
@@ -67,6 +68,7 @@
     "react-form-validator-core": "^0.2.0",
     "react-google-maps": "^9.4.5",
     "react-helmet": "^5.2.0",
+    "react-infinite": "^0.12.1",
     "react-markdown": "^2.5.1",
     "react-material-ui-form-validator": "^1.1.0",
     "react-measure": "^1.4.7",

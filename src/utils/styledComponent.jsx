@@ -36,7 +36,7 @@ export const FormWrapper = styled(ValidatorForm)`
   transition: max-height 1s;
   box-sizing: border-box;
   ${props => ((props['data-display']) ? css`
-      max-height: 2000px;
+      max-height: 10000px;
   ` : css`
       max-height: 0;
   `)}
