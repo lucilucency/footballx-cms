@@ -1,4 +1,4 @@
-/* eslint-disable react/forbid-prop-types,max-len */
+/* eslint-disable react/forbid-prop-types,max-len,no-lonely-if */
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -23,7 +23,8 @@ import {
 } from 'material-ui';
 import Checkbox from 'material-ui/Checkbox';
 import IconFail from 'material-ui/svg-icons/content/clear';
-import IconSuccess from 'material-ui/svg-icons/navigation/check';
+import IconSuccess from 'material-ui/svg-icons/navigation/check'
+import CircularProgress from 'material-ui/CircularProgress';
 import DateTimePicker from 'material-ui-datetimepicker';
 import DatePickerDialog from 'material-ui/DatePicker/DatePickerDialog';
 import TimePickerDialog from 'material-ui/TimePicker/TimePickerDialog';
@@ -132,16 +133,17 @@ class CreateEventForm extends React.Component {
   componentWillReceiveProps(newProps) {
     if (newProps.mode === 'edit') {
       const __group = newProps.event.group_id ? { value: newProps.event.group_id, text: newProps.dataSourceGroups.find(o => o.value === newProps.event.group_id) && newProps.dataSourceGroups.find(o => o.value === newProps.event.group_id).text } : {};
+      const __hotspots = newProps.event.hotspot_id ? [{
+        label: newProps.event.hotspot_name,
+        value: {
+          id: newProps.event.hotspot_id,
+          name: newProps.event.hotspot_name,
+        },
+      }] : this.state.hotspots;
       this.setState({
         event: {
           event_id: newProps.event.event_id,
-          hotspots: newProps.event.hotspot_id ? [{
-            label: newProps.event.hotspot_name,
-            value: {
-              id: newProps.event.hotspot_id,
-              name: newProps.event.hotspot_name,
-            },
-          }] : [],
+          hotspots: __hotspots,
           group: __group,
           match: newProps.event.match_id ? { value: newProps.event.match_id } : {},
           seats: { value: newProps.event.seats, text: newProps.event.seats && newProps.event.seats.toString() },
@@ -171,16 +173,18 @@ class CreateEventForm extends React.Component {
         },
       });
     } else {
-      this.setState({
-        event: update(this.state.event, {
-          hotspots: {
-            $set: newProps.hotspot ? [{
-              label: newProps.hotspot.name,
-              value: newProps.hotspot,
-            }] : [],
-          },
-        }),
-      });
+      if (newProps.hotspot) {
+        this.setState({
+          event: update(this.state.event, {
+            hotspots: {
+              $set: [{
+                label: newProps.hotspot.name,
+                value: newProps.hotspot,
+              }],
+            },
+          }),
+        });
+      }
     }
   }
 
@@ -259,9 +263,18 @@ class CreateEventForm extends React.Component {
     const that = this;
     const event = that.state.event;
 
+    const submitResultData = [];
+    event.hotspots.forEach((o) => {
+      submitResultData.push({
+        submitAction: !that.props.hotspotId ? o.label : event.match.text,
+        submitting: true,
+      });
+    });
+
     this.setState({
       submitResults: update(that.state.submitResults, {
         show: { $set: true },
+        data: { $set: submitResultData },
       }),
     }, () => {
       const createEventFn = that.props.dispatch ? that.props.dispatch : that.props.defaultCreateFunction;
@@ -273,17 +286,8 @@ class CreateEventForm extends React.Component {
       const doEditEvent = (eventId, eventData) => new Promise((resolve) => {
         resolve(editEventFn(eventId, eventData));
       });
+
       event.hotspots && Promise.all(event.hotspots.map((o) => {
-        that.setState({
-          submitResults: update(that.state.submitResults, {
-            data: {
-              $push: [{
-                submitAction: !that.props.hotspotId ? o.label : event.match.text,
-                submitting: true,
-              }],
-            },
-          }),
-        });
         const eventData = this.getFormData();
         eventData.hotspot_id = o.value.id;
         return this.props.mode === 'edit' ? doEditEvent(this.state.event.event_id, eventData) : doCreateEvent(eventData, this.state.payload);
@@ -975,11 +979,11 @@ class CreateEventForm extends React.Component {
           {this.state.submitResults.data.map(r => (<ListItem
             key={r.submitAction}
             primaryText={r.submitAction}
-            leftIcon={r.error ?
-              <IconFail color={constants.colorRed} title={strings.form_create_event_fail} />
+            leftIcon={r.submitting ? <CircularProgress size={24} /> : r.error ?
+              <IconFail color={constants.colorRed} title={strings.form_general_fail} />
               : <IconSuccess
                 color={constants.colorSuccess}
-                title={strings.form_create_event_success}
+                title={strings.form_general_success}
               />}
             secondaryText={r.error && r.error}
             secondaryTextLines={1}
