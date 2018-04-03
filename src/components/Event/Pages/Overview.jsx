@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -92,7 +91,7 @@ const HotspotContainer = styled.div`
 class Overview extends React.Component {
   static propTypes = {
     event: PropTypes.shape({}),
-    eventXUsers: PropTypes.shape([]),
+    eventXUsers: PropTypes.array,
     user: PropTypes.shape({}),
   };
 

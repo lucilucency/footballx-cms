@@ -158,7 +158,7 @@ class CreateEditHotspotForm extends React.Component {
           submitResults: update(that.state.submitResults, {
             data: {
               $push: [{
-                submitAction: 'Creating hotspot',
+                submitAction: that.props.mode === 'edit' ? 'Updating hotspot' : 'Creating hotspot',
                 submitting: true,
               }],
             },
@@ -182,7 +182,7 @@ class CreateEditHotspotForm extends React.Component {
         const resultsReport = [];
         if (results[0].type.indexOf('OK') === 0) {
           resultsReport.push({
-            submitAction: 'Create hotspot successfully',
+            submitAction: that.props.mode === 'edit' ? 'Update hotspot successfully' : 'Create hotspot successfully',
             submitting: false,
           });
 
@@ -197,7 +197,7 @@ class CreateEditHotspotForm extends React.Component {
           });
         } else {
           resultsReport.push({
-            submitAction: 'Create hotspot failed',
+            submitAction: that.props.mode === 'edit' ? 'Update hotspot failed' : 'Create hotspot failed',
             submitting: false,
             error: results[0].error,
           });
@@ -358,8 +358,8 @@ class CreateEditHotspotForm extends React.Component {
       <MapWithSearchBox
         onChanged={this.onPlaceChanged}
         marker={mode === 'edit' && {
-          lat: Number(this.state.formData.lat.value),
-          lng: Number(this.state.formData.lon.value),
+          lat: this.state.formData.lat.value || 0,
+          lng: this.state.formData.lon.value || 0,
         }}
       />
 

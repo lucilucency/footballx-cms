@@ -10,7 +10,7 @@ import moment from 'moment';
 import { isEmpty } from 'lodash';
 import Clubs from 'fxconstants/build/clubsObj.json';
 import BigCalendar from 'components/Calendar';
-import CalendarMatch from 'components/Visualizations/Calendar/Match';
+import CalendarMatch from 'components/Visualizations/Match/CalendarView';
 import Header from './Header';
 import FilterForm from './Forms/FilterForm';
 

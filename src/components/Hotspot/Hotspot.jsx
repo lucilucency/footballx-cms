@@ -7,13 +7,13 @@ import {
   getHotspot,
   getHotspotEvents,
   toggleShowForm,
+  createHotspotEvent,
 } from 'actions';
 import strings from 'lang';
 import TabBar from 'components/TabBar';
 import Spinner from 'components/Spinner';
 import EditHotspotForm from 'components/Hotspot/Forms/CreateEditHotspotForm';
-import CreateEventForm from './Forms/CreateHotspotEvent';
-// import EditHotspotForm from './Forms/EditHotspot';
+import CreateEventForm from 'components/Event/Forms/CreateEditEventForm';
 import HotspotHeader from './Header/index';
 import hotspotPages from './HotspotPages';
 
@@ -61,7 +61,7 @@ class RequestLayer extends React.Component {
 
   render() {
     const props = this.props;
-    const { location, match, hotspot, user, history, toggleShowFormEditHotspot, showFormEditHotspot } = props;
+    const { location, match, hotspot, user, history, showFormEditHotspot, showFormCreateEvent, toggleShowFormEditHotspot, toggleShowFormCreateEvent } = props;
     const route = this.props.match.params.hotspotId;
 
     const userData = user.user;
@@ -91,7 +91,15 @@ class RequestLayer extends React.Component {
           <Helmet title={title} />
           <div>
             <HotspotHeader {...this.props} hotspotId={hotspotId} isOwner={isOwner} />
-            <CreateEventForm hotspotId={hotspotId} />
+            <CreateEventForm
+              mode="create"
+              toggle
+              display={showFormCreateEvent}
+              callback={toggleShowFormCreateEvent}
+              hotspot={hotspot}
+              hotspotId={hotspotId}
+              dispatch={props.createHotspotEvent}
+            />
             <EditHotspotForm
               mode="edit"
               toggle
@@ -117,12 +125,16 @@ const mapStateToProps = state => ({
   hotspot: state.app.hotspot.data || {},
   user: state.app.metadata.data,
   showFormEditHotspot: state.app.formEditHotspot.show,
+  showFormCreateEvent: state.app.formCreateEvent.show,
 });
 
 const mapDispatchToProps = dispatch => ({
   getHotspot: hotspotId => dispatch(getHotspot(hotspotId)),
   getHotspotEvents: (hotspotId, params) => dispatch(getHotspotEvents(hotspotId, params)),
+  createHotspotEvent: (params, payload) => dispatch(createHotspotEvent(params, payload)),
+
   toggleShowFormEditHotspot: () => dispatch(toggleShowForm('editHotspot')),
+  toggleShowFormCreateEvent: () => dispatch(toggleShowForm('createEvent')),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RequestLayer));

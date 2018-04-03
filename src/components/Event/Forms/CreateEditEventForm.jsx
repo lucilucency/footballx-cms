@@ -20,9 +20,6 @@ import {
   List,
   ListItem,
   MenuItem,
-  FontIcon,
-  Chip,
-  Avatar,
 } from 'material-ui';
 import Checkbox from 'material-ui/Checkbox';
 import IconFail from 'material-ui/svg-icons/content/clear';
@@ -35,7 +32,6 @@ import Spinner from 'components/Spinner';
 import { SketchPicker } from 'react-color';
 import FormField from 'components/Form/FormField';
 import { AutoCompleteValidator, SelectValidator, TextValidator } from 'react-material-ui-form-validator';
-import BigSelector from 'components/BigSelector';
 import styled, { css } from 'styled-components';
 import constants from 'components/constants';
 
@@ -45,7 +41,10 @@ const moment = require('moment');
 
 const initialState = props => ({
   event: {
-    hotspots: props.hotspotId ? [props.hotspotId] : null,
+    hotspots: props.hotspot ? [{
+      label: props.hotspot.name,
+      value: props.hotspot,
+    }] : null,
     group: props.groupId ? { value: props.groupId } : {},
     match: props.matchId ? { value: props.matchId } : {},
     price: {},
@@ -104,21 +103,6 @@ class CreateEventForm extends React.Component {
       dataSourceMatches: [],
       dataSourceHotspots: [],
       dataSourceGroups: [],
-
-      state4: [
-        {
-          label: 'France',
-          value: {
-            'English short name': 'France',
-            'French short name': 'France (la)',
-            'Alpha-2 code': 'FR',
-            'Alpha-3 code': 'FRA',
-            Numeric: 250,
-            Capital: 'Paris',
-            Continent: 4,
-          },
-        },
-      ],
     };
     bindAll([
       'getFormData',
@@ -151,7 +135,13 @@ class CreateEventForm extends React.Component {
       this.setState({
         event: {
           event_id: newProps.event.event_id,
-          hotspots: newProps.event.hotspot_id ? [newProps.event.hotspot_id] : [],
+          hotspots: newProps.event.hotspot_id ? [{
+            label: newProps.event.hotspot_name,
+            value: {
+              id: newProps.event.hotspot_id,
+              name: newProps.event.hotspot_name,
+            },
+          }] : [],
           group: __group,
           match: newProps.event.match_id ? { value: newProps.event.match_id } : {},
           seats: { value: newProps.event.seats, text: newProps.event.seats && newProps.event.seats.toString() },
@@ -179,6 +169,17 @@ class CreateEventForm extends React.Component {
           checkin_total: { value: newProps.event.checkin_total },
           register_total: { value: newProps.event.register_total },
         },
+      });
+    } else {
+      this.setState({
+        event: update(this.state.event, {
+          hotspots: {
+            $set: newProps.hotspot ? [{
+              label: newProps.hotspot.name,
+              value: newProps.hotspot,
+            }] : [],
+          },
+        }),
       });
     }
   }
@@ -277,7 +278,7 @@ class CreateEventForm extends React.Component {
           submitResults: update(that.state.submitResults, {
             data: {
               $push: [{
-                actionName: !that.props.hotspotId ? o.label : event.match.text,
+                submitAction: !that.props.hotspotId ? o.label : event.match.text,
                 submitting: true,
               }],
             },
@@ -290,12 +291,12 @@ class CreateEventForm extends React.Component {
         const resultsReport = event.hotspots.map((o, index) => {
           if (results[index].type.indexOf('OK') === 0) {
             return {
-              actionName: !that.props.hotspotId ? o.label : event.match.text,
+              submitAction: !that.props.hotspotId ? o.label : event.match.text,
               submitting: false,
             };
           }
           return {
-            actionName: !that.props.hotspotId ? o.label : event.match.text,
+            submitAction: !that.props.hotspotId ? o.label : event.match.text,
             submitting: false,
             error: results[index].error,
           };
@@ -905,7 +906,17 @@ class CreateEventForm extends React.Component {
       {this.state.error && <Error text={this.state.error} />}
 
       <div>
-        {!(mode === 'edit') && !this.props.hotspotId && this.props.dataSourceHotspots && __renderHotspotSelector()}
+        {!(mode === 'edit') && !this.props.hotspotId && this.props.dataSourceHotspots && <HotspotSelector
+          onSelect={(values) => {
+            this.setState({
+              event: update(this.state.event, {
+                hotspots: {
+                  $set: values,
+                },
+              }),
+            });
+          }}
+        />}
         {!(mode === 'edit') && !this.props.matchId && this.props.dataSourceMatches && __renderMatchSelector()}
         {!(mode === 'edit') && this.state.event.match.home && __renderMatchPreview()}
         {!(mode === 'edit') && !this.props.groupId && this.props.dataSourceGroups && __renderGroupSelector()}
@@ -928,21 +939,6 @@ class CreateEventForm extends React.Component {
         </Row>
         <Row>
           {__renderNotesInput()}
-        </Row>
-
-        <Row>
-          <HotspotSelector
-            onSelect={(values) => {
-              console.log('values', values);
-              this.setState({
-                event: update(this.state.event, {
-                  hotspots: {
-                    $set: values,
-                  },
-                }),
-              });
-            }}
-          />
         </Row>
       </div>
 
@@ -977,7 +973,8 @@ class CreateEventForm extends React.Component {
       >
         <List>
           {this.state.submitResults.data.map(r => (<ListItem
-            primaryText={r.actionName}
+            key={r.submitAction}
+            primaryText={r.submitAction}
             leftIcon={r.error ?
               <IconFail color={constants.colorRed} title={strings.form_create_event_fail} />
               : <IconSuccess

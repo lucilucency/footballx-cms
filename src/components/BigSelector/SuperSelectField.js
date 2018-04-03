@@ -440,7 +440,7 @@ class SelectField extends Component {
               style={{ margin: '0 16px 5px', width: 'calc(100% - 32px)' }}
               underlineFocusStyle={autocompleteUnderlineFocusStyle}
               underlineStyle={autocompleteUnderlineStyle}
-              value={this.state.searchText}
+              value={this.state.searchText || ""}
             />
           )}
 
