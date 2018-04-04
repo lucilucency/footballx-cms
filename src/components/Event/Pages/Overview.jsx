@@ -27,7 +27,7 @@ const eventXUsersColumns = (user, event) => [{
   field: 'nickname',
   displayFn: transformations.th_xuser_image,
   sortFn: true,
-}, null && user.user_type === 1 && {
+}, user.user_type === 1 && {
   displayName: '',
   field: 'facebook_id',
   displayFn: (row, col, field) => (<div>

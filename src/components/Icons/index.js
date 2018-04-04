@@ -16,6 +16,7 @@ export { default as IconDot } from './Dota2/Dot';
 export { default as IconBackpack } from './Dota2/Backpack';
 export { default as IconDice } from './Dota2/Dice';
 export { default as IconCrystalBall } from './Dota2/CrystalBall';
+
 export { default as IconLogout } from './FontAwesome/Logout';
 export { default as IconOpenSource } from './FontAwesome/OpenSource';
 export { default as IconGithub } from './FontAwesome/Github';
@@ -25,4 +26,5 @@ export { default as IconFacebook } from './FontAwesome/Facebook';
 export { default as IconFootballX } from './Fx/FootballX';
 export { default as IconTeam } from './Fx/Team';
 export { default as IconCheckCircle } from './Fx/CheckCircle';
+export { default as IconProgressing } from './Fx/Progressing';
 

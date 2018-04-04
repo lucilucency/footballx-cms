@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { getHotspotHUsers } from 'actions';
+import { getHotspotHUsers, createHotspotHUser } from 'actions';
 import Table from 'components/Table';
 import Container from 'components/Container';
 import { transformations } from 'utils';
@@ -63,9 +63,12 @@ class RequestLayer extends React.Component {
     const { routeParams } = this.props;
     const subInfo = routeParams.subInfo;
 
-
     return (<div>
-      {subInfo && subInfo === 'add' && <CreateHotspotHUserForm hotspotId={Number(this.props.hotspotId)} />}
+      {subInfo && subInfo === 'add' && <CreateHotspotHUserForm
+        hotspotId={Number(this.props.hotspotId)}
+        dispatch={this.props.createHotspotHUser}
+        callback={() => {}}
+      />}
       <Husers {...this.props.hotspotHUsers} />
     </div>);
   }
@@ -77,6 +80,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   getHotspotHUsers: hotspotId => dispatch(getHotspotHUsers(hotspotId)),
+  createHotspotHUser: (params, payload) => dispatch(createHotspotHUser(params, payload)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RequestLayer);

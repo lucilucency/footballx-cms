@@ -15,7 +15,7 @@ import Spinner from 'components/Spinner';
 import EditHotspotForm from 'components/Hotspot/Forms/CreateEditHotspotForm';
 import CreateEventForm from 'components/Event/Forms/CreateEditEventForm';
 import HotspotHeader from './Header/index';
-import hotspotPages from './HotspotPages';
+import hotspotPages from './Pages';
 
 const getEvents = (props) => {
   const now = Date.now();

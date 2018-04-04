@@ -4,15 +4,12 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import update from 'immutability-helper';
 import PropTypes from 'prop-types';
-/* actions & helpers */
 import { toDateTimeString, Row, Col, bindAll, FormWrapper } from 'utils';
 import { createEvent as defaultCreateEvent, editEvent as defaultEditEvent, getHotspots, getGroups, getMatchesLeague } from 'actions';
 import util from 'util';
-/* data */
 import strings from 'lang';
 import * as data from 'components/Event/Event.config';
 import Clubs from 'fxconstants/build/clubsObj.json';
-/* components */
 import {
   AutoComplete,
   Dialog,
@@ -23,7 +20,7 @@ import {
 } from 'material-ui';
 import Checkbox from 'material-ui/Checkbox';
 import IconFail from 'material-ui/svg-icons/content/clear';
-import IconSuccess from 'material-ui/svg-icons/navigation/check'
+import IconSuccess from 'material-ui/svg-icons/navigation/check';
 import CircularProgress from 'material-ui/CircularProgress';
 import DateTimePicker from 'material-ui-datetimepicker';
 import DatePickerDialog from 'material-ui/DatePicker/DatePickerDialog';
@@ -31,11 +28,9 @@ import TimePickerDialog from 'material-ui/TimePicker/TimePickerDialog';
 import Error from 'components/Error';
 import Spinner from 'components/Spinner';
 import { SketchPicker } from 'react-color';
-import FormField from 'components/Form/FormField';
-import { AutoCompleteValidator, SelectValidator, TextValidator } from 'react-material-ui-form-validator';
+import { AutoCompleteValidator, TextValidator } from 'react-material-ui-form-validator';
 import styled, { css } from 'styled-components';
 import constants from 'components/constants';
-
 import HotspotSelector from './HotspotSelector';
 
 const moment = require('moment');
@@ -437,53 +432,6 @@ class CreateEventForm extends React.Component {
       left: 0;
     `;
 
-    // eslint-disable-next-line no-unused-vars
-    const __renderHotspotSelector = () => (<SelectValidator
-      name="hotspots"
-      fullWidth
-      multiple
-      hintText={strings.tooltip_select_hotspots}
-      value={this.state.event.hotspots}
-      onChange={(event, index, values) => {
-        this.setState({
-          event: update(this.state.event, {
-            hotspots: { $set: values },
-          }),
-        });
-      }}
-      selectionRenderer={(values) => {
-        const that = this;
-        switch (values.length) {
-          case 0:
-            return '';
-          case 1:
-            return that.props.dataSourceHotspots.find(o => o.value === values[0]).text;
-          default: {
-            const arrayNames = values.map(value => `[${that.props.dataSourceHotspots.find(o => o.value === value).textShort}]`);
-            return arrayNames.join(',  ');
-          }
-        }
-      }}
-      validators={['required']}
-      errorMessages={[strings.validate_is_required]}
-    >
-      {this.__renderHotspotSelectorItems()}
-    </SelectValidator>);
-    // eslint-disable-next-line no-unused-vars
-    const __renderHotspotSelector2 = () => (<FormField
-      name="hotspots"
-      label={strings.tooltip_select_hotspots}
-      dataSource={this.props.dataSourceHotspots.map(o => ({ text: o.text, value: o.value }))}
-      fullWidth
-      onChange={(data) => {
-        this.setState({
-          event: update(this.state.event, {
-            hotspots: { $set: data.selectedElements },
-          }),
-        });
-      }}
-      listStyle={{ maxHeight: 300, overflow: 'auto' }}
-    />);
     const __renderGroupSelector = () => (<AutoCompleteValidator
       name="group"
       hintText={strings.filter_group}
@@ -867,9 +815,9 @@ class CreateEventForm extends React.Component {
       rows={1}
       rowsMax={4}
       value={this.state.event.notes.value}
-      onChange={(event, notes) => this.setState({
+      onChange={(event, value) => this.setState({
         event: update(this.state.event, {
-          notes: { $set: { text: notes, value: notes } },
+          notes: { $set: { text: value, value } },
         }),
       })}
       fullWidth
