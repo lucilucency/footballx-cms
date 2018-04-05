@@ -31,6 +31,7 @@ export const cuserLogin = (username, password) => fxActionAuth('auth', 'cuser/lo
 export const getHUserHotspot = accountId => fxActionGet('hotspot', `huser/${accountId}/hotspot`);
 export const createUser = (params, payload) => fxActionPost('ADD/users', 'user', params, null, payload);
 export const editUser = (userID, params) => fxActionPut('EDIT/user', `user/${userID}`, params);
+export const getUser = userID => fxActionGet('user', `user/${userID}`);
 /* club & league */
 export const getLeagueClubs = leagueID => fxActionGet(`league[${leagues[leagueID] && leagues[leagueID].name}]`, `league/${leagueID}/clubs`);
 export const editLeagueClub = (leagueID, clubID, params) => fxActionPut(`EDIT_ARR/league[${leagues[leagueID] && leagues[leagueID].name}]`, `club/${clubID}`, params);

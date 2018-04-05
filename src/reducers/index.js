@@ -14,9 +14,9 @@ const leaguesReducer = leagues.reduce((__prev, cur) => {
 export default combineReducers({
   metadata: fxReducer('metadata'),
   auth: fxReducer('auth', {}),
+  user: fxReducer('user', {}),
 
   clubs: fxReducer('clubs', []),
-  // leagues: fxReducer('leagues', []),
   ...leaguesReducer,
   matches: fxReducer('matches', []),
   matchesLeague: fxReducer('matchesLeague', { matches: [] }),

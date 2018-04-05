@@ -5,7 +5,7 @@ import MenuItem from 'material-ui/MenuItem';
 import Next from 'material-ui/svg-icons/hardware/keyboard-arrow-right';
 import strings, { langs } from 'lang';
 import styled from 'styled-components';
-import constants from '../constants';
+import constants from 'components/constants';
 
 const ClickableDiv = styled.div`
   display: flex;

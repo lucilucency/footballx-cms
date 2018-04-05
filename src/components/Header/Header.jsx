@@ -15,7 +15,7 @@ import NoficationIcon from 'material-ui/svg-icons/social/notifications-active';
 import Add from 'material-ui/svg-icons/av/playlist-add';
 import ActionSettings from 'material-ui/svg-icons/action/settings';
 import FlatButton from 'material-ui/FlatButton';
-import { LocalizationMenu } from 'components/Localization';
+import { LocalizationMenu } from 'components/Header/Localization';
 // import Announce from 'components/Announce';
 import AccountWidget from './AccountWidget';
 import DropDown from './Dropdown';
@@ -90,8 +90,8 @@ const VerticalAlignToolbar = styled(ToolbarGroup)`
 
 const VerticalAlignDropdown = styled(DropDown)`
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
 `;
 
 const VerticalAlignDiv = styled.div`
@@ -182,28 +182,6 @@ const LinkGroup = (propsVar) => {
 //   </VerticalAlignToolbar>
 // );
 
-const AccountGroup = () => (
-  <VerticalAlignToolbar>
-    <AccountWidget />
-  </VerticalAlignToolbar>
-);
-
-
-const StyledFlatButton = styled(FlatButton)`
- min-width: 30px !important;
- & > div > span {
-   display: inline-block;
-   max-width: 150px;
-   overflow: hidden;
-   text-overflow: ellipsis;
-   text-transform: none !important;
-   white-space: nowrap;
-   font-size: 16px !important;
-   padding-right: 10px !important;
-   padding-left: 0 !important;
- }
-`;
-
 const SettingsGroup = (propsVar) => {
   const { user } = propsVar;
   return (
@@ -212,26 +190,23 @@ const SettingsGroup = (propsVar) => {
       buttonProps={buttonProps}
     >
       <LocalizationMenu />
-      <AccountGroup />
       {user && user.user_type === 1 && <Link to={'/notify'}>
-        <StyledFlatButton
+        <FlatButton
           label={strings.header_send_notification}
           hoverColor="transparent"
           icon={<NoficationIcon />}
         />
       </Link>}
-      <Link to={'/settings'}>
-        <StyledFlatButton
+      {user && user.user_type === 1 && <Link to={'/settings'}>
+        <FlatButton
           label={'Settings'}
           hoverColor="transparent"
           icon={<ActionSettings />}
         />
-      </Link>
-      <FlatButton
-        fullWidth
-        label={<span className={'label'}>{'Settings'}</span>}
-        containerElement={<Link to="/settings" />}
-      />
+      </Link>}
+      <VerticalAlignToolbar>
+        <AccountWidget />
+      </VerticalAlignToolbar>
       {user ? <Logout /> : null}
     </VerticalAlignDropdown>
   );

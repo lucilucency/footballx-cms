@@ -1,38 +1,31 @@
-/* eslint-disable class-methods-use-this */
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import LogOutIcon from 'material-ui/svg-icons/action/power-settings-new';
-
+import { FlatButton } from 'material-ui';
 import strings from 'lang';
 import styled from 'styled-components';
 import constants from 'components/constants';
 
-const LogoutButton = styled.a`
-    font-size: ${constants.fontSizeMedium} !important;
-    font-weight: ${constants.fontWeightLight} !important;
-    color: ${constants.colorMutedLight} !important;
-    display: flex;
-    align-items: center;
-    margin-top: 2px;
-    margin-right: 15px;
+const LogoutButton = styled(FlatButton)`
+  font-size: ${constants.fontSizeMedium} !important;
+  font-weight: ${constants.fontWeightLight} !important;
+  color: ${constants.colorMutedLight} !important;
+  display: flex;
+  align-items: center;
+  margin-top: 2px;
+  margin-right: 15px;
 
-    & svg {
-        margin-right: 5px;
+  & svg {
+    margin-right: 5px;
 
-        color: currentColor !important;
-        width: 18px !important;
-        height: 18px !important;
-    }
+    color: currentColor !important;
+    width: 18px !important;
+    height: 18px !important;
+  }
 `;
 
 class Logout extends React.Component {
-  constructor() {
-    super();
-    this.state = {};
-    // this.handleClickLogout = this.handleClickLogout.bind(this);
-  }
-
-  handleClickLogout(event) {
+  static handleClickLogout(event) {
     event.preventDefault();
     localStorage.removeItem('access_token');
     localStorage.removeItem('account_user');
@@ -40,13 +33,19 @@ class Logout extends React.Component {
     window.location.href = '/';
   }
 
+  constructor() {
+    super();
+    this.state = {};
+    // this.handleClickLogout = this.handleClickLogout.bind(this);
+  }
+
   render() {
-    return (
-      <LogoutButton rel="no-opener no-referrer" onClick={e => this.handleClickLogout(e)}>
-        <LogOutIcon />
-        <span>{strings.app_logout}</span>
-      </LogoutButton>
-    );
+    return (<LogoutButton
+      label={strings.app_logout}
+      hoverColor="transparent"
+      icon={<LogOutIcon />}
+      onClick={e => Logout.handleClickLogout(e)}
+    />);
   }
 }
 

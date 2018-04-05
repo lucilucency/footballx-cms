@@ -332,6 +332,12 @@ class CreateEditHotspotForm extends React.Component {
         style={{ float: 'left' }}
       />,
       <FlatButton
+        key="delete"
+        label={strings.form_general_delete}
+        secondary
+        style={{ float: 'left' }}
+      />,
+      <FlatButton
         label={strings.form_general_close}
         key="cancel"
         primary
