@@ -11,7 +11,7 @@ function transformsMatchEvent(matches) {
       __cur.away = clubs[1];
       __cur.clubs = clubs;
 
-      const {hotspot_id, hotspot_address, hotspot_name, hotspot_short_name, checkin_total, register_total} = __cur;
+      const { hotspot_id, hotspot_address, hotspot_name, hotspot_short_name, checkin_total, register_total } = __cur;
       const cur = __cur;
       delete cur.hotspot_id;
       delete cur.hotspot_address;
@@ -19,12 +19,12 @@ function transformsMatchEvent(matches) {
       delete cur.hotspot_short_name;
       delete cur.checkin_total;
       delete cur.register_total;
-      cur.hotspots = [{hotspot_id, hotspot_address, hotspot_name, hotspot_short_name, checkin_total, register_total}];
+      cur.hotspots = [{ hotspot_id, hotspot_address, hotspot_name, hotspot_short_name, checkin_total, register_total }];
       prev.push(cur);
     } else {
-      const {hotspot_id, hotspot_address, hotspot_name, hotspot_short_name, checkin_total, register_total} = prev[pos];
+      const { hotspot_id, hotspot_address, hotspot_name, hotspot_short_name, checkin_total, register_total } = prev[pos];
       prev[pos].hotspots = prev[pos].hotspots || [];
-      prev[pos].hotspots.push({hotspot_id, hotspot_address, hotspot_name, hotspot_short_name, checkin_total, register_total});
+      prev[pos].hotspots.push({ hotspot_id, hotspot_address, hotspot_name, hotspot_short_name, checkin_total, register_total });
     }
     return prev;
   }, []);

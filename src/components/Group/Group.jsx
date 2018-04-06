@@ -3,11 +3,11 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Helmet from 'react-helmet';
 import { withRouter } from 'react-router-dom';
-import { getGroup, getGroupEvents } from 'actions';
+import { getGroup, getGroupEvents, createGroupEvent } from 'actions';
 import strings from 'lang';
 import TabBar from 'components/TabBar';
 import Spinner from 'components/Spinner';
-import CreateGroupEventForm from './Forms/CreateGroupEvent';
+import CreateGroupEventForm from 'components/Event/Forms/CreateEditEventForm';
 import EditGroupForm from './Forms/EditGroup';
 import GroupHeader from './Header/index';
 import pages from './Pages/index';
@@ -81,7 +81,13 @@ class RequestLayer extends React.Component {
           <Helmet title={title} />
           <div>
             {!match.params.subInfo && <GroupHeader {...this.props} groupId={Number(groupId)} isOwner={isOwner()} />}
-            <CreateGroupEventForm groupId={Number(groupId)} />
+            <CreateGroupEventForm
+              mode="create"
+              toggle
+              display={this.props.showFormCreateGroupEvent}
+              dispatch={this.props.createGroupEvent}
+              groupId={Number(groupId)}
+            />
             <EditGroupForm group={group} />
             <TabBar info={info} tabs={pages(Number(groupId))} />
           </div>
@@ -100,11 +106,13 @@ const mapStateToProps = state => ({
   loading: state.app.group.loading,
   group: state.app.group.data || {},
   metadata: state.app.metadata.data,
+  showFormCreateGroupEvent: state.app.formCreateEvent.show,
 });
 
 const mapDispatchToProps = dispatch => ({
   getGroup: groupId => dispatch(getGroup(groupId)),
   getGroupEvents: groupId => dispatch(getGroupEvents(groupId)),
+  createGroupEvent: (params, payload) => dispatch(createGroupEvent(params, payload)),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RequestLayer));

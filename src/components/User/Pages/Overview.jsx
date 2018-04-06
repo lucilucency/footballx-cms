@@ -2,9 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import strings from 'lang';
 import PropTypes from 'prop-types';
-import Table from 'components/Table';
 import Container from 'components/Container';
-import hotspotEventsColumns from 'components/Hotspot/Pages/Events/HotspotEventsColumns';
 import styled from 'styled-components';
 
 const OverviewWrapper = styled.div`
@@ -18,36 +16,26 @@ const OverviewWrapper = styled.div`
 }
 `;
 
-export const MAX_MATCHES_ROWS = 20;
-
 const Overview = (propsVar) => {
   const {
-    hotspotEvents,
-    hotspotId,
     loading,
-    browser,
   } = propsVar;
+  console.log(loading);
+
   return (<OverviewWrapper>
     <Container
-      title={strings.hotspot_upcoming_events}
-      titleTo={`/hotspots/${hotspotId}/events`}
-      loading={loading}
+      title={strings.heading_overview}
+      loading={false}
       error={false}
     >
-      <Table
-        columns={hotspotEventsColumns(browser)}
-        data={hotspotEvents}
-        maxRows={MAX_MATCHES_ROWS}
-        loading={loading}
-        error={false}
-      />
+      <div />
     </Container>
   </OverviewWrapper>);
 };
 
 class RequestLayer extends React.Component {
   componentDidMount() {
-    // getData(this.props);
+    //
   }
 
   // componentWillUpdate(nextProps) {
@@ -65,25 +53,15 @@ class RequestLayer extends React.Component {
 }
 
 RequestLayer.propTypes = {
-  data: PropTypes.oneOfType([
-    PropTypes.shape({}),
-    PropTypes.arrayOf(PropTypes.shape({})),
-  ]),
-  user: PropTypes.shape({}),
+  metadata: PropTypes.shape({}),
   loading: PropTypes.bool,
-  match: PropTypes.shape({
-    params: PropTypes.shape({
-      info: PropTypes.string,
-    }),
-  }),
 };
 
 const mapStateToProps = state => ({
-  user: state.app.metadata.data.user || {},
-  hotspotEvents: state.app.hotspotEvents && state.app.hotspotEvents.data.filter(o => o.status === 1),
   loading: state.app.hotspotEvents.loading,
   error: state.app.hotspotEvents.error,
   browser: state.browser,
+  metadata: state.app.metadata.data.user || {},
 });
 
 

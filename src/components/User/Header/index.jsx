@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-/* components */
 import { IconButton, Avatar, Badge } from 'material-ui';
 import Spinner from 'components/Spinner';
 import IconValidated from 'material-ui/svg-icons/action/check-circle';
@@ -8,16 +7,12 @@ import IconCafe from 'material-ui/svg-icons/maps/local-cafe';
 import IconBeer from 'material-ui/svg-icons/maps/local-drink';
 import IconStadium from 'material-ui/svg-icons/maps/local-activity';
 import IconPhone from 'material-ui/svg-icons/communication/phone';
-import IconLocation from 'material-ui/svg-icons/communication/location-on';
-import IconWifi from 'material-ui/svg-icons/notification/wifi';
-/* data */
+import IconEmail from 'material-ui/svg-icons/communication/email';
+import IconAddress from 'material-ui/svg-icons/communication/location-on';
 import strings from 'lang';
 import constants from 'components/constants';
-/* css */
 import styled from 'styled-components';
-
-import { HotspotHeaderStats } from './Stats';
-import HotspotHeaderButtons from './Buttons';
+import Buttons from './Buttons';
 
 const LARGE_IMAGE_SIZE = 124;
 
@@ -60,27 +55,29 @@ const InfoContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   
-  & li {
+  > li:first-child {
+    line-height: 3em;
+  }
+ 
+  > li {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     flex-wrap: wrap;
-    line-height: 1.5em;
+    color: ${constants.colorMutedLight};
     
     @media only screen and (max-width: 768px) {
       flex-direction: column;
       align-items: center;
     }
     
-    & span[data='name'] {
-      color: rgba(245, 245, 245, 0.870588);
-      font-size: 28px;
+    & span {
       text-align: center;
+      display: inline-flex;
     }
     
-    & span[data='address'] {
-      color: rgba(245, 245, 245, 0.870588);
-      font-size: 18px;
+    & span[data='name'] {
+      font-size: 28px;
       text-align: center;
     }
   }
@@ -93,7 +90,7 @@ const AvatarStyled = styled(Avatar)`
   }
 `;
 
-const getHotspotIcon = (type) => {
+const getIcon = (type) => {
   switch (type) {
     case 1:
       return (<IconButton tooltip={strings.enum_hotspot_type_1}>
@@ -116,38 +113,35 @@ const getHotspotIcon = (type) => {
 
 
 const HotspotHeader = (propsVar) => {
-  const { hotspotId, user, small, extraSmall, events, isOwner, metadata } = propsVar;
-  const hotspotData = user.data || {};
+  const { user, small, extraSmall, isOwner, metadata } = propsVar;
+  let userData = user.data || {};
+  if (userData.cuser) {
+    userData = Object.assign(userData, userData.cuser);
+  } else if (userData.huser) {
+    userData = Object.assign(userData, userData.huser);
+  } else if (userData.guser) {
+    userData = Object.assign(userData.guser);
+  }
   if (user.loading) {
     return <Spinner />;
   }
-  const checkedInXUsers = (events.length && events.reduce((a, b) => a + b.checkin_total, 0)) || 0;
-  const registeredXUsers = (events.length && events.reduce((a, b) => a + b.register_total, 0)) || 0;
 
-  let badgeStyle = {
+  const badgeStyle = color => ({
     fontSize: 20,
     top: 5,
-    left: 40,
-    background: isOwner ? constants.green : 'transparent',
-    width: 18,
-    height: 18,
-  };
+    left: 25,
+    background: color || 'transparent',
+    width: 32,
+    height: 32,
+    marginLeft: !small ? -1 * (LARGE_IMAGE_SIZE / 2) * 0.75 : 0,
+  });
 
   const avatarStyle = {
     marginLeft: small ? 30 : 0,
     marginRight: extraSmall ? 30 : 0,
   };
 
-  if (!small) {
-    badgeStyle = {
-      ...badgeStyle,
-      marginLeft: -1 * (LARGE_IMAGE_SIZE / 2) * 0.75,
-    };
-  }
-
   const iconStyle = {
-    width: 15,
-    height: 15,
     color: constants.colorMutedLight,
   };
 
@@ -155,18 +149,15 @@ const HotspotHeader = (propsVar) => {
     <Header>
       <ImageContainer>
         <Badge
-          badgeContent={<ValidatedBadge
-            data-hint={strings.tooltip_validated}
-            data-hint-position="top"
-          />}
-          badgeStyle={badgeStyle}
+          badgeContent={<ValidatedBadge />}
+          badgeStyle={badgeStyle()}
           style={{
             margin: 0,
             padding: 0,
           }}
         >
           <AvatarStyled
-            src={hotspotData.avatar || '/assets/images/footballx.png'}
+            src={userData.avatar || '/assets/images/no-avatar.png'}
             style={avatarStyle}
             size={LARGE_IMAGE_SIZE}
           />
@@ -174,34 +165,25 @@ const HotspotHeader = (propsVar) => {
       </ImageContainer>
       <InfoContainer>
         <li>
-          <span data="name">{hotspotData.name}</span>
-          {hotspotData.short_name && <small>({hotspotData.short_name})</small>}
-          {getHotspotIcon(hotspotData.type)}
+          <span data="name">{userData.username}</span>
+          {(userData.fullname || userData.name) && <small>( {userData.name || userData.fullname} )</small>}
         </li>
         <li>
-          <span data="address"><IconLocation style={{ ...iconStyle }} /> {hotspotData.address}</span>
+          <small>{strings[`enum_user_type_${userData.type}`]}</small>
         </li>
-        {hotspotData.phone && <li>
-          <span><IconPhone style={{ ...iconStyle }} /> {hotspotData.phone}</span>
+        {userData.email && <li>
+          <span><IconEmail style={{ ...iconStyle }} /> {userData.email}</span>
         </li>}
-        {hotspotData.wifi && <li>
-          <span><IconWifi style={{ ...iconStyle }} /> {hotspotData.wifi}</span>
+        {userData.phone && <li>
+          <span><IconPhone style={{ ...iconStyle }} /> {userData.phone}</span>
+        </li>}
+        {userData.address && <li>
+          <span><IconAddress style={{ ...iconStyle }} /> {userData.address}</span>
         </li>}
 
-        <HotspotHeaderStats
-          loading={user.loading}
-          error={user.error}
-          compact={!small}
-          events={events.length || 0}
-          registeredXUsers={registeredXUsers}
-          checkedInXUsers={checkedInXUsers}
-          hotspot={user.data}
-        />
-        {(metadata.user_type === 1 || isOwner) && <HotspotHeaderButtons
-          hotspotId={hotspotId}
+        {(metadata.user_type === 1 || isOwner) && <Buttons
           compact={!small}
         />}
-
       </InfoContainer>
     </Header>
   );

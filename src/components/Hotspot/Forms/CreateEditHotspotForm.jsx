@@ -71,6 +71,7 @@ class CreateEditHotspotForm extends React.Component {
     bindAll([
       'getFormData',
       'submit',
+      'deleteHotspot',
       'closeDialog',
       'onPlaceChanged',
     ], this);
@@ -211,6 +212,53 @@ class CreateEditHotspotForm extends React.Component {
     });
   }
 
+  deleteHotspot() {
+    if (confirm('Are you sure you want to delete this hotspot?')) {
+      this.setState({
+        submitResults: update(this.state.submitResults, {
+          show: { $set: true },
+        }),
+      }, () => {
+        const doSubmit = new Promise((resolve) => {
+          this.setState({
+            submitResults: update(this.state.submitResults, {
+              data: {
+                $push: [{
+                  submitAction: 'Deleting hotspot...',
+                  submitting: true,
+                }],
+              },
+            }),
+          });
+          resolve(this.props.defaultDeleteFunction(this.state.formData.hotspot_id.value))
+        });
+
+        Promise.all([doSubmit]).then((results) => {
+          const resultsReport = [];
+          if (results[0].type.indexOf('OK') === 0) {
+            resultsReport.push({
+              submitAction: 'Delete hotspot successfully',
+              submitting: false,
+            });
+          } else {
+            resultsReport.push({
+              submitAction: 'Delete hotspot failed',
+              submitting: false,
+              error: results[0].error,
+            });
+          }
+          this.setState({
+            submitResults: update(this.state.submitResults, {
+              data: { $set: resultsReport },
+            }),
+          });
+        });
+      });
+    } else {
+      // Do nothing!
+    }
+  }
+
   closeDialog() {
     this.setState({
       submitResults: update(this.state.submitResults, {
@@ -334,7 +382,7 @@ class CreateEditHotspotForm extends React.Component {
         key="delete"
         label={strings.form_general_delete}
         secondary
-        onClick={this.delete}
+        onClick={this.deleteHotspot}
         style={{ float: 'left' }}
       />,
       <FlatButton

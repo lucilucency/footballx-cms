@@ -209,7 +209,7 @@ const SettingsGroup = (propsVar) => {
       {user && user.user_type === 1 && <FlatButton
         icon={<IconUpdate />}
         onClick={() => {
-          fetch(`${FX_API}/${FX_VERSION}/content`, {method: 'POST'});
+          fetch(`${FX_API}/${FX_VERSION}/content`, { method: 'POST' });
         }}
         label={strings.app_update_content_data}
       />}

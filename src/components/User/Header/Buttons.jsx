@@ -9,6 +9,7 @@ import strings from 'lang';
 import styled from 'styled-components';
 
 const ButtonContainer = styled.div`
+  margin-top: 1em;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -78,7 +79,6 @@ HotspotHeaderButtons.propTypes = {
   showFormEditHotspot: PropTypes.bool,
   toggleShowFormCreateEvent: PropTypes.func,
   toggleShowFormEditHotspot: PropTypes.func,
-  hotspotId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 };
 
 const mapStateToProps = state => ({
