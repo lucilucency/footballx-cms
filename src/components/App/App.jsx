@@ -13,21 +13,22 @@ import Footer from 'components/Footer';
 
 import Home from 'components/Home';
 import Search from 'components/Search';
+import Settings from 'components/Settings';
+import Notify from 'components/Notify';
+
 import Login from 'components/Login';
 import Admin from 'components/Admin';
-import Settings from 'components/Settings';
 
 import Clubs from 'components/Clubs';
-import Matches from 'components/Matches';
+import Cards from 'components/Cards';
 import Event from 'components/Event';
 import Events from 'components/Events';
-import Hotspots from 'components/Hotspots';
-import Hotspot from 'components/Hotspot';
 import Groups from 'components/Groups';
 import Group from 'components/Group';
-import Cards from 'components/Cards';
-
-import Notify from 'components/Notify';
+import Hotspots from 'components/Hotspots';
+import Hotspot from 'components/Hotspot';
+import Matches from 'components/Matches';
+import User from 'components/User';
 
 import constants from 'components/constants';
 import styled from 'styled-components';
@@ -98,25 +99,24 @@ class App extends React.Component {
           <Header params={params} location={location} />
           <StyledBodyDiv>
             <Route exact path="/" component={Home} />
-            <Route exact path="/search" component={Search} />
 
             <Route exact path="/login" component={Login} />
             <Route exact path="/admin" component={Admin} />
+            <Route exact path="/search" component={Search} />
             <Route exact path="/settings" component={Settings} />
-
-            <Route exact path="/clubs/:clubId?/:info?" component={Clubs} />
-            <Route exact path="/matches/:matchId?/:info?" component={Matches} />
-            <Route exact path="/events/:info?/:subInfo?" component={Events} />
-            <Route exact path="/event/:eventId?/:info?/:subInfo?" component={Event} />
-            <Route exact path="/hotspots/:info?/:subInfo?" component={Hotspots} />
-            <Route exact path="/hotspot/:hotspotId?/:info?/:subInfo?" component={Hotspot} />
-            <Route exact path="/groups/:info?/:subInfo?" component={Groups} />
-            <Route exact path="/group/:groupId?/:info?/:subInfo?" component={Group} />
-            <Route exact path="/cards/:info?/:subInfo?" component={Cards} />
-
             <Route exact path="/notify" component={Notify} />
 
-            {/* <Route exact path="/events/:eventId?/:info?" component={} /> */}
+            <Route exact path="/clubs/:clubId?/:info?" component={Clubs} />
+            <Route exact path="/cards/:info?/:subInfo?" component={Cards} />
+            <Route exact path="/events/:info?/:subInfo?" component={Events} />
+            <Route exact path="/event/:eventId?/:info?/:subInfo?" component={Event} />
+            <Route exact path="/groups/:info?/:subInfo?" component={Groups} />
+            <Route exact path="/group/:groupId?/:info?/:subInfo?" component={Group} />
+            <Route exact path="/hotspots/:info?/:subInfo?" component={Hotspots} />
+            <Route exact path="/hotspot/:hotspotId?/:info?/:subInfo?" component={Hotspot} />
+            <Route exact path="/matches/:matchId?/:info?" component={Matches} />
+            <Route exact path="/user/:id?/:info?/:subInfo?" component={User} />
+
           </StyledBodyDiv>
           <Footer location={location} width={width} />
         </StyledDiv>

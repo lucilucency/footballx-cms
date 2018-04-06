@@ -5,10 +5,9 @@ import { withRouter } from 'react-router-dom';
 import update from 'immutability-helper';
 import PropTypes from 'prop-types';
 import { Row, Col, bindAll, FormWrapper } from 'utils';
-import { createHotspot as defaultCreateFn, editHotspot as defaultEditFn } from 'actions';
+import { createHotspot as defaultCreateFn, editHotspot as defaultEditFn, deleteHotspot } from 'actions';
 import strings from 'lang';
 import constants from 'components/constants';
-/* components */
 import {
   AutoComplete,
   Dialog,
@@ -335,6 +334,7 @@ class CreateEditHotspotForm extends React.Component {
         key="delete"
         label={strings.form_general_delete}
         secondary
+        onClick={this.delete}
         style={{ float: 'left' }}
       />,
       <FlatButton
@@ -439,6 +439,7 @@ const mapStateToProps = () => ({
 const mapDispatchToProps = dispatch => ({
   defaultCreateFunction: params => dispatch(defaultCreateFn(params)),
   defaultEditFunction: (hotspotId, params) => dispatch(defaultEditFn(hotspotId, params)),
+  defaultDeleteFunction: hotspotID => dispatch(deleteHotspot(hotspotID)),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CreateEditHotspotForm));

@@ -116,9 +116,9 @@ const getHotspotIcon = (type) => {
 
 
 const HotspotHeader = (propsVar) => {
-  const { hotspotId, hotspot, small, extraSmall, events, isOwner, user } = propsVar;
-  const hotspotData = hotspot.data || {};
-  if (hotspot.loading) {
+  const { hotspotId, user, small, extraSmall, events, isOwner, metadata } = propsVar;
+  const hotspotData = user.data || {};
+  if (user.loading) {
     return <Spinner />;
   }
   const checkedInXUsers = (events.length && events.reduce((a, b) => a + b.checkin_total, 0)) || 0;
@@ -189,15 +189,15 @@ const HotspotHeader = (propsVar) => {
         </li>}
 
         <HotspotHeaderStats
-          loading={hotspot.loading}
-          error={hotspot.error}
+          loading={user.loading}
+          error={user.error}
           compact={!small}
           events={events.length || 0}
           registeredXUsers={registeredXUsers}
           checkedInXUsers={checkedInXUsers}
-          hotspot={hotspot.data}
+          hotspot={user.data}
         />
-        {(user.user_type === 1 || isOwner) && <HotspotHeaderButtons
+        {(metadata.user_type === 1 || isOwner) && <HotspotHeaderButtons
           hotspotId={hotspotId}
           compact={!small}
         />}
@@ -208,8 +208,8 @@ const HotspotHeader = (propsVar) => {
 };
 
 const mapStateToProps = state => ({
-  hotspot: state.app.hotspot,
-  user: state.app.metadata.data.user,
+  user: state.app.user,
+  metadata: state.app.metadata.data.user,
   events: state.app.hotspotEvents.data,
   small: state.browser.greaterThan.small,
   extraSmall: state.browser.greaterThan.extraSmall,

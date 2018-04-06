@@ -19,7 +19,7 @@ export default combineReducers({
   clubs: fxReducer('clubs', []),
   ...leaguesReducer,
   matches: fxReducer('matches', []),
-  matchesLeague: fxReducer('matchesLeague', { matches: [] }),
+  matchesCompact: fxReducer('matchesCompact', { matches: [] }),
 
   groups: fxReducer('groups', []),
   group: fxReducer('group', []),

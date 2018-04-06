@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom';
 import update from 'immutability-helper';
 import PropTypes from 'prop-types';
 import { toDateTimeString, Row, Col, bindAll, FormWrapper } from 'utils';
-import { createEvent as defaultCreateEvent, editEvent as defaultEditEvent, getHotspots, getGroups, getMatchesLeague } from 'actions';
+import { createEvent as defaultCreateEvent, editEvent as defaultEditEvent, getHotspots, getGroups, getMatchesCompact } from 'actions';
 import util from 'util';
 import strings from 'lang';
 import * as data from 'components/Event/Event.config';
@@ -78,9 +78,9 @@ class CreateEventForm extends React.Component {
     dataSourceGroups: PropTypes.array,
     dataSourceHotspots: PropTypes.array,
     dataSourceMatches: PropTypes.array,
-    dispatchLeagueMatches: PropTypes.func,
-    dispatchHotspots: PropTypes.func,
-    dispatchGroups: PropTypes.func,
+    dispatchMatchDs: PropTypes.func,
+    dispatchHotspotDs: PropTypes.func,
+    dispatchGroupDs: PropTypes.func,
   };
 
   static defaultProps = {
@@ -118,11 +118,11 @@ class CreateEventForm extends React.Component {
         start_time: parseInt(now / 1000),
         end_time: parseInt(now / 1000) + 2592000,
       };
-      this.props.dispatchLeagueMatches(params);
+      this.props.dispatchMatchDs(params);
     }
 
-    if (!this.props.hotspotId) this.props.dispatchHotspots();
-    if (!this.props.groupId) this.props.dispatchGroups();
+    if (!this.props.hotspotId) this.props.dispatchHotspotDs();
+    if (!this.props.groupId) this.props.dispatchGroupDs();
   }
 
   componentWillReceiveProps(newProps) {
@@ -955,7 +955,7 @@ const mapStateToProps = state => ({
     value: Number(o.id),
     textShort: `${o.short_name}`,
   })),
-  dataSourceMatches: state.app.matchesLeague.data.matches.map((o) => {
+  dataSourceMatches: state.app.matchesCompact.data.matches.map((o) => {
     const matchTime = toDateTimeString(o.date * 1000);
     return {
       text: `${Clubs[o.home.club_id] && Clubs[o.home.club_id].name} vs ${Clubs[o.away.club_id] && Clubs[o.away.club_id].name} - ${matchTime}`,
@@ -970,9 +970,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   defaultCreateFunction: params => dispatch(defaultCreateEvent(params)),
   defaultEditFunction: (eventId, params) => dispatch(defaultEditEvent(eventId, params)),
-  dispatchHotspots: () => dispatch(getHotspots()),
-  dispatchGroups: () => dispatch(getGroups()),
-  dispatchLeagueMatches: params => dispatch(getMatchesLeague(params)),
+  dispatchHotspotDs: () => dispatch(getHotspots()),
+  dispatchGroupDs: () => dispatch(getGroups()),
+  dispatchMatchDs: params => dispatch(getMatchesCompact(params)),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CreateEventForm));

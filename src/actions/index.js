@@ -37,14 +37,13 @@ export const getLeagueClubs = leagueID => fxActionGet(`league[${leagues[leagueID
 export const editLeagueClub = (leagueID, clubID, params) => fxActionPut(`EDIT_ARR/league[${leagues[leagueID] && leagues[leagueID].name}]`, `club/${clubID}`, params);
 /* matches */
 export const getMatches = params => fxActionGet('matches', 'matches/calendar', params, transform.transformsMatchEvent);
-export const getMatchesLeague = params => fxActionGet('matchesLeague', 'matches', params, transform.transformsMatch);
+export const getMatchesCompact = params => fxActionGet('matchesCompact', 'matches', params, transform.transformsMatch);
 /* hotspot */
 export const getHotspots = () => fxActionGet('hotspots', 'hotspots');
 export const createHotspot = params => fxActionPost('ADD/hotspots', 'hotspot', params);
-
+export const deleteHotspot = hotspotID => fxActionDelete('DELETE/hotspot', `hotspot/${hotspotID}`);
 export const getHotspot = hotspotId => fxActionGet('hotspot', `hotspot/${hotspotId}`);
 export const editHotspot = (hotspotId, params) => fxActionPut('EDIT/hotspot', `hotspot/${hotspotId}`, params, transform.transformEditEvent);
-
 export const getHotspotEvents = (hotspotId, params = {}) => fxActionGet('hotspotEvents', `hotspot/${hotspotId}/events`, params, transform.transformEvents);
 export const getHotspotUpcomingEvents = (hotspotId, params = {}) => fxActionGet('hotspotUpcomingEvents', `hotspot/${hotspotId}/events`, params, transform.transformEvents);
 export const createHotspotEvent = (params, payload) => fxActionPost('ADD/hotspotEvents', 'event', params, transform.transformCreateEvent, payload);

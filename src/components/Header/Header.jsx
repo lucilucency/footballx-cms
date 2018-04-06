@@ -1,26 +1,25 @@
+/* global FX_API, FX_VERSION */
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-/* data */
 import { toggleShowForm } from 'actions';
 import strings from 'lang';
-/* css */
 import styled from 'styled-components';
 import constants from 'components/constants';
-/* components */
-// import ActionSearch from 'material-ui/svg-icons/action/search';
 import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
 import IconButton from 'material-ui/IconButton';
+import IconUpdate from 'material-ui/svg-icons/action/update';
 import NoficationIcon from 'material-ui/svg-icons/social/notifications-active';
 import Add from 'material-ui/svg-icons/av/playlist-add';
 import ActionSettings from 'material-ui/svg-icons/action/settings';
 import FlatButton from 'material-ui/FlatButton';
 import { LocalizationMenu } from 'components/Header/Localization';
-// import Announce from 'components/Announce';
 import AccountWidget from './AccountWidget';
 import DropDown from './Dropdown';
 import Logout from './Logout';
+// import Announce from 'components/Announce';
 // import SearchForm from '../Search/SearchForm';
+// import ActionSearch from 'material-ui/svg-icons/action/search';
 import AppLogo from '../App/AppLogo';
 import BurgerMenu from './BurgerMenu/index';
 
@@ -189,6 +188,9 @@ const SettingsGroup = (propsVar) => {
       Button={IconButton}
       buttonProps={buttonProps}
     >
+      <VerticalAlignToolbar>
+        <AccountWidget />
+      </VerticalAlignToolbar>
       <LocalizationMenu />
       {user && user.user_type === 1 && <Link to={'/notify'}>
         <FlatButton
@@ -204,9 +206,13 @@ const SettingsGroup = (propsVar) => {
           icon={<ActionSettings />}
         />
       </Link>}
-      <VerticalAlignToolbar>
-        <AccountWidget />
-      </VerticalAlignToolbar>
+      {user && user.user_type === 1 && <FlatButton
+        icon={<IconUpdate />}
+        onClick={() => {
+          fetch(`${FX_API}/${FX_VERSION}/content`, {method: 'POST'});
+        }}
+        label={strings.app_update_content_data}
+      />}
       {user ? <Logout /> : null}
     </VerticalAlignDropdown>
   );
