@@ -6,17 +6,14 @@ import PropTypes from 'prop-types';
 import {
   getUser,
 } from 'actions';
-import strings from 'lang';
 import TabBar from 'components/TabBar';
 import Spinner from 'components/Spinner';
-import EditHotspotForm from 'components/Hotspot/Forms/CreateEditHotspotForm';
-import CreateEventForm from 'components/Event/Forms/CreateEditEventForm';
 import Header from './Header/index';
 import pages from './Pages';
 
 class UserModule extends React.Component {
   static propTypes = {
-    hotspotId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    userID: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     user: PropTypes.oneOfType([
       PropTypes.shape({}),
       PropTypes.arrayOf(PropTypes.shape({})),
@@ -24,7 +21,7 @@ class UserModule extends React.Component {
     metadata: PropTypes.shape({}),
     match: PropTypes.shape({
       params: PropTypes.shape({
-        hotspotId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        userID: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
       }),
     }),
     location: PropTypes.shape({
@@ -34,23 +31,17 @@ class UserModule extends React.Component {
   };
 
   componentDidMount() {
+    console.log('UserModule.componentDidMount');
     const that = this;
     const userID = that.props.userID || that.props.match.params.id;
     this.props.getUser(userID);
   }
 
-  componentWillUpdate(nextProps) {
-    if (this.props.hotspotId !== nextProps.hotspotId || this.props.location.key !== nextProps.location.key) {
-      getUser(nextProps);
-    }
-  }
-
   render() {
-    const props = this.props;
-    const { location, match, user, metadata, history, showFormEditHotspot, showFormCreateEvent, toggleShowFormEditHotspot, toggleShowFormCreateEvent } = this.props;
+    console.log('UserModule.render');
+    const { location, match, user, metadata, history } = this.props;
     const route = this.props.match.params.id;
 
-    console.log('metadata', metadata);
     if (!metadata.user) {
       history.push('/login');
       return false;
@@ -62,11 +53,10 @@ class UserModule extends React.Component {
     }
 
     if (Number.isInteger(Number(route))) {
-      const userID = Number(match.params.id || user.id);
-      console.log(userID);
+      const userID = Number(match.params.id || user.user_id);
 
       let isOwner = false;
-      if (metadata.user.user_type === 2 && Number(metadata.user.id) === Number(userID)) {
+      if (Number(metadata.user.user_id) === Number(userID)) {
         isOwner = true;
       }
 

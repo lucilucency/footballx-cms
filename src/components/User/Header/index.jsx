@@ -25,7 +25,7 @@ const Header = styled.div`
     align-items: center;
   }
 `;
-const ImageContainer = styled.div`
+const UserAvatar = styled.div`
   padding-top: 2em;
   display: flex;
   flex-direction: row;
@@ -48,7 +48,7 @@ const ValidatedBadge = styled(IconValidated)`
     }
   }
 `;
-const InfoContainer = styled.div`
+const UserInfo = styled.div`
   padding-top: 1em;
   width: 100%;
   display: flex;
@@ -147,7 +147,7 @@ const HotspotHeader = (propsVar) => {
 
   return (
     <Header>
-      <ImageContainer>
+      <UserAvatar>
         <Badge
           badgeContent={<ValidatedBadge />}
           badgeStyle={badgeStyle()}
@@ -162,8 +162,8 @@ const HotspotHeader = (propsVar) => {
             size={LARGE_IMAGE_SIZE}
           />
         </Badge>
-      </ImageContainer>
-      <InfoContainer>
+      </UserAvatar>
+      <UserInfo>
         <li>
           <span data="name">{userData.username}</span>
           {(userData.fullname || userData.name) && <small>( {userData.name || userData.fullname} )</small>}
@@ -184,7 +184,7 @@ const HotspotHeader = (propsVar) => {
         {(metadata.user_type === 1 || isOwner) && <Buttons
           compact={!small}
         />}
-      </InfoContainer>
+      </UserInfo>
     </Header>
   );
 };

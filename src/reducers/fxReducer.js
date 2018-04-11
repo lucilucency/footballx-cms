@@ -1,3 +1,4 @@
+/* eslint-disable no-else-return */
 import update from 'react-addons-update';
 
 export default (type, initialData) => (state = {
@@ -57,12 +58,21 @@ export default (type, initialData) => (state = {
         error: false,
       };
     case `OK/EDIT/${type}`:
-      return {
-        ...state,
-        loading: false,
-        data: update(state.data, { $merge: action.payload }),
-        error: false,
-      };
+      if (action.payload) {
+        return {
+          ...state,
+          loading: false,
+          data: update(state.data, { $merge: action.payload }),
+          error: false,
+        };
+      } else {
+        return {
+          ...state,
+          loading: false,
+          data: state.data,
+          error: false,
+        };
+      }
     case `FAIL/EDIT/${type}`:
       return {
         ...state,

@@ -230,7 +230,7 @@ class CreateEditHotspotForm extends React.Component {
               },
             }),
           });
-          resolve(this.props.defaultDeleteFunction(this.state.formData.hotspot_id.value))
+          resolve(this.props.defaultDeleteFunction(this.state.formData.hotspot_id.value));
         });
 
         Promise.all([doSubmit]).then((results) => {
@@ -376,9 +376,10 @@ class CreateEditHotspotForm extends React.Component {
         key="reset"
         label="Reset"
         secondary
+        onClick={this.clearState}
         style={{ float: 'left' }}
       />,
-      <FlatButton
+      mode === 'edit' && <FlatButton
         key="delete"
         label={strings.form_general_delete}
         secondary

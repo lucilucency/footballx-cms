@@ -30,8 +30,13 @@ export const cuserLogin = (username, password) => fxActionAuth('auth', 'cuser/lo
 /* user */
 export const getHUserHotspot = accountId => fxActionGet('hotspot', `huser/${accountId}/hotspot`);
 export const createUser = (params, payload) => fxActionPost('ADD/users', 'user', params, null, payload);
-export const editUser = (userID, params) => fxActionPut('EDIT/user', `user/${userID}`, params);
 export const getUser = userID => fxActionGet('user', `user/${userID}`);
+export const editUser = (userID, params) => fxActionPut('EDIT/user', `user/${userID}`, params);
+export const changePassword = (userID, params) => fxActionPut('user/change_password', `user/${userID}/change_password`, params);
+export const resetPassword = (userID, params) => fxActionPut('user/reset_password', `user/${userID}/reset_password`, params);
+export const editHUserProfile = (huserID, params) => fxActionPut('EDIT/user', `huser/${huserID}`, params);
+export const editCUserProfile = (cuserID, params) => fxActionPut('EDIT/user', `cuser/${cuserID}`, params);
+export const editGUserProfile = (guserID, params) => fxActionPut('EDIT/user', `guser/${guserID}`, params);
 /* club & league */
 export const getLeagueClubs = leagueID => fxActionGet(`league[${leagues[leagueID] && leagues[leagueID].name}]`, `league/${leagueID}/clubs`);
 export const editLeagueClub = (leagueID, clubID, params) => fxActionPut(`EDIT_ARR/league[${leagues[leagueID] && leagues[leagueID].name}]`, `club/${clubID}`, params);

@@ -1,10 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { toggleShowForm } from 'actions';
+import { bindAll, renderDialog } from 'utils';
 import PropTypes from 'prop-types';
+import {
+  FlatButton,
+} from 'material-ui';
 import IconChangePassword from 'material-ui/svg-icons/action/fingerprint';
 import IconEdit from 'material-ui/svg-icons/editor/mode-edit';
-import ShowFormToggle from 'components/Form/ShowFormToggle';
+import EditUserAccountSettings from 'components/User/Forms/EditUserAccount';
+import ChangePassword from 'components/User/Forms/ChangePassword';
+import ResetPassword from 'components/User/Forms/ResetPassword';
 import strings from 'lang';
 import styled from 'styled-components';
 
@@ -38,58 +44,126 @@ const ButtonContainer = styled.div`
   }
 `;
 
-class HotspotHeaderButtons extends React.Component {
+class Buttons extends React.Component {
+  static initialState = {
+    openDialog: false,
+    dialogConstruct: {},
+  };
+
+  constructor(props) {
+    console.log('Buttons.constructor');
+    super(props);
+    this.state = {
+      ...Buttons.initialState,
+    };
+
+    bindAll([
+      'handleOpenDialog',
+      'handleCloseDialog',
+      'handleOpenEditUserForm',
+      'handleOpenChangePasswordForm',
+      'handleOpenResetPasswordForm',
+    ], this);
+  }
+
   componentWillMount() {
+    console.log('Buttons.componentWillMount');
+  }
+
+  componentDidMount() {
+    console.log('Buttons.componentDidMount');
+  }
+
+  handleOpenDialog() {
+    this.setState({ openDialog: true });
+  }
+
+  handleCloseDialog() {
+    console.log('Buttons.handleCloseDialog');
+    this.setState({ openDialog: false, dialogConstruct: {} });
+  }
+
+  handleOpenEditUserForm() {
     this.setState({
-      disableRefresh: false,
-      disableEdit: false,
+      dialogConstruct: {
+        title: strings.form_user_account_settings,
+        view: <EditUserAccountSettings
+          popup
+          user={this.props.user.data}
+          callback={this.handleCloseDialog}
+        />,
+      },
+    }, () => {
+      this.handleOpenDialog();
+    });
+  }
+
+  handleOpenChangePasswordForm() {
+    this.setState({
+      dialogConstruct: {
+        title: strings.form_user_change_password,
+        view: <ChangePassword
+          popup
+          user={this.props.user.data}
+          callback={this.handleCloseDialog}
+        />,
+      },
+    }, () => {
+      this.handleOpenDialog();
+    });
+  }
+
+  handleOpenResetPasswordForm() {
+    this.setState({
+      dialogConstruct: {
+        title: strings.form_user_reset_password,
+        view: <ResetPassword
+          popup
+          user={this.props.user.data}
+          callback={this.handleCloseDialog}
+        />,
+      },
+    }, () => {
+      this.handleOpenDialog();
     });
   }
 
   render() {
-    const {
-      showFormCreateEvent,
-      showFormEditHotspot,
-      toggleShowFormCreateEvent,
-      toggleShowFormEditHotspot,
-    } = this.props;
-
+    const isAvailable = this.props.metadata.user_type === 1;
     return (<ButtonContainer>
-      {this.props.user && <ShowFormToggle
-        show={showFormEditHotspot}
-        onClick={toggleShowFormEditHotspot}
+      {isAvailable && <FlatButton
         icon={<IconEdit />}
-        text={strings.form_general_edit}
-        textToggle={strings.form_general_close}
+        disabled={this.state.disableRefresh}
+        onClick={this.handleOpenEditUserForm}
+        label={strings.form_user_account_settings}
       />}
-      {this.props.user && <ShowFormToggle
-        show={showFormCreateEvent}
-        onClick={toggleShowFormCreateEvent}
+      <FlatButton
         icon={<IconChangePassword />}
-        text={strings.form_user_change_password}
-        textToggle={strings.form_user_change_password}
+        onClick={this.handleOpenChangePasswordForm}
+        label={strings.form_user_change_password}
+      />
+      {isAvailable && <FlatButton
+        icon={<IconChangePassword />}
+        onClick={this.handleOpenResetPasswordForm}
+        label={strings.form_user_reset_password}
       />}
+      {renderDialog(this.state.dialogConstruct, this.state.openDialog)}
     </ButtonContainer>);
   }
 }
 
-HotspotHeaderButtons.propTypes = {
+Buttons.propTypes = {
   user: PropTypes.shape({}),
-  showFormCreateEvent: PropTypes.bool,
-  showFormEditHotspot: PropTypes.bool,
-  toggleShowFormCreateEvent: PropTypes.func,
-  toggleShowFormEditHotspot: PropTypes.func,
 };
 
 const mapStateToProps = state => ({
   showFormCreateEvent: state.app.formCreateEvent.show,
-  showFormEditHotspot: state.app.formEditHotspot.show,
-  user: state.app.metadata.data.user,
+  user: state.app.user,
+  metadata: state.app.metadata.data.user,
 });
 
 const mapDispatchToProps = dispatch => ({
   toggleShowFormCreateEvent: () => dispatch(toggleShowForm('createEvent')),
-  toggleShowFormEditHotspot: () => dispatch(toggleShowForm('editHotspot')),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(HotspotHeaderButtons);
+export default connect(mapStateToProps, mapDispatchToProps)(Buttons);

@@ -84,6 +84,7 @@ class Clubs extends React.Component {
   };
 
   constructor(props) {
+    console.log('Clubs.constructor');
     super(props);
 
     this.state = {
@@ -98,6 +99,7 @@ class Clubs extends React.Component {
   }
 
   componentDidMount() {
+    console.log('Clubs.componentDidMount');
     leagues.forEach(league => this.props.getLeagueClubs(league.id));
   }
 
@@ -118,13 +120,6 @@ class Clubs extends React.Component {
           club={this.state.selectedClub}
           callback={this.handleCloseDialog}
         />,
-        // actions: [
-        //   <FlatButton
-        //     label="Close"
-        //     secondary
-        //     onClick={this.handleCloseDialog}
-        //   />,
-        // ],
       },
     }, () => {
       this.handleOpenDialog();

@@ -432,33 +432,35 @@ class CreateEventForm extends React.Component {
       left: 0;
     `;
 
-    const __renderGroupSelector = () => (<AutoCompleteValidator
-      name="group"
-      hintText={strings.filter_group}
-      floatingLabelText={strings.filter_group}
-      searchText={this.state.event.group.text}
-      value={this.state.event.group.value}
-      dataSource={this.props.dataSourceGroups}
-      onNewRequest={(o) => {
-        this.setState({
-          event: update(this.state.event, {
-            group: { $set: o },
-          }),
-        });
-      }}
-      onUpdateInput={(searchText) => {
-        this.setState({
-          event: update(this.state.event, {
-            group: { $set: { value: searchText } },
-          }),
-        });
-      }}
-      filter={AutoComplete.caseInsensitiveFilter}
-      openOnFocus
-      maxSearchResults={100}
-      fullWidth
-      listStyle={{ maxHeight: 300, overflow: 'auto' }}
-    />);
+    const __renderGroupSelector = () => (<div style={{ marginBottom: 20 }}>
+      <AutoCompleteValidator
+        name="group"
+        hintText={strings.filter_group}
+        floatingLabelText={strings.filter_group}
+        searchText={this.state.event.group.text}
+        value={this.state.event.group.value}
+        dataSource={this.props.dataSourceGroups}
+        onNewRequest={(o) => {
+          this.setState({
+            event: update(this.state.event, {
+              group: { $set: o },
+            }),
+          });
+        }}
+        onUpdateInput={(searchText) => {
+          this.setState({
+            event: update(this.state.event, {
+              group: { $set: { value: searchText } },
+            }),
+          });
+        }}
+        filter={AutoComplete.caseInsensitiveFilter}
+        openOnFocus
+        maxSearchResults={100}
+        fullWidth
+        listStyle={{ maxHeight: 300, overflow: 'auto' }}
+      />
+    </div>);
     const __renderMatchSelector = () => (<AutoCompleteValidator
       name="match"
       hintText={strings.filter_match}
@@ -709,8 +711,8 @@ class CreateEventForm extends React.Component {
       openOnFocus
       errorText={this.state.event.deposit.error}
       fullWidth
-      validators={['required', 'minNumber:0', 'maxNumber:100']}
-      errorMessages={[strings.validate_is_required, util.format(strings.validate_minimum, 0), util.format(strings.validate_maximum, 100)]}
+      validators={['minNumber:0', 'maxNumber:100']}
+      errorMessages={[util.format(strings.validate_minimum, 0), util.format(strings.validate_maximum, 100)]}
     />);
     const __renderIsChargedCheckbox = () => (<Checkbox
       label={strings.event_is_charged}
@@ -725,6 +727,25 @@ class CreateEventForm extends React.Component {
               },
             },
           }),
+        }, () => {
+          if (!this.state.event.is_charged.value) {
+            this.setState({
+              event: update(this.state.event, {
+                seats: {
+                  $set: {
+                    value: 0,
+                    text: '0',
+                  },
+                },
+                price: {
+                  $set: {
+                    value: 0,
+                    text: '0',
+                  },
+                },
+              }),
+            });
+          }
         });
       }}
     />);
@@ -873,14 +894,16 @@ class CreateEventForm extends React.Component {
         {!(mode === 'edit') && this.state.event.match.home && __renderMatchPreview()}
         {!(mode === 'edit') && !this.props.groupId && this.props.dataSourceGroups && __renderGroupSelector()}
         <Row>
-          <Col flex={6}>{__renderSeatsInput()}</Col>
-          <Col flex={6}>{__renderPriceInput()}</Col>
-          <Col flex={6}>{__renderDepositInput()}</Col>
-          <Col flex={6}>{__renderDiscountInput()}</Col>
-        </Row>
-        <Row>
           <Col flex={6}>{__renderIsChargedCheckbox()}</Col>
         </Row>
+        {this.state.event.is_charged.value && <Row>
+          <Col flex={6}>{__renderSeatsInput()}</Col>
+          <Col flex={6}>{__renderPriceInput()}</Col>
+        </Row>}
+        {this.state.event.is_charged.value && <Row>
+          <Col flex={6}>{__renderDepositInput()}</Col>
+          <Col flex={6}>{__renderDiscountInput()}</Col>
+        </Row>}
         <Row>
           <Col flex={3}>{__renderStartTimeRegisterPicker()}</Col>
           <Col flex={3}>{__renderEndTimeRegisterPicker()}</Col>
@@ -892,6 +915,18 @@ class CreateEventForm extends React.Component {
         <Row>
           {__renderNotesInput()}
         </Row>
+
+        {null && [__renderIsChargedCheckbox(),
+          __renderSeatsInput(),
+          __renderPriceInput(),
+          __renderDepositInput(),
+          __renderDiscountInput(),
+          __renderNotesInput(),
+          __renderStartTimeRegisterPicker(),
+          __renderEndTimeCheckinPicker(),
+          __renderStartTimeCheckinPicker(),
+          __renderEndTimeCheckinPicker(),
+        ]}
       </div>
 
       <div className="actions">
@@ -965,6 +1000,7 @@ const mapStateToProps = state => ({
       away: o.away,
     };
   }),
+  browser: state.browser,
 });
 
 const mapDispatchToProps = dispatch => ({

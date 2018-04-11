@@ -19,7 +19,6 @@ const pages = [
 ];
 
 export default id => pages.map((page) => {
-  console.log('page', page);
   return {
     ...page,
     route: `/user/${id}/${page.key}`,
