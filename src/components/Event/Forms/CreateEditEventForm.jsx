@@ -727,25 +727,6 @@ class CreateEventForm extends React.Component {
               },
             },
           }),
-        }, () => {
-          if (!this.state.event.is_charged.value) {
-            this.setState({
-              event: update(this.state.event, {
-                seats: {
-                  $set: {
-                    value: 0,
-                    text: '0',
-                  },
-                },
-                price: {
-                  $set: {
-                    value: 0,
-                    text: '0',
-                  },
-                },
-              }),
-            });
-          }
         });
       }}
     />);

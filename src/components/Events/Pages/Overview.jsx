@@ -21,13 +21,17 @@ import { EventsSummary } from './EventsSummary';
 
 const tableEventsColumns = browser => [browser.greaterThan.medium && {
   displayName: strings.th_event_id,
-  field: 'event_id',
+  field: 'match_id',
   sortFn: true,
   displayFn: (row, col, field) => (<div>
-    <TableLink to={`/event/${field}`}>{field}</TableLink>
+    <TableLink to={`/event/${row.event_id}`}><span title={strings.th_event_id}>{row.event_id}</span></TableLink>
+    {browser.greaterThan.small &&
+    <span style={{...subTextStyle, maxWidth: browser.greaterThan.medium ? 300 : 150}} title={strings.th_match_id}>
+      {row.match_id}
+    </span>}
   </div>),
 }, {
-  displayName: strings.th_event,
+  displayName: strings.th_match,
   field: 'event_id',
   displayFn: transformations.th_event_club_vs_club_image,
   sortFn: true,
@@ -39,7 +43,7 @@ const tableEventsColumns = browser => [browser.greaterThan.medium && {
   displayFn: (row, col, field) => (<div>
     <TableLink to={`/hotspot/${field}`}>{row.hotspot_name}</TableLink>
     {browser.greaterThan.small &&
-    <span style={{ ...subTextStyle, maxWidth: browser.greaterThan.medium ? 300 : 150 }} title={row.hotspot_address}>
+    <span style={{...subTextStyle, maxWidth: browser.greaterThan.medium ? 300 : 150}} title={row.hotspot_address}>
       {row.hotspot_address}
     </span>}
   </div>),
