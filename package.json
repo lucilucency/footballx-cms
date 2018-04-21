@@ -64,6 +64,7 @@
     "react-card-flip": "^0.2.1",
     "react-color": "^2.14.0",
     "react-dom": "^15.6.2",
+    "react-facebook-login": "^4.0.1",
     "react-file-reader": "^1.1.4",
     "react-form-validator-core": "^0.2.0",
     "react-google-maps": "^9.4.5",
