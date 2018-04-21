@@ -90,7 +90,7 @@ const config = {
     }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-      FX_API: JSON.stringify(isProd ? '//web-api.ttab.me' : isDev ? '//code.ttab.me:51168' : isTest ? '//web-api.ttab.me' : '//localhost:51168'),
+      FX_API: JSON.stringify(isProd ? 'https://web-api.ttab.me' : isDev ? 'http://code.ttab.me:51168' : isTest ? 'https://web-api.ttab.me' : '//localhost:51168'),
       FX_VERSION: JSON.stringify(process.env.FX_VERSION || 'v1'),
       FX_SOCKET: JSON.stringify(isProd ? '//prod.ttab.me:51170/' : '//code.ttab.me:51170/'),
       API_KEY_GOOGLE_MAPS: JSON.stringify('AIzaSyAVuAeRe7X-4rtzJZb00XUohyCVPV_03QE'),
