@@ -21,11 +21,11 @@ const Button = (propsVar) => {
         appId="161873251167984"
         autoLoad={true}
         fields="name,email,picture"
-        onClick={() => {
-          console.log('clicked');
+        onClick={(data) => {
+          console.log('clicked login with facebook', data);
         }}
         callback={(response) => {
-          console.log(response);
+          console.log('response', response);
         }} />
       {user && user.user_type === 1 && <div>
         <FlatButton
