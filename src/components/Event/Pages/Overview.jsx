@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { getOrdinal, transformations } from 'utils';
 import { toDateTimeString } from 'utils/time';
 import strings from 'lang';
-/* components */
 import Container from 'components/Container';
 import { IconFacebook } from 'components/Icons';
 import Table from 'components/Table';
@@ -13,8 +12,6 @@ import Divider from 'material-ui/Divider';
 import IconPlace from 'material-ui/svg-icons/maps/place';
 import IconPhone from 'material-ui/svg-icons/communication/phone';
 import IconWifi from 'material-ui/svg-icons/notification/wifi';
-
-/* css */
 import styled, { css } from 'styled-components';
 import constants from 'components/constants';
 

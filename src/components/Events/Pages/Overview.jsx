@@ -3,17 +3,12 @@ import PropTypes from 'prop-types';
 import {
   connect,
 } from 'react-redux';
-
-/* actions & helpers */
 import { getEvents } from 'actions';
 import { transformations } from 'utils';
 import { toDateString, toTimeString, fromNow } from 'utils/time';
-/* components */
 import Table, { TableLink } from 'components/Table';
 import Container from 'components/Container/index';
-/* data */
 import strings from 'lang';
-/* css */
 import constants from 'components/constants';
 import { colors } from 'material-ui/styles';
 import { subTextStyle } from 'utils/style';
@@ -23,10 +18,10 @@ const tableEventsColumns = browser => [browser.greaterThan.medium && {
   displayName: strings.th_event_id,
   field: 'match_id',
   sortFn: true,
-  displayFn: (row, col, field) => (<div>
+  displayFn: row => (<div>
     <TableLink to={`/event/${row.event_id}`}><span title={strings.th_event_id}>{row.event_id}</span></TableLink>
     {browser.greaterThan.small &&
-    <span style={{...subTextStyle, maxWidth: browser.greaterThan.medium ? 300 : 150}} title={strings.th_match_id}>
+    <span style={{ ...subTextStyle, maxWidth: browser.greaterThan.medium ? 300 : 150 }} title={strings.th_match_id}>
       {row.match_id}
     </span>}
   </div>),
@@ -43,7 +38,7 @@ const tableEventsColumns = browser => [browser.greaterThan.medium && {
   displayFn: (row, col, field) => (<div>
     <TableLink to={`/hotspot/${field}`}>{row.hotspot_name}</TableLink>
     {browser.greaterThan.small &&
-    <span style={{...subTextStyle, maxWidth: browser.greaterThan.medium ? 300 : 150}} title={row.hotspot_address}>
+    <span style={{ ...subTextStyle, maxWidth: browser.greaterThan.medium ? 300 : 150 }} title={row.hotspot_address}>
       {row.hotspot_address}
     </span>}
   </div>),

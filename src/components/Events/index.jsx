@@ -2,11 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import PropTypes from 'prop-types';
-/* data */
 import strings from 'lang';
 import _ from 'lodash';
 import queryString from 'querystring';
-/* components */
 import Event from 'components/Event';
 import TabBar from 'components/TabBar';
 import CreateEventsForm from 'components/Event/Forms/CreateEditEventForm';

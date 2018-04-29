@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { toggleShowForm } from 'actions';
 import PropTypes from 'prop-types';
-/* components */
 import { Link } from 'react-router-dom';
 import FlatButton from 'material-ui/FlatButton';
 import IconUpdate from 'material-ui/svg-icons/action/update';
@@ -10,7 +9,6 @@ import IconAdd from 'material-ui/svg-icons/av/playlist-add';
 import IconAddUser from 'material-ui/svg-icons/social/group-add';
 import IconEdit from 'material-ui/svg-icons/editor/mode-edit';
 import ShowFormToggle from 'components/Form/ShowFormToggle';
-/* data */
 import strings from 'lang';
 import styled from 'styled-components';
 

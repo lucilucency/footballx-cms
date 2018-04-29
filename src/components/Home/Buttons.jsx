@@ -3,9 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import FlatButton from 'material-ui/FlatButton';
 import strings from 'lang';
-import FacebookLogin from 'react-facebook-login';
 import { ButtonsDiv } from './Styled';
-
 
 const Button = (propsVar) => {
   const { user, userHotspot, userGroup } = propsVar;
@@ -17,16 +15,6 @@ const Button = (propsVar) => {
       />}
     </div>
     <div className={'bottomButtons'}>
-      <FacebookLogin
-        appId="161873251167984"
-        autoLoad={true}
-        fields="name,email,picture"
-        onClick={(data) => {
-          console.log('clicked login with facebook', data);
-        }}
-        callback={(response) => {
-          console.log('response', response);
-        }} />
       {user && user.user_type === 1 && <div>
         <FlatButton
           label={<span className={'label'}>{strings.home_view} <b>{strings.general_events}</b></span>}

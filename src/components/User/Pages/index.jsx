@@ -1,7 +1,6 @@
 import React from 'react';
 import strings from 'lang';
 import OverviewPage from './Overview';
-import EventsPage from './Events';
 
 const pages = [
   {
@@ -18,9 +17,7 @@ const pages = [
   // },
 ];
 
-export default id => pages.map((page) => {
-  return {
-    ...page,
-    route: `/user/${id}/${page.key}`,
-  };
-});
+export default id => pages.map(page => ({
+  ...page,
+  route: `/user/${id}/${page.key}`,
+}));

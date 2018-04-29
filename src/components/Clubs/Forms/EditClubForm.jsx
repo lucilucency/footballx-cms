@@ -9,7 +9,6 @@ import { editLeagueClub as defaultEditFn } from 'actions';
 import strings from 'lang';
 import constants from 'components/constants';
 import styled from 'styled-components';
-/* components */
 import {
   Dialog,
   FlatButton,
@@ -20,7 +19,6 @@ import {
 import IconFail from 'material-ui/svg-icons/content/clear';
 import IconSuccess from 'material-ui/svg-icons/navigation/check';
 import CircularProgress from 'material-ui/CircularProgress';
-
 import Error from 'components/Error/index';
 import Spinner from 'components/Spinner/index';
 

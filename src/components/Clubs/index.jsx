@@ -84,7 +84,6 @@ class Clubs extends React.Component {
   };
 
   constructor(props) {
-    console.log('Clubs.constructor');
     super(props);
 
     this.state = {

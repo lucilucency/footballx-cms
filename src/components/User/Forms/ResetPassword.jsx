@@ -7,7 +7,7 @@ import { resetPassword } from 'actions';
 import util from 'util';
 import strings from 'lang';
 import constants from 'components/constants';
-import { FlatButton, Dialog, List, ListItem, SelectField, MenuItem } from 'material-ui';
+import { FlatButton, Dialog, List, ListItem } from 'material-ui';
 import { IconProgressing } from 'components/Icons';
 import IconFail from 'material-ui/svg-icons/content/clear';
 import IconSuccess from 'material-ui/svg-icons/navigation/check';

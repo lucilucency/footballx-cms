@@ -90,6 +90,7 @@ const AvatarStyled = styled(Avatar)`
   }
 `;
 
+// eslint-disable-next-line no-unused-vars
 const getIcon = (type) => {
   switch (type) {
     case 1:
