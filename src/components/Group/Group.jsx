@@ -63,13 +63,13 @@ class RequestLayer extends React.Component {
       const groupId = match.params.groupId || group.id;
 
       const isOwner = () => {
-        if (metadata.user.user_type !== 2 || metadata.user.type !== 'group') {
+        if (metadata.user.user_type !== 3) {
           return false;
         }
-        if (!metadata.group || !metadata.group.id) {
+        if (!metadata.user.group_id) {
           return false;
         }
-        return parseInt(metadata.group.id) === parseInt(groupId);
+        return parseInt(metadata.user.group_id) === parseInt(groupId);
       };
 
       const info = match.params.info || 'overview';
