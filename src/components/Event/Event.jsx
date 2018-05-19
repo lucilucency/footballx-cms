@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import PropTypes from 'prop-types';
-import socket from 'socketClient';
+// import socket from 'socketClient';
 import TabBar from 'components/TabBar';
 import {
   getEvent, getEventXUsers, addEventXUser, dispatchNewXUserCheckin, toggleShowForm,
@@ -35,41 +35,41 @@ class RequestLayer extends React.Component {
     const eventId = this.props.match.params.eventId;
     this.props.getEvent(eventId);
     this.props.getEventXUsers(eventId);
-    const props = this.props;
+    // const props = this.props;
 
-    socket.on('event', (data) => {
-      if (data) {
-        try {
-          const parsedData = JSON.parse(data);
-          window.abc = parsedData;
-          if (typeof parsedData === 'object') {
-            const json = JSON.stringify(eval(`(${parsedData.qr_data})`));
-            const qrData = JSON.parse(json);
-
-            if (qrData.notification.toString() === props.user.user.user_id.toString()) {
-              let xuserGroup = {};
-              if (parsedData.xuser_groups && parsedData.xuser_groups.length) {
-                xuserGroup = parsedData.xuser_groups[0];
-              }
-
-              const payload = {
-                ...parsedData.xuser,
-                ...xuserGroup,
-                ...parsedData.xuser_group,
-                event_updated_at: Date.now(),
-                event_status: 'checkin',
-                xcoin: parsedData.xuser_balance.xcoin,
-              };
-
-              props.addEventXUser(payload);
-              props.dispatchNewXUserCheckin(payload);
-            }
-          }
-        } catch (e) {
-          console.log('Error occur!', e);
-        }
-      }
-    });
+    // socket.on('event', (data) => {
+    //   if (data) {
+    //     try {
+    //       const parsedData = JSON.parse(data);
+    //       window.abc = parsedData;
+    //       if (typeof parsedData === 'object') {
+    //         const json = JSON.stringify(eval(`(${parsedData.qr_data})`));
+    //         const qrData = JSON.parse(json);
+    //
+    //         if (qrData.notification.toString() === props.user.user.user_id.toString()) {
+    //           let xuserGroup = {};
+    //           if (parsedData.xuser_groups && parsedData.xuser_groups.length) {
+    //             xuserGroup = parsedData.xuser_groups[0];
+    //           }
+    //
+    //           const payload = {
+    //             ...parsedData.xuser,
+    //             ...xuserGroup,
+    //             ...parsedData.xuser_group,
+    //             event_updated_at: Date.now(),
+    //             event_status: 'checkin',
+    //             xcoin: parsedData.xuser_balance.xcoin,
+    //           };
+    //
+    //           props.addEventXUser(payload);
+    //           props.dispatchNewXUserCheckin(payload);
+    //         }
+    //       }
+    //     } catch (e) {
+    //       console.log('Error occur!', e);
+    //     }
+    //   }
+    // });
   }
 
   render() {
@@ -131,6 +131,7 @@ class RequestLayer extends React.Component {
         <Helmet title={pageTitle} />
         <EventHeader
           event={this.props.event}
+          hotspot={this.props.hotspot}
         />
         <EditEventForm
           mode="edit"

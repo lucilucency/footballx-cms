@@ -286,7 +286,7 @@ class GenerateQR extends React.Component {
               onClick={event => this.doRandomXUser(event)}
               disabled={Boolean(this.state.tries <= 0)}
             />}
-            {!this.state.isFlipping && <RaisedButton
+            {false && !this.state.isFlipping && <RaisedButton
               style={{ margin: 'auto', marginBottom: 20, marginTop: 20 }}
               label={'New Game'}
               primary

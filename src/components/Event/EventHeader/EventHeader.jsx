@@ -223,6 +223,7 @@ class EventHeader extends React.Component {
         view: <CheckinQRView
           toggle={false}
           eventId={this.props.event.data.event_id}
+          hotspotID={this.props.event.data.hotspot_id}
         />,
         onRequestClose: this.handleCloseDialog,
         modal: true,
