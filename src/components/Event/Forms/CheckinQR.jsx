@@ -164,10 +164,10 @@ class CheckinQR extends React.Component {
     // };
 
     console.log(JSON.stringify({
-      object: 'event',
+      object: 'hotspot',
       data: {
-        event_id: this.props.eventId,
-        notification: this.props.user.user_id.toString(),
+        hotspot_id: this.props.hotspotID,
+        notification: 'null',
       },
     }));
 
