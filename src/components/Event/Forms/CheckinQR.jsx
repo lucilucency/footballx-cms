@@ -100,9 +100,7 @@ class CheckinQR extends React.Component {
     eventId: PropTypes.number,
     newXUser: PropTypes.shape({}),
     browser: PropTypes.shape({}),
-    user: PropTypes.shape({
-      user_id: PropTypes.number,
-    }),
+    // user: PropTypes.object,
   };
   constructor(props) {
     super(props);
