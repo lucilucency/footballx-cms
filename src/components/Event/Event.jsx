@@ -117,6 +117,7 @@ class RequestLayer extends React.Component {
         prev[pos].paidSubscription += cur.paidSubscription;
         prev[pos].paidXCoin += cur.paidXCoin;
         prev[pos].paidXCoinTimes += cur.paidXCoinTimes;
+        prev[pos].event_status = (prev[pos].event_status === 'checkin' || cur.event_status === 'checkin') ? 'checkin' : 'registered';
       }
       return prev;
     }, []);
