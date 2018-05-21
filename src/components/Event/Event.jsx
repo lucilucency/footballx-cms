@@ -107,20 +107,20 @@ class RequestLayer extends React.Component {
     });
 
     /* cancel by fking sheeet MUSVN */
-    eventXUsers = eventXUsers.reduce((__prev, cur) => {
-      const prev = __prev;
-      const ids = prev.map(o => o.id);
-      const pos = ids.indexOf(cur.id);
-      if (pos === -1) {
-        prev.push(cur);
-      } else {
-        prev[pos].paidSubscription += cur.paidSubscription;
-        prev[pos].paidXCoin += cur.paidXCoin;
-        prev[pos].paidXCoinTimes += cur.paidXCoinTimes;
-        prev[pos].event_status = (prev[pos].event_status === 'checkin' || cur.event_status === 'checkin') ? 'checkin' : 'registered';
-      }
-      return prev;
-    }, []);
+    // eventXUsers = eventXUsers.reduce((__prev, cur) => {
+    //   const prev = __prev;
+    //   const ids = prev.map(o => o.id);
+    //   const pos = ids.indexOf(cur.id);
+    //   if (pos === -1) {
+    //     prev.push(cur);
+    //   } else {
+    //     prev[pos].paidSubscription += cur.paidSubscription;
+    //     prev[pos].paidXCoin += cur.paidXCoin;
+    //     prev[pos].paidXCoinTimes += cur.paidXCoinTimes;
+    //     prev[pos].event_status = (prev[pos].event_status === 'checkin' || cur.event_status === 'checkin') ? 'checkin' : 'registered';
+    //   }
+    //   return prev;
+    // }, []);
 
     const eventId = match.params.eventId || event.data.event_id;
     const info = match.params.info || 'overview';
