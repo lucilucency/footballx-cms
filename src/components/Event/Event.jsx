@@ -122,6 +122,8 @@ class RequestLayer extends React.Component {
     //   return prev;
     // }, []);
 
+    // console.log('fuck');
+
     const eventId = match.params.eventId || event.data.event_id;
     const info = match.params.info || 'overview';
     const page = pages(eventId).find(el => el.key.toLowerCase() === info);
