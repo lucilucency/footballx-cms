@@ -189,12 +189,11 @@ export function fxActionGet(type, path, params = {}, transform) {
 
     const checkStatus = (response) => {
       if (response.status >= 200 && response.status < 300) {
-        return response
-      } else {
-        const error = new Error(response.statusText);
-        error.response = response;
-        throw error;
+        return response;
       }
+      const error = new Error(response.statusText);
+      error.response = response;
+      throw error;
     };
 
     function parseJSON(response) {
@@ -217,9 +216,7 @@ export function fxActionGet(type, path, params = {}, transform) {
           Authorization: `Bearer ${accessToken}`,
         },
       }).then(checkStatus)
-        .then((response) => {
-          return response.text();
-        })
+        .then(response => response.text())
         .then(parseJSON)
         .then((body) => {
           let dispatchData = body.data;
@@ -228,7 +225,6 @@ export function fxActionGet(type, path, params = {}, transform) {
           }
           return dispatch(dispatchOK(dispatchData));
         });
-
 
 
       // return request

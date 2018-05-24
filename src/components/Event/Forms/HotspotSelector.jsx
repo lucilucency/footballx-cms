@@ -75,33 +75,56 @@ class HotspotSelector extends React.Component {
 
   render() {
     const dsHotspot = this.props.dsHotspot;
-    const cities = ['Hà Nội', 'Hồ Chí Minh'];
+    // const cities = ['Hà Nội', 'Hồ Chí Minh'];
 
-    const countriesNodeList = cities.map((city, continentIndex) => (
-      <optgroup key={continentIndex} label={city}>
-        {dsHotspot
-          // .sort((a, b) => b.Continent - a.Continent)
-          .filter(c => c.address.indexOf(city) !== -1)
-          .map((hotspot, index) => {
-            const menuItemStyle = {
-              whiteSpace: 'normal',
-              display: 'flex',
-              justifyContent: 'space-between',
-              lineHeight: 'normal',
-            };
+    // const countriesNodeList = cities.map((city, continentIndex) => (
+    //   <optgroup key={continentIndex} label={city}>
+    //     {dsHotspot
+    //       // .sort((a, b) => b.Continent - a.Continent)
+    //       .filter(c => c.address.indexOf(city) !== -1)
+    //       .map((hotspot, index) => {
+    //         const menuItemStyle = {
+    //           whiteSpace: 'normal',
+    //           display: 'flex',
+    //           justifyContent: 'space-between',
+    //           lineHeight: 'normal',
+    //         };
+    //
+    //         return (
+    //           <div key={index} value={hotspot} label={`${hotspot.name} - ${hotspot.address}`} style={menuItemStyle}>
+    //             <div style={{ marginRight: 10 }}>
+    //               <span style={{ fontWeight: 'bold' }}>{hotspot.name}</span>
+    //               <br />
+    //               <span style={{ fontSize: 12 }}>{hotspot.address}</span>
+    //             </div>
+    //           </div>
+    //         );
+    //       })}
+    //   </optgroup>
+    // ));
 
-            return (
-              <div key={index} value={hotspot} label={`${hotspot.name} - ${hotspot.address}`} style={menuItemStyle}>
-                <div style={{ marginRight: 10 }}>
-                  <span style={{ fontWeight: 'bold' }}>{hotspot.name}</span>
-                  <br />
-                  <span style={{ fontSize: 12 }}>{hotspot.address}</span>
-                </div>
-              </div>
-            );
-          })}
-      </optgroup>
-    ));
+    const countriesNodeList = dsHotspot.map((hotspot) => {
+      const menuItemStyle = {
+        whiteSpace: 'normal',
+        display: 'flex',
+        justifyContent: 'space-between',
+        lineHeight: 'normal',
+      };
+
+      return (
+        <div key={hotspot.id} value={hotspot} label={`${hotspot.name} - ${hotspot.address}`} style={menuItemStyle}>
+          <div style={{ marginRight: 10 }}>
+            <span style={{ fontWeight: 'bold' }}>{hotspot.name}</span>
+            <br />
+            <span style={{ fontSize: 12 }}>{hotspot.address}</span>
+          </div>
+          <Avatar
+            src={hotspot.icon}
+            // size={48}
+          />
+        </div>
+      );
+    });
 
     return (<BigSelector
       name="selectedHotspot"
