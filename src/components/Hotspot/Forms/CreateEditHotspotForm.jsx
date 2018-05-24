@@ -95,8 +95,8 @@ class CreateEditHotspotForm extends React.Component {
           short_name: { value: newProps.hotspot.short_name, text: newProps.hotspot.short_name && newProps.hotspot.short_name.toString() },
           address: { value: newProps.hotspot.address, text: newProps.hotspot.address && newProps.hotspot.address.toString() },
           phone: { value: newProps.hotspot.phone, text: newProps.hotspot.phone && newProps.hotspot.phone.toString() },
-          lon: { value: newProps.hotspot.coordinate && parseFloat(newProps.hotspot.coordinate.lon), text: newProps.hotspot.coordinate && newProps.hotspot.coordinate.lon.toString() },
-          lat: { value: newProps.hotspot.coordinate && parseFloat(newProps.hotspot.coordinate.lat), text: newProps.hotspot.coordinate && newProps.hotspot.coordinate.lat.toString() },
+          lon: { value: newProps.hotspot.coordinate && parseFloat(newProps.hotspot.coordinate.lon), text: newProps.hotspot.coordinate && newProps.hotspot.coordinate.lon },
+          lat: { value: newProps.hotspot.coordinate && parseFloat(newProps.hotspot.coordinate.lat), text: newProps.hotspot.coordinate && newProps.hotspot.coordinate.lat },
           wifi: { value: newProps.hotspot.wifi },
           type: { value: newProps.hotspot.type, text: __type() },
         },
@@ -131,8 +131,8 @@ class CreateEditHotspotForm extends React.Component {
       short_name: formData.short_name.value,
       address: formData.address.value,
       phone: formData.phone.value,
-      lon: formData.lon.value,
-      lat: formData.lat.value,
+      lon: formData.lon.value || 21.0227788,
+      lat: formData.lat.value || 105.8194541,
       wifi: formData.wifi.value,
       type: formData.type.value || 1,
     };
@@ -394,9 +394,10 @@ class CreateEditHotspotForm extends React.Component {
       />,
       <FlatButton
         key="submit"
-        type="submit"
+        // type="submit"
         label={strings.form_general_submit}
         primary
+        onClick={this.submit}
       />,
     ];
 

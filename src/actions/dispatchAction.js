@@ -187,40 +187,79 @@ export function fxActionGet(type, path, params = {}, transform) {
       error,
     });
 
+    const checkStatus = (response) => {
+      if (response.status >= 200 && response.status < 300) {
+        return response
+      } else {
+        const error = new Error(response.statusText);
+        error.response = response;
+        throw error;
+      }
+    };
+
+    function parseJSON(response) {
+      try {
+        return JSON.parse(response);
+      } catch (error) {
+        throw error;
+      }
+    }
+
     const accessToken = localStorage.getItem('access_token');
     const fetchDataWithRetry = (delay, tries, error) => {
       if (tries < 1) {
         return dispatchFail(error);
       }
-      return request
-        .get(url)
-        .set('Content-Type', 'application/x-www-form-urlencoded')
-        .set('Authorization', `Bearer ${accessToken}`)
-        .query({}) // query string
-        .then((res, err) => {
-          if (!err) {
-            let dispatchData = res.body.data;
-            if (transform) {
-              dispatchData = transform(res.body.data);
-            }
-            return dispatch(dispatchOK(dispatchData));
-          }
-          return setTimeout(() => fetchDataWithRetry(delay + 2000, tries - 1, res.body.message), delay);
+      return fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }).then(checkStatus)
+        .then((response) => {
+          return response.text();
         })
-        .catch((err) => {
-          console.log(`Error in ${type}`);
-          console.log(err);
-
-          if (err.message === 'Unauthorized') {
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('account_user');
-            localStorage.removeItem('account_hotspot');
-            window.location.href = '/login';
-            return null;
+        .then(parseJSON)
+        .then((body) => {
+          let dispatchData = body.data;
+          if (transform) {
+            dispatchData = transform(dispatchData);
           }
-
-          return dispatch(dispatchFail(err.response ? err.response.body.message : err));
+          return dispatch(dispatchOK(dispatchData));
         });
+
+
+
+      // return request
+      //   .get(url)
+      //   .set('Content-Type', 'application/x-www-form-urlencoded')
+      //   .set('Authorization', `Bearer ${accessToken}`)
+      //   .query({}) // query string
+      //   .then((res, err) => {
+      //     if (!err) {
+      //       let dispatchData = res.body.data;
+      //       if (transform) {
+      //         dispatchData = transform(res.body.data);
+      //       }
+      //       return dispatch(dispatchOK(dispatchData));
+      //     }
+      //     return setTimeout(() => fetchDataWithRetry(delay + 2000, tries - 1, res.body.message), delay);
+      //   })
+      //   .catch((err) => {
+      //     console.log(`Error in ${type}`);
+      //     console.log(err);
+      //
+      //     if (err.message === 'Unauthorized') {
+      //       localStorage.removeItem('access_token');
+      //       localStorage.removeItem('account_user');
+      //       localStorage.removeItem('account_hotspot');
+      //       window.location.href = '/login';
+      //       return null;
+      //     }
+      //
+      //     return dispatch(dispatchFail(err.response ? err.response.body.message : err));
+      //   });
     };
 
     dispatch(dispatchStart());
