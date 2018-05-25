@@ -14,6 +14,7 @@ const CompressionPlugin = require('compression-webpack-plugin');
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = process.env.NODE_ENV === 'development';
 const isTest = process.env.NODE_ENV === 'test';
+console.warn('running build in ', process.env.NODE_ENV, ' environment');
 
 function HashBundlePlugin() {
 }

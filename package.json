@@ -4,9 +4,9 @@
   "version": "1.0.1",
   "license": "MIT",
   "scripts": {
-    "webpack": "webpack",
+    "webpack": "NODE_ENV=${NODE_ENV} webpack",
     "start": "webpack-dev-server --hot",
-    "build": "npm install && npm run lintnofix && npm run webpack",
+    "build": "NODE_ENV=${NODE_ENV} npm install && NODE_ENV=${NODE_ENV} npm run lintnofix && NODE_ENV=${NODE_ENV} npm run webpack",
     "lint": "eslint . --ext .js,.jsx --fix",
     "lintnofix": "eslint . --ext .js,.jsx",
     "lint:css": "stylelint 'src/**/*.css'",
