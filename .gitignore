@@ -9,3 +9,6 @@ analyze.html
 .idea/workspace.xml
 .idea/*
 package-lock.json
+
+.env
+.env.*

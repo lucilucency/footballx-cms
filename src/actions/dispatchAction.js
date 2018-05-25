@@ -224,7 +224,15 @@ export function fxActionGet(type, path, params = {}, transform) {
             dispatchData = transform(dispatchData);
           }
           return dispatch(dispatchOK(dispatchData));
-        });
+        }).catch((err) => {
+          if (err.message === 'Unauthorized') {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('account_user');
+            localStorage.removeItem('account_hotspot');
+            window.location.href = '/login';
+            return null;
+          }
+        })
 
 
       // return request

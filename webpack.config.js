@@ -14,7 +14,10 @@ const CompressionPlugin = require('compression-webpack-plugin');
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = process.env.NODE_ENV === 'development';
 const isTest = process.env.NODE_ENV === 'test';
-console.warn('running build in ', process.env.NODE_ENV, ' environment');
+
+console.warn('NODE_ENV', process.env.NODE_ENV);
+console.warn('FX_API', process.env.FX_API);
+console.warn('FX_VERSION', process.env.FX_VERSION);
 
 function HashBundlePlugin() {
 }
@@ -91,10 +94,10 @@ const config = {
     }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-      FX_API: JSON.stringify(isProd ? 'https://web-api.ttab.me' : isDev ? 'http://code.ttab.me:51168' : isTest ? 'https://web-api.ttab.me' : '//localhost:51168'),
+      FX_API: JSON.stringify(process.env.FX_API),
       FX_VERSION: JSON.stringify(process.env.FX_VERSION || 'v1'),
-      FX_SOCKET: JSON.stringify(isProd ? '//prod.ttab.me:51170/' : '//code.ttab.me:51170/'),
-      API_KEY_GOOGLE_MAPS: JSON.stringify('AIzaSyAVuAeRe7X-4rtzJZb00XUohyCVPV_03QE'),
+      FX_SOCKET: JSON.stringify(process.env.FX_SOCKET),
+      API_KEY_GOOGLE_MAPS: JSON.stringify(process.env.API_KEY_GOOGLE_MAPS),
     }),
   ].filter(o => o),
   devServer: {
@@ -107,7 +110,7 @@ const config = {
   },
 };
 
-if (!isProd) {
+if (process.env.NODE_ENV !== 'production') {
   config.devtool = 'eval-source-map';
   config.entry = [
     'react-hot-loader/patch',
