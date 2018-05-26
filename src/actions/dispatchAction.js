@@ -224,7 +224,8 @@ export function fxActionGet(type, path, params = {}, transform) {
             dispatchData = transform(dispatchData);
           }
           return dispatch(dispatchOK(dispatchData));
-        }).catch((err) => {
+        })
+        .catch((err) => {
           if (err.message === 'Unauthorized') {
             localStorage.removeItem('access_token');
             localStorage.removeItem('account_user');
@@ -232,7 +233,9 @@ export function fxActionGet(type, path, params = {}, transform) {
             window.location.href = '/login';
             return null;
           }
-        })
+
+          return dispatch(dispatchFail(err.response ? err.response.body.message : err));
+        });
 
 
       // return request

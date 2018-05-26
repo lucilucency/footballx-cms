@@ -11,9 +11,9 @@ const postcssCssNext = require('postcss-cssnext');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CompressionPlugin = require('compression-webpack-plugin');
 
-const isProd = process.env.NODE_ENV === 'production';
-const isDev = process.env.NODE_ENV === 'development';
-const isTest = process.env.NODE_ENV === 'test';
+// const isProd = process.env.NODE_ENV === 'production';
+// const isDev = process.env.NODE_ENV === 'development';
+// const isTest = process.env.NODE_ENV === 'test';
 
 console.warn('NODE_ENV', process.env.NODE_ENV);
 console.warn('FX_API', process.env.FX_API);
@@ -81,7 +81,7 @@ const config = {
     }],
   },
   plugins: [
-    isTest && new BundleAnalyzerPlugin(),
+    process.env.NODE_ENV === 'test' && new BundleAnalyzerPlugin(),
     new webpack.LoaderOptionsPlugin({
       options: {
         postcss: [
