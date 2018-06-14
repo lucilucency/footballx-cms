@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import constants from 'components/constants';
 import strings from 'lang';
 // import { colors } from 'material-ui/styles';
-import Clubs from 'fxconstants/build/clubsObj.json';
+import Clubs from 'fxconstants/clubsObj.json';
 
 const MatchInfo = styled.div`
   box-sizing: border-box;

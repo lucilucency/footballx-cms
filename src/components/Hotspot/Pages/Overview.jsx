@@ -34,13 +34,15 @@ const Overview = (propsVar) => {
       loading={loading}
       error={false}
     >
-      <Table
-        columns={hotspotEventsColumns(browser)}
-        data={hotspotEvents}
-        maxRows={MAX_MATCHES_ROWS}
-        loading={loading}
-        error={false}
-      />
+      <div>
+        {hotspotEvents ? <Table
+          columns={hotspotEventsColumns(browser)}
+          data={hotspotEvents}
+          maxRows={MAX_MATCHES_ROWS}
+          loading={loading}
+          error={false}
+        /> : strings.td_no_result}
+      </div>
     </Container>
   </OverviewWrapper>);
 };
@@ -80,7 +82,7 @@ RequestLayer.propTypes = {
 
 const mapStateToProps = state => ({
   user: state.app.metadata.data.user || {},
-  hotspotEvents: state.app.hotspotEvents && state.app.hotspotEvents.data.filter(o => o.status === 1),
+  hotspotEvents: state.app.hotspotEvents.data && state.app.hotspotEvents.data.length && state.app.hotspotEvents.data.filter(o => o.status === 1),
   loading: state.app.hotspotEvents.loading,
   error: state.app.hotspotEvents.error,
   browser: state.browser,

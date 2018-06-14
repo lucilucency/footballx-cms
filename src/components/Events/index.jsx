@@ -66,6 +66,14 @@ class RequestLayer extends React.Component {
             return event.hotspot_address.indexOf(filter[key]) !== -1;
           }
 
+          if (key === 'start_time') {
+            return event.start_time_register > filter[key];
+          }
+
+          if (key === 'end_time') {
+            return event.end_time_register < filter[key];
+          }
+
           if (typeof event[key] !== 'object') {
             return value.indexOf(event[key].toString()) !== -1;
           }
@@ -105,7 +113,7 @@ class RequestLayer extends React.Component {
 
 const mapStateToProps = state => ({
   user: state.app.metadata.data.user,
-  events: state.app.events.data.sort((a, b) => {
+  events: state.app.events.data ? state.app.events.data.sort((a, b) => {
     const aDate = (a.match_date * 1000) - Date.now();
     const bDate = (b.match_date * 1000) - Date.now();
 
@@ -113,7 +121,7 @@ const mapStateToProps = state => ({
       return a.match_date - b.match_date;
     }
     return b.match_date - a.match_date;
-  }),
+  }) : [],
 });
 
 // const mapDispatchToProps = dispatch => ({});

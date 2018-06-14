@@ -6,7 +6,7 @@ import XLSX from 'xlsx';
 import { getGroupXUsers } from 'actions';
 import { subTextStyle, transformations, toDateString, bindAll } from 'utils';
 import strings from 'lang';
-import groups from 'fxconstants/build/groupsObj.json';
+import groups from 'fxconstants/groupsObj.json';
 import { IconFacebook } from 'components/Icons';
 import IconPrint from 'material-ui/svg-icons/action/print';
 import IconDownload from 'material-ui/svg-icons/file/file-download';

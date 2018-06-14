@@ -1,5 +1,5 @@
 import strings from 'lang';
-import Clubs from 'fxconstants/build/clubsObj.json';
+import Clubs from 'fxconstants/clubsObj.json';
 
 export const dateList = [{
   text: strings.filter_last_week,

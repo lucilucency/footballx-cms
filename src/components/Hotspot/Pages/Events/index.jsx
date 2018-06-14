@@ -48,7 +48,9 @@ class RequestLayer extends React.Component {
     } = this.props;
 
     return (<Container title={strings.hotspot_all_events} error={false} loading={loading}>
-      <Table paginated columns={hotspotEventsColumns(browser)} data={data} error={false} loading={loading} />
+      <div>
+        {data && data.length ? <Table paginated columns={hotspotEventsColumns(browser)} data={data} error={false} loading={loading} /> : strings.td_no_result}
+      </div>
     </Container>);
   }
 }

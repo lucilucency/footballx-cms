@@ -13,7 +13,7 @@ import { createEvent as defaultCreateEvent, toggleShowForm, sendNotificationTopi
 /* data */
 import strings from 'lang';
 import { topics } from 'components/topics';
-import Clubs from 'fxconstants/build/clubsObj.json';
+import Clubs from 'fxconstants/clubsObj.json';
 import util from 'util';
 /* components */
 import { TextValidator, AutoCompleteValidator } from 'react-material-ui-form-validator';

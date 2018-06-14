@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import fxReducer from 'reducers/fxReducer';
 import request from 'reducers/request';
 import form from 'reducers/form';
-import leagues from 'fxconstants/build/leaguesArr.json';
+import leagues from 'fxconstants/leaguesArr.json';
 
 
 const leaguesReducer = leagues.reduce((__prev, cur) => {

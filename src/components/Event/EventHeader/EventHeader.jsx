@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { toggleShowForm } from 'actions';
 import { renderDialog, bindAll } from 'utils';
 import strings from 'lang';
-import Groups from 'fxconstants/build/groupsObj.json';
+import Groups from 'fxconstants/groupsObj.json';
 /* components */
 import { FlatButton } from 'material-ui';
 // import IconFingerprint from 'material-ui/svg-icons/action/fingerprint';

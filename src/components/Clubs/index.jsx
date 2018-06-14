@@ -3,7 +3,7 @@ import React from 'react';
 import Helmet from 'react-helmet';
 import { connect } from 'react-redux';
 import strings from 'lang';
-import leagues from 'fxconstants/build/leaguesArr.json';
+import leagues from 'fxconstants/leaguesArr.json';
 import { transformations, getOrdinal, renderDialog, bindAll } from 'utils';
 import { getLeagueClubs } from 'actions';
 import styled from 'styled-components';

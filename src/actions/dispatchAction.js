@@ -1,13 +1,12 @@
 /* eslint-disable no-restricted-syntax,no-param-reassign */
 /* global FX_API */
 /* global FX_VERSION */
-import fetch from 'isomorphic-fetch';
 import queryString from 'querystring';
 import update from 'react-addons-update';
 
 const request = require('superagent');
 const FormData = require('form-data');
-const FormUrlEncoded = require('form-urlencoded');
+const formurlencoded = require('form-urlencoded');
 
 
 export function action(type, host, path, params = {}, transform) {
@@ -91,6 +90,76 @@ export function fxActionAuth(type = 'auth', path, params = {}, transform) {
   };
 }
 
+export function dispatchGet({
+  auth = true,
+  host = FX_API, version = FX_VERSION,
+  reducer, path,
+  params = {}, transform,
+  retries = 1, retriesBreak = 3000,
+  callback,
+}) {
+  return (dispatchAction) => {
+    const url = `${host}/${version}/${path}?${typeof params === 'string' ? params.substring(1) : queryString.stringify(params)}`;
+
+    const dispatchStart = () => ({
+      type: `REQUEST/${reducer}`,
+    });
+    const dispatchOK = payload => ({
+      type: `OK/${reducer}`,
+      payload,
+    });
+    const dispatchFail = error => ({
+      type: `FAIL/${reducer}`,
+      error,
+    });
+
+    const accessToken = localStorage.getItem('access_token') || '';
+
+    const fetchDataWithRetry = (delay, tries = 1, error) => {
+      if (tries < 1) {
+        return dispatchFail(error);
+      }
+
+      let doRequest = request
+        .get(url)
+        .set('Content-Type', 'application/x-www-form-urlencoded');
+      if (auth) {
+        doRequest = doRequest.set('Authorization', `Bearer ${accessToken}`);
+      }
+
+      return doRequest
+        .query({}) // query string
+        .then((res) => {
+          if (res.statusCode === 200) {
+            let dispatchData = JSON.parse(res.text);
+            if (transform) {
+              dispatchData = transform(dispatchData);
+            }
+            if (callback) callback(dispatchData);
+            return dispatchAction(dispatchOK(dispatchData));
+          }
+          return setTimeout(() => fetchDataWithRetry(delay + 2000, tries - 1, res.body.message), delay);
+        })
+        .catch((err) => {
+          console.warn(`Error in dispatchGet/${reducer}`);
+          console.error(err);
+          if (err.message === 'Unauthorized') {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('account_user');
+            localStorage.removeItem('account_hotspot');
+            window.location.href = '/login';
+            return null;
+          }
+
+          return dispatchAction(dispatchFail(err.response ? err.response.body.message : err));
+        });
+    };
+
+    dispatchAction(dispatchStart());
+    return fetchDataWithRetry(retriesBreak, retries);
+  };
+}
+
 export function fxActionPost(type, path, params = {}, transform, payload) {
   const host = FX_API;
   const v = FX_VERSION;
@@ -112,7 +181,7 @@ export function fxActionPost(type, path, params = {}, transform, payload) {
 
     const options = { method: 'POST' };
     if (typeof params === 'object') {
-      options.body = FormUrlEncoded(params);
+      options.body = formurlencoded(params);
       options.contentType = 'application/x-www-form-urlencoded';
     }
 
@@ -157,6 +226,93 @@ export function fxActionPost(type, path, params = {}, transform, payload) {
   };
 }
 
+export function dispatchPost({
+  auth = true, host = FX_API, version = FX_VERSION, contentType = 'application/x-www-form-urlencoded',
+  retries = 1, retriesBreak = 3000,
+  reducer, path,
+  params = {},
+  transform,
+  payload, callback,
+  reducerCallback, payloadCallback,
+}) {
+  return (dispatchAction) => {
+    if (typeof reducerCallback === 'string') {
+      reducerCallback = [reducerCallback];
+      payloadCallback = [payloadCallback];
+    }
+    const url = `${host}/${version}/${path}?${typeof params === 'string' ? params.substring(1) : ''}`;
+
+    const dispatchStart = () => ({
+      type: `REQUEST/${reducer}`,
+    });
+    const dispatchOK = payload => ({
+      type: `OK/${reducer}`,
+      payload,
+    });
+    const dispatchFail = error => ({
+      type: `FAIL/${reducer}`,
+      error,
+    });
+
+    const accessToken = localStorage.getItem('access_token') || '';
+
+    const fetchDataWithRetry = (delay, tries, error) => {
+      if (tries < 1) {
+        return dispatchAction(dispatchFail(error));
+      }
+
+      let doRequest = request
+        .post(url)
+        .set('Content-Type', contentType);
+      if (auth) {
+        doRequest = doRequest.set('Authorization', `Bearer ${accessToken}`);
+      }
+
+      return doRequest
+        .send(formurlencoded(params))
+        .then((res) => {
+          if (res.statusCode === 200) {
+            let dispatchData = JSON.parse(res.text);
+            if (transform) {
+              dispatchData = transform(dispatchData);
+            }
+            if (payload) {
+              if (Array.isArray(payload)) {
+                dispatchData = payload;
+              } else {
+                dispatchData = update(payload, {
+                  $merge: dispatchData,
+                });
+              }
+            }
+            if (callback) callback(dispatchData);
+            if (reducerCallback && reducerCallback.length) {
+              reducerCallback.forEach((el, index) => dispatchAction({
+                type: `OK/${el}`,
+                payload: payloadCallback[index],
+              }));
+            }
+            return dispatchAction(dispatchOK(dispatchData));
+          }
+          return setTimeout(() => fetchDataWithRetry(delay + 2000, tries - 1, res.error), delay);
+        })
+        .catch((err) => {
+          console.error(`Error in dispatchPost/${reducer}`);
+          if (err.message === 'Unauthorized') {
+            console.error('Unauthorized, logging out...');
+            // window.location.href = '/login';
+            return null;
+          }
+
+          return dispatchAction(dispatchFail(err.message));
+        });
+    };
+
+    dispatchAction(dispatchStart());
+    return fetchDataWithRetry(retriesBreak, retries);
+  };
+}
+
 export function fxDispatch(type, payload, transform) {
   return (dispatch) => {
     const dispatchOK = payload => ({
@@ -187,45 +343,31 @@ export function fxActionGet(type, path, params = {}, transform) {
       error,
     });
 
-    const checkStatus = (response) => {
-      if (response.status >= 200 && response.status < 300) {
-        return response;
-      }
-      const error = new Error(response.statusText);
-      error.response = response;
-      throw error;
-    };
-
-    function parseJSON(response) {
-      try {
-        return JSON.parse(response);
-      } catch (error) {
-        throw error;
-      }
-    }
-
     const accessToken = localStorage.getItem('access_token');
     const fetchDataWithRetry = (delay, tries, error) => {
       if (tries < 1) {
         return dispatchFail(error);
       }
-      return fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }).then(checkStatus)
-        .then(response => response.text())
-        .then(parseJSON)
-        .then((body) => {
-          let dispatchData = body.data;
-          if (transform) {
-            dispatchData = transform(dispatchData);
+
+      return request
+        .get(url)
+        .set('Content-Type', 'application/x-www-form-urlencoded')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .query({}) // query string
+        .then((res, err) => {
+          if (!err) {
+            let dispatchData = res.body.data;
+            if (transform) {
+              dispatchData = transform(res.body.data);
+            }
+            return dispatch(dispatchOK(dispatchData));
           }
-          return dispatch(dispatchOK(dispatchData));
+          return setTimeout(() => fetchDataWithRetry(delay + 2000, tries - 1, res.body.message), delay);
         })
         .catch((err) => {
+          console.error(`Error in ${type}`);
+          console.error(err);
+
           if (err.message === 'Unauthorized') {
             localStorage.removeItem('access_token');
             localStorage.removeItem('account_user');
@@ -236,37 +378,6 @@ export function fxActionGet(type, path, params = {}, transform) {
 
           return dispatch(dispatchFail(err.response ? err.response.body.message : err));
         });
-
-
-      // return request
-      //   .get(url)
-      //   .set('Content-Type', 'application/x-www-form-urlencoded')
-      //   .set('Authorization', `Bearer ${accessToken}`)
-      //   .query({}) // query string
-      //   .then((res, err) => {
-      //     if (!err) {
-      //       let dispatchData = res.body.data;
-      //       if (transform) {
-      //         dispatchData = transform(res.body.data);
-      //       }
-      //       return dispatch(dispatchOK(dispatchData));
-      //     }
-      //     return setTimeout(() => fetchDataWithRetry(delay + 2000, tries - 1, res.body.message), delay);
-      //   })
-      //   .catch((err) => {
-      //     console.log(`Error in ${type}`);
-      //     console.log(err);
-      //
-      //     if (err.message === 'Unauthorized') {
-      //       localStorage.removeItem('access_token');
-      //       localStorage.removeItem('account_user');
-      //       localStorage.removeItem('account_hotspot');
-      //       window.location.href = '/login';
-      //       return null;
-      //     }
-      //
-      //     return dispatch(dispatchFail(err.response ? err.response.body.message : err));
-      //   });
     };
 
     dispatch(dispatchStart());
@@ -296,7 +407,7 @@ export function fxActionPut(type, path, params = {}, transform) {
 
 
     if (typeof params === 'object') {
-      options.body = FormUrlEncoded(params);
+      options.body = formurlencoded(params);
       options.contentType = 'application/x-www-form-urlencoded';
     }
 
@@ -354,7 +465,7 @@ export function fxActionDelete(type, path, params = {}, transform) {
     const options = { method: 'DELETE' };
 
     if (typeof params === 'object') {
-      options.body = FormUrlEncoded(params);
+      options.body = formurlencoded(params);
       options.contentType = 'application/x-www-form-urlencoded';
     }
 

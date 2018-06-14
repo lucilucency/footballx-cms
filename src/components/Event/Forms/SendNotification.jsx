@@ -16,7 +16,7 @@ import { ValidatorForm } from 'react-form-validator-core';
 /* data */
 import strings from 'lang';
 import { topics } from 'components/topics';
-import Clubs from 'fxconstants/build/clubsObj.json';
+import Clubs from 'fxconstants/clubsObj.json';
 import { sendNotificationTopic } from 'actions';
 /* css */
 import styled, { css } from 'styled-components';

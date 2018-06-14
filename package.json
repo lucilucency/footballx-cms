@@ -11,7 +11,8 @@
     "lintnofix": "eslint . --ext .js,.jsx",
     "lint:css": "stylelint 'src/**/*.css'",
     "test": "NODE_PATH=./src NODE_ENV=test mocha --ui bdd --reporter nyan -r test/initializeJsdom.js $(find src -name '*.spec.*')",
-    "test:watch": "npm test -- --watch --watch-extensions jsx,js"
+    "test:watch": "npm test -- --watch --watch-extensions jsx,js",
+    "update:fxconstants": "sh -ac '. ./.env; REACT_APP_API_HOST=${REACT_APP_API_HOST} REACT_APP_API_CMS=${FX_API} node dev/updateFxconstants.js && node dev/updateLocalData.js'"
   },
   "greenkeeper": {
     "label": "type: greenkeeper"
@@ -38,7 +39,7 @@
     "form-data": "^2.3.2",
     "form-urlencoded": "^2.0.4",
     "fuzzy": "^0.1.3",
-    "fxconstants": "^1.1.11",
+    "fxconstants": "^1.1.17",
     "globalize": "^1.3.0",
     "heatmap.js": "^2.0.5",
     "http": "0.0.0",

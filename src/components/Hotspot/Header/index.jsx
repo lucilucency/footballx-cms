@@ -121,8 +121,8 @@ const HotspotHeader = (propsVar) => {
   if (hotspot.loading) {
     return <Spinner />;
   }
-  const checkedInXUsers = (events.length && events.reduce((a, b) => a + b.checkin_total, 0)) || 0;
-  const registeredXUsers = (events.length && events.reduce((a, b) => a + b.register_total, 0)) || 0;
+  const checkedInXUsers = (events && events.length && events.reduce((a, b) => a + b.checkin_total, 0)) || 0;
+  const registeredXUsers = (events && events.length && events.reduce((a, b) => a + b.register_total, 0)) || 0;
 
   let badgeStyle = {
     fontSize: 20,

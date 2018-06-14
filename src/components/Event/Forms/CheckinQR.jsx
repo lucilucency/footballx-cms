@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { toggleShowForm } from 'actions/dispatchForm';
 import { Col } from 'utils';
-import Groups from 'fxconstants/build/groupsObj.json';
+import Groups from 'fxconstants/groupsObj.json';
 import QRCode from 'qrcode.react';
 import styled, { css } from 'styled-components';
 

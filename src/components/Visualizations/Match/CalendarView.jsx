@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import constants from 'components/constants';
-import Clubs from 'fxconstants/build/clubsObj.json';
+import Clubs from 'fxconstants/clubsObj.json';
 
 const Styled = styled.div`
   display: flex;

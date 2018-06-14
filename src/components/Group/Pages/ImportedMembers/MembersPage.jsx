@@ -6,7 +6,7 @@ import XLSX from 'xlsx';
 import { getGroupImportedMembers } from 'actions';
 import { subTextStyle, bindAll } from 'utils';
 import strings from 'lang';
-import groups from 'fxconstants/build/groupsObj.json';
+import groups from 'fxconstants/groupsObj.json';
 import IconDownload from 'material-ui/svg-icons/file/file-download';
 import Table, { TableLink } from 'components/Table/index';
 import Container from 'components/Container/index';

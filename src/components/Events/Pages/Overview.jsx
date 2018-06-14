@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import queryString from 'querystring';
 import {
   connect,
 } from 'react-redux';
@@ -108,7 +109,13 @@ const TableEvents = propsVar => (
 );
 
 const getData = (props) => {
-  props.dispatchEvents(props.location.search);
+  const { search } = props.location;
+  const params = { ...queryString.parse(search.substring(1)) };
+  const defaultStartTime = parseInt(Date.now() / 1000, 10) - 2592000; /* 1m */
+  const defaultEndTime = parseInt(Date.now() / 1000, 10) + 2592000; /* 1m */
+  params.start_time = params.start_time || defaultStartTime;
+  params.end_time = params.end_time || defaultEndTime;
+  props.dispatchEvents(params);
 };
 
 class Overview extends React.Component {

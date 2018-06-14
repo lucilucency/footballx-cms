@@ -1,7 +1,6 @@
 import * as transform from 'actions/transforms';
-import { action, fxActionPost, fxActionGet, fxActionPut, fxActionDelete, fxActionAuth, fxDispatch } from 'actions/dispatchAction';
-import queryString from 'querystring';
-import leagues from 'fxconstants/build/leaguesObj.json';
+import { action, fxActionPost, fxActionGet, fxActionPut, fxActionDelete, fxActionAuth, fxDispatch, dispatchPost, dispatchGet } from 'actions/dispatchAction';
+import leagues from 'fxconstants/leaguesObj.json';
 
 const __blankTransforms = () => ([]);
 
@@ -51,7 +50,14 @@ export const getHotspot = hotspotId => fxActionGet('hotspot', `hotspot/${hotspot
 export const editHotspot = (hotspotId, params) => fxActionPut('EDIT/hotspot', `hotspot/${hotspotId}`, params, transform.transformEditEvent);
 export const getHotspotEvents = (hotspotId, params = {}) => fxActionGet('hotspotEvents', `hotspot/${hotspotId}/events`, params, transform.transformEvents);
 export const getHotspotUpcomingEvents = (hotspotId, params = {}) => fxActionGet('hotspotUpcomingEvents', `hotspot/${hotspotId}/events`, params, transform.transformEvents);
-export const createHotspotEvent = (params, payload) => fxActionPost('ADD/hotspotEvents', 'event', params, transform.transformCreateEvent, payload);
+export const createHotspotEvent = (params, payload) => dispatchPost({
+  version: 'v2',
+  reducer: 'ADD/hotspotEvents',
+  path: 'event',
+  params,
+  payload,
+  transform: transform.transformCreateEvent,
+});
 export const createHotspotHUser = (params, payload) => fxActionPost('ADD/hotspotHUsers', 'huser', params, transform.transformHUser, payload);
 export const getHotspotHUsers = hotspotId => fxActionGet('hotspotHUsers', `hotspot/${hotspotId}/husers`);
 /* group */
@@ -68,12 +74,24 @@ export const getGroupXUsers = groupId => fxActionGet('groupXUsers', `group/${gro
 export const getGroupMembershipPackages = groupId => fxActionGet('groupMembershipPackages', `group/${groupId}/membership_packages`);
 // export const createGroup = (params) => fxActionPost('ADD/events', 'event', params, transform.transformCreateGroup);
 /* event */
-export const getEvents = params => fxActionGet('events', 'events', { ...queryString.parse(params.substring(1)) }, transform.transformEvents);
+export const getEvents = params => dispatchGet({
+  version: 'v2',
+  reducer: 'events',
+  path: 'events',
+  params,
+  transform: transform.transformEvents,
+});
 export const getEvent = eventId => fxActionGet('event', `event/${eventId}`, {}, transform.transformEvent);
 export const getEventXUsers = (eventId, params) => fxActionGet('eventXUsers', `event/${eventId}/xusers`, params);
 export const addEventXUser = payload => fxDispatch('ADD/eventXUsers', payload);
 export const dispatchNewXUserCheckin = payload => fxDispatch('eventXUser', payload);
-export const createEvent = params => fxActionPost('ADD/events', 'event', params, transform.transformCreateEvent);
+export const createEvent = params => dispatchPost({
+  version: 'v2',
+  reducer: 'ADD/events',
+  path: 'event',
+  params,
+  transform: transform.transformCreateEvent,
+});
 export const editEvent = (eventId, params) => fxActionPut('EDIT/event', `event/${eventId}`, params, transform.transformEditEvent);
 export const deleteEvent = eventId => fxActionDelete('DELETE/event', `event/${eventId}`);
 /* card */

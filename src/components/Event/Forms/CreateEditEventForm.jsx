@@ -9,7 +9,7 @@ import { createEvent as defaultCreateEvent, editEvent as defaultEditEvent, getHo
 import util from 'util';
 import strings from 'lang';
 import * as data from 'components/Event/Event.config';
-import Clubs from 'fxconstants/build/clubsObj.json';
+import Clubs from 'fxconstants/clubsObj.json';
 import {
   AutoComplete,
   Dialog,
@@ -327,12 +327,12 @@ class CreateEventForm extends React.Component {
         match: { $set: o },
         home_color: {
           $set: {
-            value: (Clubs[o.home.club_id] && Clubs[o.home.club_id].home_color) || '#ffffff',
+            value: (Clubs[o.home] && Clubs[o.home].home_color) || '#ffffff',
           },
         },
         away_color: {
           $set: {
-            value: (Clubs[o.away.club_id] && Clubs[o.away.club_id].away_color) || '#000000',
+            value: (Clubs[o.away] && Clubs[o.away].away_color) || '#000000',
           },
         },
         free_folk_color: {
@@ -366,8 +366,8 @@ class CreateEventForm extends React.Component {
         },
       }),
       payload: update(that.state.payload, {
-        home: { $set: o.home.club_id },
-        away: { $set: o.away.club_id },
+        home: { $set: o.home },
+        away: { $set: o.away },
         match_date: { $set: o.date },
         match_id: { $set: o.value },
       }),
@@ -481,7 +481,7 @@ class CreateEventForm extends React.Component {
       <MatchWrapper>
         <ClubWrapper>
           <img
-            src={Clubs[this.state.event.match.home.club_id] && Clubs[this.state.event.match.home.club_id].icon}
+            src={Clubs[this.state.event.match.home] && Clubs[this.state.event.match.home].icon}
             alt=""
           />
           <div>
@@ -564,7 +564,7 @@ class CreateEventForm extends React.Component {
 
         <ClubWrapper>
           <img
-            src={Clubs[this.state.event.match.away.club_id] && Clubs[this.state.event.match.away.club_id].icon}
+            src={Clubs[this.state.event.match.away] && Clubs[this.state.event.match.away].icon}
             alt=""
           />
           <div>
@@ -971,10 +971,12 @@ const mapStateToProps = state => ({
     value: Number(o.id),
     textShort: `${o.short_name}`,
   })),
-  dataSourceMatches: state.app.matchesCompact.data.matches.map((o) => {
+  dataSourceMatches: state.app.matchesCompact.data && state.app.matchesCompact.data.length && state.app.matchesCompact.data.map((o) => {
     const matchTime = toDateTimeString(o.date * 1000);
+    const homeName = Clubs[o.home] && Clubs[o.home].name;
+    const awayName = Clubs[o.away] && Clubs[o.away].name;
     return {
-      text: `${Clubs[o.home.club_id] && Clubs[o.home.club_id].name} vs ${Clubs[o.away.club_id] && Clubs[o.away.club_id].name} - ${matchTime}`,
+      text: `${homeName} vs ${awayName} - ${matchTime}`,
       value: o.id,
       date: o.date,
       home: o.home,
