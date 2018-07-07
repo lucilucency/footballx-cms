@@ -1,31 +1,77 @@
+/* eslint-disable camelcase */
 import * as transform from 'actions/transforms';
-import { action, fxActionPost, fxActionGet, fxActionPut, fxActionDelete, fxActionAuth, fxDispatch, dispatchPost, dispatchGet } from 'actions/dispatchAction';
+import {
+  action, fxActionPost, fxActionGet, fxActionPut, fxActionDelete, fxActionAuth, fxDispatch,
+  dispatchPost, dispatchGet, dispatchPut,
+} from 'actions/dispatchAction';
 import leagues from 'fxconstants/leaguesObj.json';
+import { setCookie, getCookie } from '../utils';
 
 const __blankTransforms = () => ([]);
 
 export * from 'actions/ajax';
 
-export const getUserMetadata = (params = {}) => (dispatch) => {
+export const getLocalMetadata = (params = {}) => (dispatch) => {
   const getDataStart = payload => ({
     type: 'OK/metadata',
     payload,
   });
 
-  const accessToken = params.access_token || localStorage.getItem('access_token');
-  const accountUser = params.account_user || JSON.parse(localStorage.getItem('account_user'));
-  const accountHotspot = params.account_hotspot || JSON.parse(localStorage.getItem('account_hotspot'));
+  const accessToken = params.access_token || getCookie('access_token');
+  const user = params.user || JSON.parse(getCookie('user'));
+  const cuser = params.cuser || JSON.parse(getCookie('cuser'));
+  const guser = params.guser || JSON.parse(getCookie('guser'));
+  const huser = params.huser || JSON.parse(getCookie('huser'));
+  // const accountUser = params.account_user || JSON.parse(localStorage.getItem('account_user'));
+  // const accountHotspot = params.account_hotspot || JSON.parse(localStorage.getItem('account_hotspot'));
   let payload = {};
-  if (accessToken && accountUser) {
-    payload = { user: accountUser, access_token: accessToken, hotspot: accountHotspot };
+  if (accessToken && user) {
+    payload = {
+      access_token: accessToken,
+      user,
+      cuser,
+      guser,
+      huser,
+      // hotspot: accountHotspot,
+    };
   }
   dispatch(getDataStart(payload));
 };
 
 // auth
-export const login = (username, password) => fxActionAuth('auth', 'user/login', { username, password });
-export const huserLogin = (username, password) => fxActionAuth('auth', 'huser/login', { username, password });
-export const cuserLogin = (username, password) => fxActionAuth('auth', 'cuser/login', { username, password });
+export const login = (username, password) => fxActionAuth('metadata', 'user/login', { username, password });
+export const auth = (username, password) => dispatchPost({
+  reducer: 'metadata',
+  path: 'user/login',
+  params: { username, password },
+  transform: (resp) => {
+    const user = resp.data;
+    const { cuser, guser, huser } = user;
+    // if (cuser) {
+    //   cuser.cuser_id = cuser.id;
+    //   delete cuser.id;
+    // }
+    // if (guser) {
+    //   guser.guser_id = guser.id;
+    //   delete guser.id;
+    // }
+    // if (huser) {
+    //   huser.huser_id = huser.id;
+    //   delete huser.id;
+    // }
+
+    delete user.cuser; delete user.guser; delete user.huser;
+    setCookie('access_token', user.access_token);
+    setCookie('user', JSON.stringify(user));
+    setCookie('cuser', JSON.stringify(cuser));
+    setCookie('guser', JSON.stringify(guser));
+    setCookie('huser', JSON.stringify(huser));
+
+    return {
+      user, cuser, guser, huser,
+    };
+  },
+});
 /* user */
 export const getHUserHotspot = accountId => fxActionGet('hotspot', `huser/${accountId}/hotspot`);
 export const createUser = (params, payload) => fxActionPost('ADD/users', 'user', params, null, payload);
@@ -43,7 +89,11 @@ export const editLeagueClub = (leagueID, clubID, params) => fxActionPut(`EDIT_AR
 export const getMatches = params => fxActionGet('matches', 'matches/calendar', params, transform.transformsMatchEvent);
 export const getMatchesCompact = params => fxActionGet('matchesCompact', 'matches', params, transform.transformsMatch);
 /* hotspot */
-export const getHotspots = () => fxActionGet('hotspots', 'hotspots');
+export const getHotspots = () => dispatchGet({
+  reducer: 'hotspots',
+  path: 'hotspots',
+  transform: resp => resp.data,
+});
 export const createHotspot = params => fxActionPost('ADD/hotspots', 'hotspot', params);
 export const deleteHotspot = hotspotID => fxActionDelete('DELETE/hotspot', `hotspot/${hotspotID}`);
 export const getHotspot = hotspotId => fxActionGet('hotspot', `hotspot/${hotspotId}`);
@@ -60,19 +110,70 @@ export const createHotspotEvent = (params, payload) => dispatchPost({
 });
 export const createHotspotHUser = (params, payload) => fxActionPost('ADD/hotspotHUsers', 'huser', params, transform.transformHUser, payload);
 export const getHotspotHUsers = hotspotId => fxActionGet('hotspotHUsers', `hotspot/${hotspotId}/husers`);
-/* group */
+/** group */
 export const getGroups = () => fxActionGet('groups', 'groups');
 export const createGroup = params => fxActionPost('ADD/groups', 'group', params);
 export const getGroup = groupId => fxActionGet('group', `group/${groupId}`);
 export const editGroup = (groupId, params) => fxActionPut('EDIT/group', `group/${groupId}`, params);
-export const getGroupEvents = groupId => fxActionGet('groupEvents', `group/${groupId}/events`, {}, transform.transformEvents);
+export const getGroupEvents = groupId => dispatchGet({
+  reducer: 'groupEvents',
+  path: `group/${groupId}/events`,
+  transform: transform.transformEvents,
+});
 export const createGroupEvent = (params, payload) => fxActionPost('ADD/groupEvents', 'event', params, transform.transformCreateEvent, payload);
 export const getGroupHUsers = groupId => fxActionGet('groupHUsers', `group/${groupId}/husers`);
 export const importGroupMembers = (groupId, params, payload) => fxActionPost('ADD/groupMembers', `group/${groupId}/membership`, params, __blankTransforms, payload);
 export const getGroupImportedMembers = groupId => fxActionGet('groupMembers', `group/${groupId}/memberships`, {}, transform.transformGroupMembers);
 export const getGroupXUsers = groupId => fxActionGet('groupXUsers', `group/${groupId}/xusers`, {});
 export const getGroupMembershipPackages = groupId => fxActionGet('groupMembershipPackages', `group/${groupId}/membership_packages`);
-// export const createGroup = (params) => fxActionPost('ADD/events', 'event', params, transform.transformCreateGroup);
+export const getGroupMembershipPacks = membershipID => dispatchGet({
+  version: 'v2',
+  reducer: 'EDIT/group',
+  path: `membership/${membershipID}/packs`,
+  transform: (resp) => {
+    const { group_membership_packs } = resp;
+    if (group_membership_packs && group_membership_packs.length) {
+      return {
+        packs: group_membership_packs,
+      };
+    }
+    return null;
+  },
+});
+export const approveGroupMember = (membershipID, processID) => dispatchPut({
+  version: 'v2',
+  reducer: '',
+  path: `membership/${membershipID}/complete-process`,
+  params: { process_id: processID },
+});
+export const getGroupMembershipProcesses = membershipID => dispatchGet({
+  version: 'v2',
+  reducer: 'EDIT/group',
+  path: `membership/${membershipID}/xuser-processes`,
+  transform: (resp) => {
+    const { xuser_membership_processes } = resp;
+    if (xuser_membership_processes && xuser_membership_processes.length) {
+      return {
+        processes: xuser_membership_processes,
+      };
+    }
+    return null;
+  },
+});
+export const getGroupMemberships = groupID => dispatchGet({
+  version: 'v2',
+  reducer: 'EDIT/group',
+  path: `group/${groupID}/memberships`,
+  transform: (resp) => {
+    const { group_membership } = resp;
+    if (group_membership && group_membership.length) {
+      return {
+        membership: group_membership[group_membership.length - 1],
+      };
+    }
+    return null;
+  },
+});
 /* event */
 export const getEvents = params => dispatchGet({
   version: 'v2',

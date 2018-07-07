@@ -12,7 +12,7 @@ import strings from 'lang';
 const HUsersColumns = [{
   displayName: strings.th_account,
   field: 'username',
-  displayFn: transformations.th_huser_link,
+  displayFn: transformations.th_user_link,
 }, {
   displayName: strings.th_name,
   field: 'fullname',

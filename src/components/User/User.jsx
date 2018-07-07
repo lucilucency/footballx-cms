@@ -31,14 +31,12 @@ class UserModule extends React.Component {
   };
 
   componentDidMount() {
-    console.log('UserModule.componentDidMount');
     const that = this;
     const userID = that.props.userID || that.props.match.params.id;
     this.props.getUser(userID);
   }
 
   render() {
-    console.log('UserModule.render');
     const { location, match, user, metadata, history } = this.props;
     const route = this.props.match.params.id;
 

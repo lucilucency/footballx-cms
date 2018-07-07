@@ -164,7 +164,7 @@ class EventSendNotification extends React.Component {
     return (
       <ValidatorForm
         onSubmit={this.sendNotification}
-        onError={errors => console.log(errors)}
+        // onError={errors => console.log(errors)}
       >
 
         <FormGroupWrapper show={showForm}>

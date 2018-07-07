@@ -43,9 +43,9 @@ class CreateHotspotForm extends React.Component {
 
     that.props.postHotspotHUser(that.props.hotspotId, newHUser).then((dispatch) => {
       if (dispatch.type.indexOf('OK') === 0) {
-        console.log('success');
+        // console.log('success');
       } else {
-        console.log('fail');
+        // console.log('fail');
       }
     });
   }
@@ -58,7 +58,7 @@ class CreateHotspotForm extends React.Component {
     return (
       <ValidatorForm
         onSubmit={this.submitCreateHUser}
-        onError={errors => console.log(errors)}
+        // onError={errors => console.log(errors)}
       >
         {this.state.error && <Error text={this.state.error} />}
         <div>

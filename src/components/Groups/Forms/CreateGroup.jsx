@@ -38,10 +38,9 @@ class CreateGroupForm extends React.Component {
 
     that.props.postGroup(newGroup).then((dispatch) => {
       if (dispatch.type.indexOf('OK') === 0) {
-        console.log('success');
         that.props.history.push('/groups/all');
       } else {
-        console.log('fail');
+        // console.log('fail');
       }
     });
   }

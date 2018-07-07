@@ -1,10 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-
 /* components */
 import Avatar from 'material-ui/Avatar';
 import Badge from 'material-ui/Badge';
-import Spinner from 'components/Spinner';
 import IconValidated from 'material-ui/svg-icons/action/check-circle';
 /* data */
 import strings from 'lang';
@@ -102,9 +100,6 @@ const getRegistrationBadge = registered => registered && (
 const GroupHeader = (propsVar) => {
   const { groupId, group, small, extraSmall, events, isOwner, user } = propsVar;
   const groupData = group.data || {};
-  if (group.loading) {
-    return <Spinner />;
-  }
   const checkedInXUsers = (events.length && events.reduce((a, b) => a + b.checkin_total, 0)) || 0;
   const registeredXUsers = (events.length && events.reduce((a, b) => a + b.register_total, 0)) || 0;
 
@@ -160,8 +155,6 @@ const GroupHeader = (propsVar) => {
           </li>}
 
           <GroupHeaderStats
-            loading={group.loading}
-            error={group.error}
             compact={!small}
             events={events.length || 0}
             registeredXUsers={registeredXUsers}

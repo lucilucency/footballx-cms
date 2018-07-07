@@ -11,13 +11,8 @@ const postcssCssNext = require('postcss-cssnext');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CompressionPlugin = require('compression-webpack-plugin');
 
-// const isProd = process.env.NODE_ENV === 'production';
-// const isDev = process.env.NODE_ENV === 'development';
-// const isTest = process.env.NODE_ENV === 'test';
-
-console.warn('NODE_ENV', process.env.NODE_ENV);
-console.warn('FX_API', process.env.FX_API);
-console.warn('FX_VERSION', process.env.FX_VERSION);
+console.warn('env', process.env.NODE_ENV);
+console.warn('api version', process.env.FX_VERSION);
 
 function HashBundlePlugin() {
 }
@@ -93,13 +88,12 @@ const config = {
       },
     }),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
       FX_API: JSON.stringify(process.env.FX_API),
       FX_VERSION: JSON.stringify(process.env.FX_VERSION || 'v1'),
       FX_SOCKET: JSON.stringify(process.env.FX_SOCKET),
       API_KEY_GOOGLE_MAPS: JSON.stringify(process.env.API_KEY_GOOGLE_MAPS),
     }),
-  ].filter(o => o),
+  ].filter(Boolean),
   devServer: {
     contentBase: __dirname,
     host: '0.0.0.0',
@@ -109,6 +103,8 @@ const config = {
     compress: true,
   },
 };
+
+// config.plugins.push(new webpack.HotModuleReplacementPlugin());
 
 if (process.env.NODE_ENV !== 'production') {
   config.devtool = 'eval-source-map';

@@ -44,14 +44,30 @@ export default {
       Ubuntu, Cantarell,
       "Fira Sans",
       Helvetica, Arial, sans-serif`,
-  fontWeightLight: '300',
+
+  fontWeightLight: '200',
   fontWeightNormal: '400',
   fontWeightMedium: '500',
-  fontSizeCommon: '16px',
-  fontSizeMedium: '14px',
-  fontSizeSmall: '12px',
-  fontSizeTiny: '10px',
-  navDrawerWidth: '256px',
+  fontWeightHeavy: '600',
+
+  fontSizeColossal: '50px',
+  fontSizeHuge: '37px',
+  fontSizeBig: '28px',
+  fontSizeLarge: '21px',
+  fontSizeNormal: '16px',
+  fontSizeSmall: '14px',
+  fontSizeLittle: '13px',
+  fontSizeTiny: '12px',
+
+  lineHeightHuge: '60px',
+  lineHeightBig: '55px',
+  lineHeightLarge: '40px',
+  lineHeightNormal: '28px',
+  lineHeightSmall: '25px',
+  lineHeightLittle: '22px',
+  lineHeightTiny: '18px',
+
+
   normalTransition: 'all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms',
   linearTransition: 'all 300ms linear',
 

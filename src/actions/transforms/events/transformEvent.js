@@ -3,31 +3,6 @@ function transformEvent(o) {
   const hotspot = o.hotspot;
   const match = o.match;
 
-  /* {
-    away_color:"#000000",
-    checkin_total:0,
-    created_user_id:3,
-    created_user_type:1,
-    deposit:5000,
-    end_time_checkin:1519851600,
-    end_time_register:1519851600,
-    free_folk_color:"#ffffff",
-    group_id:2,
-    home_color:"#ffffff",
-    hotspot_id:0,
-    id:192,
-    is_charged:true,
-    is_fan2friend_minigame:false,
-    match_id:0,
-    notes:"",
-    price:25000,
-    register_total:0,
-    seats:20,
-    start_time_checkin:1519721796,
-    start_time_register:1519721796,
-    status:1,
-  } */
-
   const eventObj = event ? {
     ...event,
     event_id: event.id,

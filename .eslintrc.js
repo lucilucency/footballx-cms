@@ -20,7 +20,7 @@ module.exports = {
         "no-mixed-operators": ["error", {
             "allowSamePrecedence": true
         }],
-        // "space-after-keywords": ["error", "never"],
+        "no-console": ["error", { allow: ["warn", "error"] }],
         "indent": [2, 2, {"SwitchCase": 1}],
         "radix": 0,
         // "indent": 0,

@@ -135,7 +135,6 @@ class SheetReader extends React.Component {
           is_valid: this.isValidRow(row),
         }));
         this.setState({ data }, () => {
-          console.log(this.state.data);
           this.props.onUpload(this.state.data);
         });
       } else {

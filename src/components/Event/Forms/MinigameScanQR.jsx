@@ -119,13 +119,6 @@ class MinigameScanQR extends React.Component {
 
     const largeSize = browser.height / 3;
     const smallSize = ((browser.width - 80) / 10) - 20;
-    console.log(JSON.stringify({
-      object: 'scan-minigame',
-      data: {
-        event_id: this.props.eventId,
-      },
-    }));
-    // let winner = xusers.find(o => o.id === this.state.winner);
 
     return (
       <FormGroup toggle={toggle} showForm={showForm}>

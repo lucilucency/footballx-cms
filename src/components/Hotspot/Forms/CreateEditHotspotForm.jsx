@@ -106,8 +106,8 @@ class CreateEditHotspotForm extends React.Component {
 
   onPlaceChanged(places) {
     const that = this;
-    console.log('Got from maps: ');
-    console.log(places[0]);
+    console.warn('Got from maps: ');
+    console.warn(places[0]);
     if (places.length) {
       const viewport = places[0].geometry.viewport;
       that.setState({

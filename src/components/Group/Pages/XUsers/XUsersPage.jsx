@@ -112,7 +112,7 @@ const downloadMembers = () => {
 
       data.push([o.fullname, o.nickname, o.phone, o.email, o.code, fileName]);
     } else {
-      console.log(id);
+      // console.log(id);
     }
   }
 

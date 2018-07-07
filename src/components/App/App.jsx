@@ -17,7 +17,6 @@ import Settings from 'components/Settings';
 import Notify from 'components/Notify';
 
 import Login from 'components/Login';
-import Admin from 'components/Admin';
 
 import Clubs from 'components/Clubs';
 import Cards from 'components/Cards';
@@ -101,7 +100,6 @@ class App extends React.Component {
             <Route exact path="/" component={Home} />
 
             <Route exact path="/login" component={Login} />
-            <Route exact path="/admin" component={Admin} />
             <Route exact path="/search" component={Search} />
             <Route exact path="/settings" component={Settings} />
             <Route exact path="/notify" component={Notify} />

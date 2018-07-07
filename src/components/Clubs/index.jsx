@@ -98,7 +98,6 @@ class Clubs extends React.Component {
   }
 
   componentDidMount() {
-    console.log('Clubs.componentDidMount');
     leagues.forEach(league => this.props.getLeagueClubs(league.id));
   }
 

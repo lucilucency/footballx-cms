@@ -3,11 +3,15 @@
 /* global FX_VERSION */
 import queryString from 'querystring';
 import update from 'react-addons-update';
+import { getCookie } from 'utils';
 
 const request = require('superagent');
 const FormData = require('form-data');
 const formurlencoded = require('form-urlencoded');
 
+
+// const FX_API = process.env.FX_API;
+// const FX_VERSION = process.env.FX_VERSION;
 
 export function action(type, host, path, params = {}, transform) {
   return (dispatch) => {
@@ -113,7 +117,7 @@ export function dispatchGet({
       error,
     });
 
-    const accessToken = localStorage.getItem('access_token') || '';
+    const accessToken = getCookie('access_token') || '';
 
     const fetchDataWithRetry = (delay, tries = 1, error) => {
       if (tries < 1) {
@@ -128,10 +132,9 @@ export function dispatchGet({
       }
 
       return doRequest
-        .query({}) // query string
         .then((res) => {
           if (res.statusCode === 200) {
-            let dispatchData = JSON.parse(res.text);
+            let dispatchData = res.body;
             if (transform) {
               dispatchData = transform(dispatchData);
             }
@@ -147,7 +150,7 @@ export function dispatchGet({
             localStorage.removeItem('access_token');
             localStorage.removeItem('account_user');
             localStorage.removeItem('account_hotspot');
-            window.location.href = '/login';
+            // window.location.href = '/login';
             return null;
           }
 
@@ -185,7 +188,7 @@ export function fxActionPost(type, path, params = {}, transform, payload) {
       options.contentType = 'application/x-www-form-urlencoded';
     }
 
-    const accessToken = localStorage.getItem('access_token') || '';
+    const accessToken = getCookie('access_token') || '';
 
     const fetchDataWithRetry = (delay, tries, error) => {
       if (tries < 1) {
@@ -254,7 +257,7 @@ export function dispatchPost({
       error,
     });
 
-    const accessToken = localStorage.getItem('access_token') || '';
+    const accessToken = getCookie('access_token') || '';
 
     const fetchDataWithRetry = (delay, tries, error) => {
       if (tries < 1) {
@@ -300,10 +303,76 @@ export function dispatchPost({
           console.error(`Error in dispatchPost/${reducer}`);
           if (err.message === 'Unauthorized') {
             console.error('Unauthorized, logging out...');
-            // window.location.href = '/login';
+            // // window.location.href = '/login';
             return null;
           }
 
+          return dispatchAction(dispatchFail(err.message));
+        });
+    };
+
+    dispatchAction(dispatchStart());
+    return fetchDataWithRetry(retriesBreak, retries);
+  };
+}
+
+export function dispatchPut({
+  host = FX_API, version = FX_VERSION,
+  reducer,
+  path,
+  params = {},
+  transform,
+  retries = 1,
+  retriesBreak = 3000,
+  callback,
+}) {
+  return (dispatchAction) => {
+    const url = `${host}/${version}/${path}?${typeof params === 'string' ? params.substring(1) : ''}`;
+
+    const dispatchStart = () => ({
+      type: `REQUEST/${reducer}`,
+    });
+    const dispatchOK = payload => ({
+      type: `OK/${reducer}`,
+      payload,
+    });
+    const dispatchFail = error => ({
+      type: `FAIL/${reducer}`,
+      error,
+    });
+
+    const options = { method: 'PUT' };
+
+    if (typeof params === 'object') {
+      options.body = formurlencoded(params);
+      options.contentType = 'application/x-www-form-urlencoded';
+    }
+
+    const accessToken = getCookie('access_token');
+
+    const fetchDataWithRetry = (delay, tries, error) => {
+      if (tries < 1) {
+        return dispatchFail(error);
+      }
+      return request
+        .put(url)
+        .send(options.body)
+        .set('Content-Type', options.contentType)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .then((res) => {
+          if (res.statusCode === 200) {
+            let dispatchData = JSON.parse(res.text);
+            if (transform) {
+              dispatchData = transform(dispatchData);
+            }
+
+            if (callback) callback(dispatchData);
+            return dispatchAction(dispatchOK(dispatchData));
+          }
+          return setTimeout(() => fetchDataWithRetry(delay, tries - 1, res.error), delay);
+        })
+        .catch((err) => {
+          console.error(`Error in dispatchPut/${reducer}`);
           return dispatchAction(dispatchFail(err.message));
         });
     };
@@ -343,7 +412,7 @@ export function fxActionGet(type, path, params = {}, transform) {
       error,
     });
 
-    const accessToken = localStorage.getItem('access_token');
+    const accessToken = getCookie('access_token');
     const fetchDataWithRetry = (delay, tries, error) => {
       if (tries < 1) {
         return dispatchFail(error);
@@ -372,7 +441,7 @@ export function fxActionGet(type, path, params = {}, transform) {
             localStorage.removeItem('access_token');
             localStorage.removeItem('account_user');
             localStorage.removeItem('account_hotspot');
-            window.location.href = '/login';
+            // window.location.href = '/login';
             return null;
           }
 
@@ -411,7 +480,7 @@ export function fxActionPut(type, path, params = {}, transform) {
       options.contentType = 'application/x-www-form-urlencoded';
     }
 
-    const accessToken = localStorage.getItem('access_token') || '';
+    const accessToken = getCookie('access_token') || '';
 
     const fetchDataWithRetry = (delay, tries, error) => {
       if (tries < 1) {
@@ -434,7 +503,7 @@ export function fxActionPut(type, path, params = {}, transform) {
           return dispatch(dispatchFail(res.body.message));
         })
         .catch((err) => {
-          console.log(`Error in ${type}`);
+          console.warn(`Error in ${type}`);
           return dispatch(dispatchFail(err.response.body.message));
         });
     };
@@ -469,7 +538,7 @@ export function fxActionDelete(type, path, params = {}, transform) {
       options.contentType = 'application/x-www-form-urlencoded';
     }
 
-    const accessToken = localStorage.getItem('access_token') || '';
+    const accessToken = getCookie('access_token') || '';
 
     const fetchDataWithRetry = (delay, tries, error) => {
       if (tries < 1) {
@@ -492,7 +561,7 @@ export function fxActionDelete(type, path, params = {}, transform) {
           return dispatch(dispatchFail(res.body.message));
         })
         .catch((err) => {
-          console.log(`Error in ${type}`);
+          console.warn(`Error in ${type}`);
           return dispatch(dispatchFail((err.response && err.response.body) ? err.response.body.message : err));
         });
     };

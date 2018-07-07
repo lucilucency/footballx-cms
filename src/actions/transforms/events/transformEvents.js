@@ -1,7 +1,7 @@
 import transformEvent from './transformEvent';
 
-function transformEvents(data) {
-  return data.events && data.events.length && data.events.map(o => transformEvent(o));
+function transformEvents(resp) {
+  return resp.data && resp.data.length && resp.data.map(o => transformEvent(o));
 }
 
 export default transformEvents;

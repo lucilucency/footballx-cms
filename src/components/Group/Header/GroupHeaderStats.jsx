@@ -77,8 +77,6 @@ export const GroupHeaderStats = ({
 const { number, bool } = PropTypes;
 
 GroupHeaderStats.propTypes = {
-  // loading: bool,
-  // error: bool,
   compact: bool,
   events: number,
   registeredXUsers: number,

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import TextField from 'material-ui/TextField';
 import FlatButton from 'material-ui/FlatButton';
-import { login, getUserMetadata, getHUserHotspot } from 'actions';
+import { auth, getLocalMetadata, getHUserHotspot } from 'actions';
 import strings from 'lang';
 
 class LoginForm extends React.Component {
@@ -17,8 +17,22 @@ class LoginForm extends React.Component {
     this.handleTextFieldKeyDown = this.handleTextFieldKeyDown.bind(this);
   }
 
-  componentWillMount() {
-
+  componentWillReceiveProps(props) {
+    if ((!this.props.user || !this.props.user.id) && props.user && props.user.user_id) {
+      const userType = props.user.user_type;
+      if (userType === 2) {
+        props.getHUserHotspot(props.user.user_id).then((h) => {
+          localStorage.setItem('account_hotspot', JSON.stringify(h.payload));
+          // TODO update metadata here (user hotspot info)
+          props.history.push('/');
+        });
+      } else if (userType === 3 || userType === 1) {
+        // TODO update metadata here
+        props.history.push('/');
+      } else {
+        props.history.push('/');
+      }
+    }
   }
 
   handleClick(event) {
@@ -28,100 +42,55 @@ class LoginForm extends React.Component {
 
   doLogin() {
     const that = this;
-    that.props.huserLogin(this.state.username, this.state.password).then((o, e) => {
-      if (!e) {
-        if (o.payload.data) {
-          const data = o.payload.data;
-          data.user_type = data.type;
-          delete data.type;
-          if (false && data.user_type === 1) {
-            that.setState({
-              loginError: true,
-              message: 'Permission denied!',
-            });
-          } else {
-            if (data.user_type === 1) {
-              data.user = data.cuser;
-            } else if (data.user_type === 2) {
-              data.user = data.huser;
-            } else if (data.user_type === 3) {
-              data.user = data.guser;
-            }
-
-            delete data.huser;
-            delete data.guser;
-            delete data.cuser;
-
-            data.user.user_type = data.user_type;
-
-            localStorage.setItem('access_token', data.access_token);
-            localStorage.setItem('account_user', JSON.stringify(data.user));
-
-            if (data.user_type === 2) {
-              that.props.getHUserHotspot(data.user.id).then((h) => {
-                localStorage.setItem('account_hotspot', JSON.stringify(h.payload));
-                that.props.dispatchUserMetadata({ access_token: data.access_token, account_hotspot: h.payload, account_user: data.user });
-                that.props.history.push('');
-              });
-            } else if (data.user_type === 3 || data.user_type === 1) {
-              that.props.dispatchUserMetadata({ access_token: data.access_token, account_user: data.user });
-              that.props.history.push('');
-            } else {
-              that.props.history.push('');
-            }
-          }
-        } else {
-          that.setState({
-            loginError: true,
-            message: o.payload.message,
-          });
-        }
-      }
-    });
+    that.props.login(this.state.username, this.state.password);
   }
 
-    handleTextFieldKeyDown = (event) => {
-      const that = this;
-      switch (event.key) {
-        case 'Enter':
-          that.doLogin();
-          break;
-        case 'Escape':
-          // etc...
-          break;
-        default: break;
-      }
-    };
-
-    render() {
-      return (
-        <form>
-          <TextField
-            hintText="Enter your Username"
-            floatingLabelText="Username"
-            onChange={(event, newValue) => this.setState({ username: newValue, message: '' })}
-            onKeyDown={this.handleTextFieldKeyDown}
-          />
-          <br />
-          <TextField
-            type="password"
-            hintText="Enter your Password"
-            floatingLabelText="Password"
-            onChange={(event, newValue) => this.setState({ password: newValue })}
-            errorText={this.state.message}
-            onKeyDown={this.handleTextFieldKeyDown}
-          />
-          <br />
-          <FlatButton label={strings.home_login} primary onClick={event => this.handleClick(event)} />
-        </form>
-      );
+  handleTextFieldKeyDown = (event) => {
+    const that = this;
+    switch (event.key) {
+      case 'Enter':
+        that.doLogin();
+        break;
+      case 'Escape':
+        // etc...
+        break;
+      default: break;
     }
+  };
+
+  render() {
+    return (
+      <form>
+        <TextField
+          hintText="Enter your Username"
+          floatingLabelText="Username"
+          onChange={(event, newValue) => this.setState({ username: newValue, message: '' })}
+          onKeyDown={this.handleTextFieldKeyDown}
+        />
+        <br />
+        <TextField
+          type="password"
+          hintText="Enter your Password"
+          floatingLabelText="Password"
+          onChange={(event, newValue) => this.setState({ password: newValue })}
+          errorText={this.state.message}
+          onKeyDown={this.handleTextFieldKeyDown}
+        />
+        <br />
+        <FlatButton label={strings.home_login} primary onClick={event => this.handleClick(event)} />
+      </form>
+    );
+  }
 }
 
+const mapStateToProps = state => ({
+  user: state.app.metadata.user,
+});
+
 const mapDispatchToProps = dispatch => ({
-  huserLogin: (username, password) => dispatch(login(username, password)),
-  dispatchUserMetadata: params => dispatch(getUserMetadata(params)),
+  login: (username, password) => dispatch(auth(username, password)),
+  dispatchUserMetadata: params => dispatch(getLocalMetadata(params)),
   getHUserHotspot: id => dispatch(getHUserHotspot(id)),
 });
 
-export default withRouter(connect(null, mapDispatchToProps)(LoginForm));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(LoginForm));

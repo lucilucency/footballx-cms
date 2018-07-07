@@ -161,14 +161,6 @@ class CheckinQR extends React.Component {
     //   "subscription": 0
     // };
 
-    console.log(JSON.stringify({
-      object: 'hotspot',
-      data: {
-        hotspot_id: this.props.hotspotID,
-        notification: 'null',
-      },
-    }));
-
     return (
       <FormGroup toggle={toggle} showForm={showForm}>
         <div>

@@ -36,7 +36,6 @@ const FormGroupWrapper = styled.div`
 const setShowFormState = (props) => {
   const currentQueryString = window.location.search;
   if (Boolean(currentQueryString.substring(1)) !== props.showForm) {
-    console.log('do toggle');
     // If query string state has a filter, turn on the form
     props.toggleShowForm();
   }

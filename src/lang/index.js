@@ -1,12 +1,12 @@
 /* eslint-disable global-require */
 export const langs = [{
-  value: 'en-US',
-  native: 'English (US)',
-  data: require('./en-US.json'),
-}, {
   value: 'vi-VN',
   native: 'Tiếng Việt',
   data: require('./vi-VN.json'),
+}, {
+  value: 'en-US',
+  native: 'English (US)',
+  data: require('./en-US.json'),
 }, false && {
   value: 'ja-JP',
   native: '日本語',

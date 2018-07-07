@@ -80,10 +80,9 @@ class EditGroupForm extends React.Component {
 
     that.props.editGroup(that.props.group.id, editedGroup).then((dispatch) => {
       if (dispatch.type.indexOf('OK') === 0) {
-        console.log('success');
         that.props.toggleShowForm();
       } else {
-        console.log('fail');
+        // console.log('fail');
       }
     });
   }

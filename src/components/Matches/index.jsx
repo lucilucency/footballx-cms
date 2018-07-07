@@ -104,10 +104,10 @@ class RequestLayer extends React.Component {
             showMultiDayTimes
             scrollToTime={new Date()}
             defaultDate={new Date()}
-            onSelectEvent={event => console.log(event)}
-            onSelectSlot={(slotInfo) => {
-              console.log(slotInfo);
-            }}
+            // onSelectEvent={event => console.log(event)}
+            // onSelectSlot={(slotInfo) => {
+            //   console.log(slotInfo);
+            // }}
           />
         </div>
         {/* <TabBar info={route} tabs={matchTabs} /> */}

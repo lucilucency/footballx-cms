@@ -111,7 +111,7 @@ class CardLabelsPage extends React.Component {
           title: 'Refresh',
           icon: <IconRefresh />,
           onClick: () => {
-            console.log('Doing refresh!');
+            // console.log('Doing refresh!');
           },
         }, {
           key: 'add',

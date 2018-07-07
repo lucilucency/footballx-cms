@@ -17,21 +17,19 @@ import { LocalizationMenu } from 'components/Header/Localization';
 import AccountWidget from './AccountWidget';
 import DropDown from './Dropdown';
 import Logout from './Logout';
-// import Announce from 'components/Announce';
-// import SearchForm from '../Search/SearchForm';
-// import ActionSearch from 'material-ui/svg-icons/action/search';
 import AppLogo from '../App/AppLogo';
 import BurgerMenu from './BurgerMenu/index';
+import { groupsObj } from '../../fxconstants';
 
 const navbarPages = [
   <Link key={strings.header_clubs} to="/clubs">{strings.header_clubs}</Link>,
 ];
 
-const navbarPagesGUser = user => [
+const navbarPagesGUser = guser => [
   <Link key={strings.header_matches} to="/matches">{strings.header_matches}</Link>,
-  user && user.group_id &&
-  <Link key={strings.header_events} to={`/group/${user.group_id}`}>{strings.header_my_group}</Link>,
-];
+  guser && guser.group_id &&
+  <Link key={strings.header_events} to={`/group/${guser.group_id}`}>{groupsObj[guser.group_id].short_name}</Link>,
+].filter(Boolean);
 
 const navbarPagesHUser = hotspot => ([
   <Link key={strings.header_matches} to="/matches">{strings.header_matches}</Link>,
@@ -39,7 +37,7 @@ const navbarPagesHUser = hotspot => ([
     key={strings.header_events}
     to={`/hotspot/${hotspot.id}`}
   >{strings.header_my_hotspot}</Link>,
-]);
+]).filter(Boolean);
 
 const navbarPagesCUser = [
   <Link key={strings.header_matches} to="/matches">{strings.header_matches}</Link>,
@@ -49,10 +47,11 @@ const navbarPagesCUser = [
   <Link key={strings.header_cards} to="/cards">{strings.header_cards}</Link>,
 ];
 
-const burgerItems = (user, hotspot, group) => {
-  const burgerHUser = (user && user.user_type === 2) ? navbarPagesHUser(hotspot) : [];
-  const burgerGUser = (user && user.user_type === 3) ? navbarPagesGUser(group) : [];
-  const burgerCUser = (user && user.user_type === 1) ? navbarPagesCUser : [];
+const burgerItems = (metadata) => {
+  const { cuser, guser, huser } = metadata;
+  const burgerHUser = navbarPagesHUser(huser);
+  const burgerGUser = navbarPagesGUser(guser);
+  const burgerCUser = (cuser && cuser.id) ? navbarPagesCUser : [];
   return [
     {
       component: <AccountWidget key={0} />,
@@ -112,14 +111,15 @@ const LogoGroup = (propsVar) => {
   return (
     <VerticalAlignToolbar>
       {!small &&
-      <BurgerMenu menuItems={burgerItems(auth.user, auth.hotspot)} />}
+      <BurgerMenu menuItems={burgerItems(auth)} />}
       <AppLogo style={{ marginRight: 18 }} />
     </VerticalAlignToolbar>
   );
 };
 
 const LinkGroup = (propsVar) => {
-  const { user, hotspot } = propsVar.user;
+  const { metadata } = propsVar;
+  const { user, guser, huser } = metadata;
   return (
     <VerticalAlignToolbar>
       {navbarPages.map(page => (
@@ -134,7 +134,7 @@ const LinkGroup = (propsVar) => {
           </div>
         </TabContainer>
       ))}
-      {(user && user.user_type === 2) && navbarPagesHUser(hotspot).map(page => (
+      {(huser && huser.id) && navbarPagesHUser(huser).map(page => (
         <TabContainer key={page.key}>
           <div style={{
             margin: '0 10px',
@@ -146,8 +146,8 @@ const LinkGroup = (propsVar) => {
           </div>
         </TabContainer>
       ))}
-      {(user && user.user_type === 3) && navbarPagesGUser(user).map(page => (
-        <TabContainer key={page.key}>
+      {(guser && guser.id) && navbarPagesGUser(guser).map((page, index) => (
+        <TabContainer key={index}>
           <div style={{
             margin: '0 10px',
             textAlign: 'center',
@@ -255,7 +255,7 @@ const Header = (propsVar) => {
       <ToolbarHeader>
         <VerticalAlignDiv>
           <LogoGroup small={small} auth={auth} />
-          {small && <LinkGroup user={auth} />}
+          {small && <LinkGroup metadata={auth} />}
           {/* <SearchGroup/> */}
         </VerticalAlignDiv>
         <VerticalAlignDiv>

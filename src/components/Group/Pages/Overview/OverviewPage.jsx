@@ -56,7 +56,7 @@ class RequestLayer extends React.Component {
 
 const mapStateToProps = state => ({
   user: state.app.metadata.data.user || {},
-  groupEvents: state.app.groupEvents && state.app.groupEvents.data.filter(o => o.status === 1),
+  groupEvents: state.app.groupEvents.data && state.app.groupEvents.data.filter(o => o.status === 1),
   loading: state.app.groupEvents.loading,
   error: state.app.groupEvents.error,
   browser: state.browser,

@@ -51,7 +51,6 @@ class Buttons extends React.Component {
   };
 
   constructor(props) {
-    console.log('Buttons.constructor');
     super(props);
     this.state = {
       ...Buttons.initialState,
@@ -66,20 +65,11 @@ class Buttons extends React.Component {
     ], this);
   }
 
-  componentWillMount() {
-    console.log('Buttons.componentWillMount');
-  }
-
-  componentDidMount() {
-    console.log('Buttons.componentDidMount');
-  }
-
   handleOpenDialog() {
     this.setState({ openDialog: true });
   }
 
   handleCloseDialog() {
-    console.log('Buttons.handleCloseDialog');
     this.setState({ openDialog: false, dialogConstruct: {} });
   }
 

@@ -17,19 +17,14 @@ const getEvents = (props) => {
   props.getGroupEvents(groupId);
 };
 
-class RequestLayer extends React.Component {
+class GroupHomePage extends React.Component {
   static propTypes = {
     groupId: PropTypes.number,
-    match: PropTypes.shape({
-      params: PropTypes.shape({
-        groupId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-      }),
-    }),
-    location: PropTypes.shape({
-      key: PropTypes.string,
-    }),
-    group: PropTypes.shape({}),
-    metadata: PropTypes.shape({}),
+    match: PropTypes.object,
+    location: PropTypes.object,
+    group: PropTypes.object,
+    user: PropTypes.object,
+    guser: PropTypes.object,
   };
 
   componentDidMount() {
@@ -46,66 +41,64 @@ class RequestLayer extends React.Component {
   }
 
   render() {
-    const { location, match, group, metadata } = this.props;
+    const { location, match, group, user, guser } = this.props;
+
     const route = this.props.match.params.groupId;
-    const user = metadata.user;
-    if (!user) {
-      history.push('/login');
+    if (!user || !user.user_id) {
+      this.props.history.push('/login');
       return false;
     }
 
-    if (user.user_type === 2 && user.type === 'group') {
-      history.push('/');
+    if (user.type !== 3 || !guser || !guser.id) {
+      this.props.history.push('/');
       return false;
     }
 
-    if (Number.isInteger(Number(route))) {
-      const groupId = match.params.groupId || group.id;
+    if (!Number.isInteger(Number(route))) {
+      this.props.history.push('/');
+      return false;
+    }
 
-      const isOwner = () => {
-        if (metadata.user.user_type !== 3) {
-          return false;
-        }
-        if (!metadata.user.group_id) {
-          return false;
-        }
-        return parseInt(metadata.user.group_id) === parseInt(groupId);
-      };
+    const groupId = match.params.groupId || group.id;
 
-      const info = match.params.info || 'overview';
-      const page = pages(groupId).find(page => page.key === info);
-      const groupName = group.name || strings.general_anonymous;
-      const title = page ? `${groupName} - ${page.name}` : groupName;
-      return (
+    const isOwner = () => {
+      if (user.type !== 3) { return false; }
+      if (guser.group_id) { return false; }
+      return parseInt(guser.group_id) === parseInt(groupId);
+    };
+
+    const info = match.params.info || 'overview';
+    const page = pages(groupId).find(page => page.key === info);
+    const groupName = group.name || strings.general_anonymous;
+    const title = page ? `${groupName} - ${page.name}` : groupName;
+    return (
+      <div>
+        <Helmet title={title} />
         <div>
-          <Helmet title={title} />
-          <div>
-            {!match.params.subInfo && <GroupHeader {...this.props} groupId={Number(groupId)} isOwner={isOwner()} />}
-            <CreateGroupEventForm
-              mode="create"
-              toggle
-              display={this.props.showFormCreateGroupEvent}
-              dispatch={this.props.createGroupEvent}
-              groupId={Number(groupId)}
-            />
-            <EditGroupForm group={group} />
-            <TabBar info={info} tabs={pages(Number(groupId))} />
-          </div>
-          <div style={{ marginTop: -15 }}>
-            {page ? page.content(groupId, match.params, location) : <Spinner />}
-          </div>
+          {!match.params.subInfo && <GroupHeader {...this.props} groupId={Number(groupId)} isOwner={isOwner()} />}
+          <CreateGroupEventForm
+            mode="create"
+            toggle
+            display={this.props.showFormCreateGroupEvent}
+            dispatch={this.props.createGroupEvent}
+            groupId={Number(groupId)}
+          />
+          <EditGroupForm group={group} />
+          <TabBar info={info} tabs={pages(Number(groupId))} />
         </div>
-      );
-    }
-    history.push('/');
-    return false;
+        <div style={{ marginTop: -15 }}>
+          {page ? page.content(groupId, match.params, location) : <Spinner />}
+        </div>
+      </div>
+    );
   }
 }
 
 const mapStateToProps = state => ({
   loading: state.app.group.loading,
   group: state.app.group.data || {},
-  metadata: state.app.metadata.data,
+  user: state.app.metadata.data.user,
+  guser: state.app.metadata.data.guser,
   showFormCreateGroupEvent: state.app.formCreateEvent.show,
 });
 
@@ -115,4 +108,4 @@ const mapDispatchToProps = dispatch => ({
   createGroupEvent: (params, payload) => dispatch(createGroupEvent(params, payload)),
 });
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RequestLayer));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(GroupHomePage));

@@ -16,22 +16,15 @@ const OverviewWrapper = styled.div`
 }
 `;
 
-const Overview = (propsVar) => {
-  const {
-    loading,
-  } = propsVar;
-  console.log(loading);
-
-  return (<OverviewWrapper>
-    <Container
-      title={strings.heading_overview}
-      loading={false}
-      error={false}
-    >
-      <div />
-    </Container>
-  </OverviewWrapper>);
-};
+const Overview = () => (<OverviewWrapper>
+  <Container
+    title={strings.heading_overview}
+    loading={false}
+    error={false}
+  >
+    <div />
+  </Container>
+</OverviewWrapper>);
 
 class RequestLayer extends React.Component {
   componentDidMount() {

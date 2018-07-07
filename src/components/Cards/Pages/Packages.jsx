@@ -15,7 +15,7 @@ import IconPrint from 'material-ui/svg-icons/action/print';
 
 import PackageViewer from './PackageViewer';
 import PackageCreateForm from './PackageCreateForm';
-import PackageConfirmPrintedButton from './PackageConfirmPrintedButton';
+import PackageConfirmPrintedButton from '../components/PackageConfirmPrintedButton';
 
 const tableCardLabelsColumns = [{
   displayName: 'ID',
@@ -158,7 +158,6 @@ class PackagesPage extends React.Component {
           //   });
           // }}
           callback={() => {
-            console.log('callback');
             this.handleCloseDialog();
           }}
         />,

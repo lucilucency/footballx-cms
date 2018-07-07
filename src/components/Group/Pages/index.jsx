@@ -3,8 +3,9 @@ import strings from 'lang';
 import OverviewPage from './Overview/OverviewPage';
 import EventsPage from './Events/EventsPage';
 import HUsersPage from './HUsers/HUsersPage';
-import MembersPage from './ImportedMembers/MembersPage';
+import ImportedMembersPage from './ImportedMembers/ImportedMembersPage';
 import XUsersPage from './XUsers/XUsersPage';
+import GroupMemberships from './GroupMemberships/index';
 
 const pages = [{
   name: strings.tab_hotspot_overview,
@@ -26,12 +27,17 @@ const pages = [{
   key: 'xusers',
   content: (groupId, routeParams, location) => (
     <XUsersPage groupId={groupId} routeParams={routeParams} location={location} />),
-}, {
+}, null && {
   name: strings.tab_group_members,
-  key: 'members',
+  key: 'imported_members',
   content: (groupId, routeParams, location) => (
-    <MembersPage groupId={groupId} routeParams={routeParams} location={location} />),
-}].filter(o => o);
+    <ImportedMembersPage groupId={groupId} routeParams={routeParams} location={location} />),
+}, {
+  name: 'Group membership',
+  key: 'memberships',
+  content: (groupId, routeParams, location) => (
+    <GroupMemberships groupId={groupId} routeParams={routeParams} location={location} />),
+}].filter(Boolean);
 
 export default groupId => pages.map(page => ({
   ...page,

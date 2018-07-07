@@ -6,11 +6,9 @@ import { IconButton, FlatButton, Dialog, ListItem, List } from 'material-ui';
 import IconPrint from 'material-ui/svg-icons/action/print';
 import IconFail from 'material-ui/svg-icons/content/clear';
 import IconSuccess from 'material-ui/svg-icons/navigation/check';
-/* data */
-import strings from 'lang';
-import { confirmPrintedPackage } from 'actions';
-import { Row } from 'utils';
-/* css */
+import strings from 'lang/index';
+import { confirmPrintedPackage } from 'actions/index';
+import { Row } from 'utils/index';
 import constants from 'components/constants';
 
 // eslint-disable-next-line no-unused-vars

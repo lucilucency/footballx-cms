@@ -123,7 +123,6 @@ class IssuesPage extends React.Component {
         title: 'Create new Issue',
         view: <IssueCreateForm
           callback={() => {
-            console.log('callback create new issue');
             this.handleCloseDialog();
           }}
         />,
@@ -140,7 +139,6 @@ class IssuesPage extends React.Component {
         view: <IssueViewer
           issue={this.state.previewingIssue}
           callback={() => {
-            console.log('callback close issue previewer');
             this.handleCloseDialog();
           }}
         />,

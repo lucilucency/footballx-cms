@@ -111,7 +111,6 @@ const getEvent = (props, context) => {
     .then((res, err) => {
       if (!err) {
         const data = transformEvents(res.body.data);
-        console.log(data);
         // const events = data.filter(o => o.status === 1).map((o) => {
         //   const matchTime = toDateTimeString(o.match_date * 1000);
         //   return {
@@ -287,7 +286,6 @@ class CreateNotificationForm extends React.Component {
     return (
       <ValidatorForm
         onSubmit={this.sendNotification}
-        onError={errors => console.log(errors)}
       >
         {loading && <Spinner />}
         <FormContainer show={!toggle || showForm}>
