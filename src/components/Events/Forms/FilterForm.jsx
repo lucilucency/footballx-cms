@@ -6,7 +6,6 @@ import queryString from 'querystring';
 /* actions & helpers */
 import { getHotspots } from 'actions';
 import { toggleShowForm } from 'actions/dispatchForm';
-/* components */
 import FormField from 'components/Form/FormField';
 import strings from 'lang';
 /* css */

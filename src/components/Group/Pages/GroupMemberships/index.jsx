@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { TextField } from 'material-ui';
 import Table from 'components/Table/index';
 import Container from 'components/Container/index';
 import { getGroupMemberships, getGroupMembershipPacks, getGroupMembershipProcesses } from 'actions/index';
@@ -9,6 +10,9 @@ import strings from 'lang/index';
 import ConfirmBeMember from './ConfirmBeMember';
 
 const columns = packs => [{
+  displayName: 'CODE',
+  field: 'id',
+}, {
   displayName: strings.th_name,
   field: 'fullname',
   displayFn: transformations.th_xuser_link,
@@ -32,7 +36,7 @@ const columns = packs => [{
 }, {
   displayName: strings.th_status,
   field: 'is_complete',
-  displayFn: (row, col, field) => field && <img src="/assets/images/paid-rectangle-stamp-300.png" alt="" width={50} />,
+  displayFn: (row, col, field) => field === 'true' && <img src="/assets/images/paid-rectangle-stamp-300.png" alt="" width={50} />,
 }, {
   field: 'id',
   displayName: '',
@@ -44,6 +48,10 @@ const getData = (props) => {
 };
 
 class GroupMemberships extends React.Component {
+  state = {
+    code: null,
+  };
+
   componentDidMount() {
     getData(this.props);
   }
@@ -58,10 +66,27 @@ class GroupMemberships extends React.Component {
   render() {
     const { group, error } = this.props;
 
+    let { processes } = group;
+    if (processes && this.state.code) {
+      processes = processes.filter(el => Number(el.id) === Number(this.state.code));
+    }
+
     return (<div>
       <Container title={strings.title_group_memberships}>
         <div>
-          <Table paginated columns={columns(this.props.group.packs)} data={group.processes} error={error} />
+          <div>
+            <div>
+              {group.processes && <div>Total registration: {group.processes.length}</div>}
+            </div>
+            <div>
+              <TextField
+                hintText="Find code"
+                type="number"
+                onChange={e => this.setState({ code: e.target.value })}
+              />
+            </div>
+          </div>
+          {group.processes && <Table paginated columns={columns(group.packs)} data={processes} error={error} />}
         </div>
       </Container>
     </div>);

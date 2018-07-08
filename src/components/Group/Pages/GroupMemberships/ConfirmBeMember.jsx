@@ -53,7 +53,7 @@ class ConfirmBeMember extends React.Component {
         },
       }),
     }, () => {
-      this.props.submitFn(this.props.processID, this.props.membershipID).then((results) => {
+      this.props.submitFn(this.props.membershipID, this.props.processID).then((results) => {
         const actionName = <div>{'Confirmed'}</div>;
         const resultsReport = [];
         if (results.type.indexOf('OK') === 0) {
@@ -81,7 +81,7 @@ class ConfirmBeMember extends React.Component {
   render() {
     return (
       <div style={{ textAlign: 'right' }}>
-        {!this.state.submitResults.show && <IconButton tooltip={strings.tooltip_confirm_printed} onClick={this.handleOpenDialog}>
+        {!this.state.submitResults.show && <IconButton tooltip="Confirm" onClick={this.handleOpenDialog}>
           <IconPrint color={constants.blue500} />
         </IconButton>}
 
@@ -121,7 +121,7 @@ class ConfirmBeMember extends React.Component {
           open={this.state.openDialog}
           onRequestClose={this.handleCloseDialog}
         >
-          Bạn có chắc chắn chấp nhận <b>{this.props.userName}</b> trở thành thành viên?
+          Bạn có chắc chắn <b>{this.props.userName}</b> đã thanh toán và trở thành thành viên?
         </Dialog>
       </div>
     );
