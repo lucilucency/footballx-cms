@@ -18,15 +18,6 @@ const getEvents = (props) => {
 };
 
 class GroupHomePage extends React.Component {
-  static propTypes = {
-    groupId: PropTypes.number,
-    match: PropTypes.object,
-    location: PropTypes.object,
-    group: PropTypes.object,
-    user: PropTypes.object,
-    guser: PropTypes.object,
-  };
-
   componentDidMount() {
     const that = this;
     const groupId = this.props.groupId || this.props.match.params.groupId;
@@ -93,6 +84,15 @@ class GroupHomePage extends React.Component {
     );
   }
 }
+
+GroupHomePage.propTypes = {
+  groupId: PropTypes.number,
+  match: PropTypes.object,
+  location: PropTypes.object,
+  group: PropTypes.object,
+  user: PropTypes.object,
+  guser: PropTypes.object,
+};
 
 const mapStateToProps = state => ({
   loading: state.app.group.loading,

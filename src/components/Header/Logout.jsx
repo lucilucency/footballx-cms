@@ -32,7 +32,9 @@ class Logout extends React.Component {
     eraseCookie('user_id');
     eraseCookie('user_data');
     console.warn('Cleared cookie');
-    window.location.reload();
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   };
 
   render() {

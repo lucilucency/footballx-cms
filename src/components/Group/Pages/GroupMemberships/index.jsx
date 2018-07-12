@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { TextField } from 'material-ui';
+import { TextField, SelectField, MenuItem } from 'material-ui';
 import Table from 'components/Table/index';
 import Container from 'components/Container/index';
 import { getGroupMemberships, getGroupMembershipPacks, getGroupMembershipProcesses } from 'actions/index';
@@ -26,7 +26,7 @@ const columns = packs => [{
   displayName: strings.th_membership_pack,
   field: 'group_membership_pack_id',
   displayFn: (row, col, field) => {
-    const pack = packs.find(p => Number(p.id) === Number(field));
+    const pack = packs && packs.find(p => Number(p.id) === Number(field));
     return (<span>{pack && pack.name}</span>);
   },
 }, {
@@ -36,11 +36,11 @@ const columns = packs => [{
 }, {
   displayName: strings.th_status,
   field: 'is_complete',
-  displayFn: (row, col, field) => field === 'true' && <img src="/assets/images/paid-rectangle-stamp-300.png" alt="" width={50} />,
+  displayFn: (row, col, field) => (field === 'true' || field === true) && <img src="/assets/images/paid-rectangle-stamp-300.png" alt="" width={50} />,
 }, {
   field: 'id',
   displayName: '',
-  displayFn: (row, col, field) => (row.is_complete === 'false' ? <ConfirmBeMember membershipID={row.group_membership_id} userName={row.fullname} processID={field} /> : null),
+  displayFn: (row, col, field) => ((row.is_complete === 'false' || field === false) ? <ConfirmBeMember membershipID={Number(row.group_membership_id)} userName={row.fullname} processID={field} /> : null),
 }];
 
 const getData = (props) => {
@@ -70,6 +70,16 @@ class GroupMemberships extends React.Component {
     if (processes && this.state.code) {
       processes = processes.filter(el => Number(el.id) === Number(this.state.code));
     }
+    if (processes && this.state.pack) {
+      processes = processes.filter(el => Number(el.group_membership_pack_id) === Number(this.state.pack));
+    }
+    if (processes && this.state.is_complete) {
+      processes = processes.filter((el) => {
+        if (this.state.is_complete === -1) return el.is_complete === false || el.is_complete === 'false';
+        else if (this.state.is_complete === 1) return el.is_complete === true || el.is_complete === 'true';
+        return true;
+      });
+    }
 
     return (<div>
       <Container title={strings.title_group_memberships}>
@@ -77,13 +87,39 @@ class GroupMemberships extends React.Component {
           <div>
             <div>
               {group.processes && <div>Total registration: {group.processes.length}</div>}
+              {group.processes && <div>Total paid: {group.processes.filter(el => el.is_complete === 'true' || el.is_complete === true).length}</div>}
             </div>
             <div>
               <TextField
+                floatingLabelText="Code"
                 hintText="Find code"
                 type="number"
                 onChange={e => this.setState({ code: e.target.value })}
               />
+              <br />
+              {group.packs && (
+                <SelectField
+                  floatingLabelText="Gói thành viên"
+                  value={this.state.pack || 0}
+                  onChange={(event, index, value) => this.setState({ pack: value })}
+                >
+                  <MenuItem value={0} primaryText="All" />
+                  {group.packs.map(el => (
+                    <MenuItem key={el.id} value={el.id} primaryText={el.name} />
+                  ))}
+                </SelectField>
+              )}
+              {group.processes && (
+                <SelectField
+                  floatingLabelText="Trạng thái"
+                  value={this.state.is_complete || 0}
+                  onChange={(event, index, value) => this.setState({ is_complete: value })}
+                >
+                  <MenuItem value={0} primaryText="All" />
+                  <MenuItem value={-1} primaryText="Chưa thanh toán" />
+                  <MenuItem value={1} primaryText="Đã thanh toán" />
+                </SelectField>
+              )}
             </div>
           </div>
           {group.processes && <Table paginated columns={columns(group.packs)} data={processes} error={error} />}

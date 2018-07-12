@@ -22,7 +22,7 @@ export default combineReducers({
   matchesCompact: fxReducer('matchesCompact', { matches: [] }),
 
   groups: fxReducer('groups', []),
-  group: fxReducer('group', []),
+  group: fxReducer('group', {}),
   groupEvents: fxReducer('groupEvents', []),
   groupHUsers: fxReducer('groupHUsers', []),
   groupMembers: fxReducer('groupMembers', []),
