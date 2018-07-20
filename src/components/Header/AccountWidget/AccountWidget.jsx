@@ -53,6 +53,6 @@ const mapStateToProps = (state) => {
 // });
 
 
-const RequestLayer = (propsVar) => <AccountWidget {...propsVar} />
+const RequestLayer = propsVar => <AccountWidget {...propsVar} />;
 
 export default connect(mapStateToProps, null)(withRouter(RequestLayer));
