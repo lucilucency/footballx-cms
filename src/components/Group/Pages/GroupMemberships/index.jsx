@@ -40,7 +40,7 @@ const columns = packs => [{
 }, {
   field: 'id',
   displayName: '',
-  displayFn: (row, col, field) => ((row.is_complete === 'false' || field === false) ? <ConfirmBeMember membershipID={Number(row.group_membership_id)} userName={row.fullname} processID={field} /> : null),
+  displayFn: (row, col, field) => ((!row.is_complete || row.is_complete === 'false' || field === false) ? <ConfirmBeMember membershipID={Number(row.group_membership_id)} userName={row.fullname} processID={field} /> : null),
 }];
 
 const getData = (props) => {

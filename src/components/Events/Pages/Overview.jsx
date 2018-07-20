@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React from 'react';
 import PropTypes from 'prop-types';
 import queryString from 'querystring';
@@ -93,11 +94,14 @@ const tableEventsColumns = browser => [browser.greaterThan.medium && {
   field: 'checkin_total',
   tooltip: strings.tooltip_xuser_register_checkin,
   sortFn: true,
-  displayFn: row => (<div>
-    <span className="subText ellipsis" style={{ display: 'block', marginTop: 1 }}>
-      {row.checkin_total} / {row.checkin_total + row.register_total}
-    </span>
-  </div>),
+  displayFn: (row) => {
+    const { checkin_total = 0, register_total = 0 } = row;
+    return (<div>
+      <span className="subText ellipsis" style={{ display: 'block', marginTop: 1 }}>
+        {checkin_total} / {checkin_total + register_total}
+      </span>
+    </div>);
+  },
   relativeBars: true,
 }];
 
@@ -111,7 +115,7 @@ const TableEvents = propsVar => (
 const getData = (props) => {
   const { search } = props.location;
   const params = { ...queryString.parse(search.substring(1)) };
-  const defaultStartTime = parseInt(Date.now() / 1000, 10) - 2592000; /* 1m */
+  const defaultStartTime = parseInt(Date.now() / 1000, 10) - (12 * 2592000); /* 1m */
   const defaultEndTime = parseInt(Date.now() / 1000, 10) + 2592000; /* 1m */
   params.start_time = params.start_time || defaultStartTime;
   params.end_time = params.end_time || defaultEndTime;

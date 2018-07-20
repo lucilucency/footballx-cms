@@ -50,6 +50,11 @@ class RequestLayer extends React.Component {
       return false;
     }
 
+    if (this.props.user.type !== 1 && location.pathname !== '/events/add') {
+      this.props.history.push('/');
+      return false;
+    }
+
     // filter local
     const filter = queryString.parse(location.search.replace('?', ''));
     if (!_.isEmpty(filter)) {
@@ -85,11 +90,6 @@ class RequestLayer extends React.Component {
     const route = match.params.info || 'all';
     if (Number.isInteger(Number(route))) {
       return <Event {...this.props} eventId={route} />;
-    }
-
-    if (this.props.user.user_type !== 1 && location.pathname !== '/events/add') {
-      this.props.history.push('/');
-      return false;
     }
 
     const tab = eventTabs.find(el => el.key === route);

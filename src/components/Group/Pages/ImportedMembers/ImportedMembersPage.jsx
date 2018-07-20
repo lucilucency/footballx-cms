@@ -166,7 +166,7 @@ class RequestLayer extends React.Component {
           loading={this.props.groupMembers.loading}
         />
       </Container>
-      {props.user.user_type === 1 ? <Container title={strings.title_group_imported_members}>
+      {props.user.type === 1 ? <Container title={strings.title_group_imported_members}>
         <XUsersImportForm groupId={this.props.groupId} groupMembers={this.props.groupMembers.data} />
       </Container> : null}
     </div>);

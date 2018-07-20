@@ -26,7 +26,7 @@ class RequestLayer extends React.Component {
       return false;
     }
 
-    if (userData.user.user_type === 1) {
+    if (userData.user.type === 1) {
       return (<div>
         <Helmet title={strings.title_group_husers} />
         <CreateNotificationForm toggle={false} />

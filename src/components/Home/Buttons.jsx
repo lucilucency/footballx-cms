@@ -15,7 +15,7 @@ const Button = (propsVar) => {
       />}
     </div>
     <div className={'bottomButtons'}>
-      {user && user.user_type === 1 && <div>
+      {user && user.type === 1 && <div>
         <FlatButton
           label={<span className={'label'}>{strings.home_view} <b>{strings.general_events}</b></span>}
           containerElement={<Link to={'/events'} />}
@@ -25,14 +25,14 @@ const Button = (propsVar) => {
           containerElement={<Link to={'/hotspots'} />}
         />
       </div>}
-      {user && user.user_type === 2 && <div>
+      {user && user.type === 2 && <div>
         {userHotspot && userHotspot.id && <FlatButton
           label={<span className={'label'}>{strings.home_view_your} <b>{strings.home_hotspot}</b></span>}
           containerElement={<Link to={`/hotspot/${userHotspot.id}`} />}
         />}
 
       </div>}
-      {user && user.user_type === 3 && <div>
+      {user && user.type === 3 && <div>
         {userGroup && userGroup.id && <FlatButton
           label={<span className={'label'}>{strings.home_view_your} <b>{strings.home_group}</b></span>}
           containerElement={<Link to={`/group/${userGroup.id}`} />}

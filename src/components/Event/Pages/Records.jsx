@@ -49,7 +49,7 @@ const eventXUsersColumns = (user, event) => [{
   field: 'nickname',
   displayFn: transformations.th_xuser_image,
   sortFn: true,
-}, null && user.user_type === 1 && {
+}, null && user.type === 1 && {
   displayName: '',
   field: 'facebook_id',
   displayFn: (row, col, field) => (<div>
@@ -94,11 +94,11 @@ const eventXUsersColumns = (user, event) => [{
     {field > 0 && field}
   </div>),
   sortFn: true,
-}, user.user_type === 1 && {
+}, user.type === 1 && {
   displayName: 'Remaining Subs',
   field: 'subscription',
   sortFn: true,
-}, user.user_type === 1 && {
+}, user.type === 1 && {
   displayName: 'Remaining XCoin',
   field: 'xcoin',
   sortFn: true,
@@ -201,11 +201,11 @@ class Overview extends React.Component {
                   primaryText={'Total Paid Subscription'}
                   secondaryText={`${(paidSubscription).toLocaleString()}`}
                 />
-                {user.user.user_type === 1 && <ListItem
+                {user.user.type === 1 && <ListItem
                   primaryText={'Total Remaining X-Coin'}
                   secondaryText={computed.xcoin.total.toLocaleString()}
                 />}
-                {user.user.user_type === 1 && <ListItem
+                {user.user.type === 1 && <ListItem
                   primaryText={'Total Remaining Subscription'}
                   secondaryText={subscription.toLocaleString()}
                 />}

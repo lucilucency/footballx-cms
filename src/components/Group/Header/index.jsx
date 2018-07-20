@@ -161,7 +161,7 @@ const GroupHeader = (propsVar) => {
             checkedInXUsers={checkedInXUsers}
             group={group.data}
           />
-          {(user.user_type === 1 || isOwner) && <GroupHeaderButtons
+          {(user.type === 1 || isOwner) && <GroupHeaderButtons
             groupId={groupId}
             compact={!small}
           />}

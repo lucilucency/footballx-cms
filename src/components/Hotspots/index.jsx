@@ -56,7 +56,7 @@ class RequestLayer extends React.Component {
       return <Hotspot {...this.props} hotspotId={route} />;
     }
 
-    if (user.user_type === 2 && user.type === 'hotspot') {
+    if (user.type === 2 && user.type === 'hotspot') {
       history.push('/');
       return false;
     }
@@ -73,7 +73,7 @@ class RequestLayer extends React.Component {
         />
       </div>),
       route: '/hotspots/all',
-    }, user.user_type === 1 && {
+    }, user.type === 1 && {
       name: strings.tab_hotspots_add,
       key: 'add',
       content: () => (<div style={{ paddingBottom: 20 }}>

@@ -197,7 +197,7 @@ const HotspotHeader = (propsVar) => {
           checkedInXUsers={checkedInXUsers}
           hotspot={hotspot.data}
         />
-        {(user.user_type === 1 || isOwner) && <HotspotHeaderButtons
+        {(user.type === 1 || isOwner) && <HotspotHeaderButtons
           hotspotId={hotspotId}
           compact={!small}
         />}

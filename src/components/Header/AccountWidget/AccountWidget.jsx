@@ -1,11 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import strings from 'lang';
 import Error from 'components/Error';
 import FlatButton from 'material-ui/FlatButton';
 import UserIcon from 'material-ui/svg-icons/action/verified-user';
 import Spinner from 'components/Spinner';
+import { LinkStyled } from '../Styled';
 
 const LoggedIn = (propsVar) => {
   const { user } = propsVar;
@@ -24,21 +25,17 @@ const LoggedIn = (propsVar) => {
 
 
 const AccountWidget = (propsVar) => {
-  const { loading, error, user, style = {} } = propsVar;
-  return (
-    <div style={style}>
-      {error && <Error />}
-      {!error && !loading && user
-        ? <LoggedIn user={user} />
-        : <Link to="/login">
-          <FlatButton
-            label={strings.app_login}
-            hoverColor="transparent"
-          />
-        </Link>
-      }
-    </div>
-  );
+  const { loading, error, user } = propsVar;
+  return error ? <Error /> :
+    !loading && user ? <LoggedIn user={user} /> : (
+      <LinkStyled
+        onClick={() => {
+          propsVar.history.push('/login');
+        }}
+      >
+        <span>{strings.app_login}</span>
+      </LinkStyled>
+    );
 };
 
 const mapStateToProps = (state) => {
@@ -56,18 +53,6 @@ const mapStateToProps = (state) => {
 // });
 
 
-class RequestLayer extends React.Component {
-  componentDidMount() {
+const RequestLayer = (propsVar) => <AccountWidget {...propsVar} />
 
-  }
-
-  componentWillUpdate() {
-
-  }
-
-  render() {
-    return <AccountWidget {...this.props} />;
-  }
-}
-
-export default connect(mapStateToProps, null)(RequestLayer);
+export default connect(mapStateToProps, null)(withRouter(RequestLayer));

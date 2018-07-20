@@ -45,7 +45,7 @@ class UserModule extends React.Component {
       return false;
     }
 
-    if (metadata.user.user_type === 2 && metadata.user.type === 'hotspot') {
+    if (metadata.user.type === 2 && metadata.user.type === 'hotspot') {
       history.push('/');
       return false;
     }

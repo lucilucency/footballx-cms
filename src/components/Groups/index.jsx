@@ -82,7 +82,7 @@ class RequestLayer extends React.Component {
       return <Group {...this.props} groupId={route} />;
     }
 
-    if (user.user_type === 2 && user.type === 'group') {
+    if (user.type === 2 && user.type === 'group') {
       history.push('/');
       return false;
     }
@@ -99,7 +99,7 @@ class RequestLayer extends React.Component {
         />
       </div>),
       route: '/groups/all',
-    }, user.user_type === 1 && {
+    }, user.type === 1 && {
       name: strings.tab_groups_add,
       key: 'add',
       content: () => (<div>

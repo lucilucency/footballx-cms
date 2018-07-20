@@ -163,7 +163,7 @@ const mapStateToProps = (state) => {
 
   return {
     leagues: leaguesReducer,
-    user_type: state.app.metadata.data.user && state.app.metadata.data.user.user_type,
+    user_type: state.app.metadata.data.user && state.app.metadata.data.user.type,
   };
 };
 

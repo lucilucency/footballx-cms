@@ -19,7 +19,7 @@ class LoginForm extends React.Component {
 
   componentWillReceiveProps(props) {
     if ((!this.props.user || !this.props.user.id) && props.user && props.user.user_id) {
-      const userType = props.user.user_type;
+      const userType = props.user.type;
       if (userType === 2) {
         props.getHUserHotspot(props.user.user_id).then((h) => {
           localStorage.setItem('account_hotspot', JSON.stringify(h.payload));

@@ -48,10 +48,10 @@ const navbarPagesCUser = [
 ];
 
 const burgerItems = (metadata) => {
-  const { cuser, guser, huser } = metadata;
+  const { cuser, guser, huser, user } = metadata;
   const burgerHUser = navbarPagesHUser(huser);
   const burgerGUser = navbarPagesGUser(guser);
-  const burgerCUser = (cuser && cuser.id) ? navbarPagesCUser : [];
+  const burgerCUser = (user.type === 1 && cuser) ? navbarPagesCUser : [];
   return [
     {
       component: <AccountWidget key={0} />,
@@ -134,7 +134,7 @@ const LinkGroup = (propsVar) => {
           </div>
         </TabContainer>
       ))}
-      {(huser && huser.id) && navbarPagesHUser(huser).map(page => (
+      {(user && user.type === 2 && huser && huser.id) && navbarPagesHUser(huser).map(page => (
         <TabContainer key={page.key}>
           <div style={{
             margin: '0 10px',
@@ -146,7 +146,7 @@ const LinkGroup = (propsVar) => {
           </div>
         </TabContainer>
       ))}
-      {(guser && guser.id) && navbarPagesGUser(guser).map((page, index) => (
+      {(user && user.type === 3 && guser && guser.id) && navbarPagesGUser(guser).map((page, index) => (
         <TabContainer key={index}>
           <div style={{
             margin: '0 10px',
@@ -158,7 +158,7 @@ const LinkGroup = (propsVar) => {
           </div>
         </TabContainer>
       ))}
-      {(user && user.user_type === 1) ? navbarPagesCUser.map(page => (
+      {(user && user.type === 1) ? navbarPagesCUser.map(page => (
         <TabContainer key={page.key}>
           <div style={{
             margin: '0 10px',
@@ -192,26 +192,26 @@ const SettingsGroup = (propsVar) => {
         <AccountWidget />
       </VerticalAlignToolbar>
       <LocalizationMenu />
-      {user && user.user_type === 1 && <Link to={'/notify'}>
+      {user && user.type === 1 && <Link to={'/notify'}>
         <FlatButton
           label={strings.header_send_notification}
           hoverColor="transparent"
           icon={<NoficationIcon />}
         />
       </Link>}
-      {user && user.user_type === 1 && <Link to={'/settings'}>
+      {user && user.type === 1 && <Link to={'/settings'}>
         <FlatButton
           label={'Settings'}
           hoverColor="transparent"
           icon={<ActionSettings />}
         />
       </Link>}
-      {user && user.user_type === 1 && <FlatButton
+      {user && user.type === 1 && <FlatButton
         icon={<IconUpdate />}
         onClick={() => {
           fetch(`${FX_API}/${FX_VERSION}/content`, { method: 'POST' });
         }}
-        label={strings.app_update_content_data}
+        label="Update content data"
       />}
       {user ? <Logout /> : null}
     </VerticalAlignDropdown>
@@ -259,7 +259,7 @@ const Header = (propsVar) => {
           {/* <SearchGroup/> */}
         </VerticalAlignDiv>
         <VerticalAlignDiv>
-          {auth.user && (auth.user.user_type === 1 || (auth.user.user_type === 2 && auth.user.type === 'group')) &&
+          {auth.user && (auth.user.type === 1 || (auth.user.type === 2 && auth.user.type === 'group')) &&
           <FastActionGroup />}
           {<SettingsGroup user={auth.user} />}
         </VerticalAlignDiv>

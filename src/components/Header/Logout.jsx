@@ -1,29 +1,9 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import styled from 'styled-components';
 import LogOutButton from 'material-ui/svg-icons/action/power-settings-new';
-import ui from 'components/constants';
 import strings from '../../lang';
 import { eraseCookie } from '../../utils';
-
-const LinkStyled = styled.a`
-  font-size: ${ui.fontSizeNormal};
-  font-weight: ${ui.fontWeightLight};
-  color: ${ui.textColorPrimary} !important;
-  display: flex;
-  align-items: center;
-  margin-top: 2px;
-  margin-right: 15px;
-
-  & svg {
-    margin-right: 5px;
-
-    /* Override material-ui */
-    color: currentColor !important;
-    width: 18px !important;
-    height: 18px !important;
-  }
-`;
+import { LinkStyled } from './Styled';
 
 class Logout extends React.Component {
   handleClickLogout = (event) => {
