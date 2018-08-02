@@ -20,6 +20,18 @@ import {
 import { TextValidator } from 'react-material-ui-form-validator';
 
 class EditUserAccount extends React.Component {
+  static initialState = {
+    formData: {
+      username: {},
+      type: {},
+      role: {},
+    },
+    payload: {},
+    submitResults: {
+      data: [],
+      show: false,
+    },
+  };
   static propTypes = {
     display: PropTypes.bool,
     toggle: PropTypes.bool,
@@ -32,18 +44,6 @@ class EditUserAccount extends React.Component {
     toggle: false,
     popup: false,
     loading: false,
-  };
-  static initialState = {
-    formData: {
-      username: {},
-      type: {},
-      role: {},
-    },
-    payload: {},
-    submitResults: {
-      data: [],
-      show: false,
-    },
   };
 
   constructor() {

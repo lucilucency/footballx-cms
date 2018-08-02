@@ -49,9 +49,9 @@ const navbarPagesCUser = [
 
 const burgerItems = (metadata) => {
   const { cuser, guser, huser, user } = metadata;
-  const burgerHUser = navbarPagesHUser(huser);
-  const burgerGUser = navbarPagesGUser(guser);
-  const burgerCUser = (user.type === 1 && cuser) ? navbarPagesCUser : [];
+  const burgerHUser = (user && huser && navbarPagesHUser(huser)) || [];
+  const burgerGUser = (user && guser && navbarPagesGUser(guser)) || [];
+  const burgerCUser = (user && cuser && user.type === 1) ? navbarPagesCUser : [];
   return [
     {
       component: <AccountWidget key={0} />,

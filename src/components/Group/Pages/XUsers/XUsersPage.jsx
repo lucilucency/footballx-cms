@@ -47,7 +47,7 @@ const MembersTableCols = browser => ([{
   displayName: '',
   field: 'facebook_id',
   displayFn: (row, col, field) => (<div>
-    <a href={`https://www.facebook.com/${field}`} target="_blank"><IconFacebook width={24} height={24} /></a>
+    <a href={`https://www.facebook.com/${field}`} rel="noopener noreferrer" target="_blank"><IconFacebook width={24} height={24} /></a>
   </div>),
 }, {
   displayName: strings.th_address,
@@ -193,7 +193,7 @@ class RequestLayer extends React.Component {
         error={error}
         loading={loading}
         actions={!printing ? [{
-          title: 'View & Download Not QRCode of not activated members',
+          title: 'View & Download QRCode of NOT activated members',
           icon: <IconPrint />,
           link: `${props.location.pathname}/printing`,
         }, {

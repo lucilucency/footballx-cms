@@ -72,15 +72,15 @@ const clubsColumns = (context, leagueID) => [null && {
 // });
 
 class Clubs extends React.Component {
-  static propTypes = {
-    leagues: React.PropTypes.array,
-    getLeagueClubs: React.PropTypes.func,
-  };
-
   static initialState = {
     openDialog: false,
     dialogConstruct: {},
     leagues: [],
+  };
+
+  static propTypes = {
+    leagues: React.PropTypes.array,
+    getLeagueClubs: React.PropTypes.func,
   };
 
   constructor(props) {

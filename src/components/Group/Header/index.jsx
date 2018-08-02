@@ -99,6 +99,7 @@ const getRegistrationBadge = registered => registered && (
 
 const GroupHeader = (propsVar) => {
   const { groupId, group, small, extraSmall, events, isOwner, user } = propsVar;
+
   const groupData = group.data || {};
   const checkedInXUsers = (events.length && events.reduce((a, b) => a + b.checkin_total, 0)) || 0;
   const registeredXUsers = (events.length && events.reduce((a, b) => a + b.register_total, 0)) || 0;

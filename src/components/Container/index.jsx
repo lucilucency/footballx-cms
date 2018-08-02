@@ -26,27 +26,29 @@ AsyncContainer.propTypes = {
 
 const Container = ({ title, subtitle, style, className, children, error, loading, hide, titleTo, actions }) => (!hide ? (
   <div className={className} style={{ ...style }}>
-    {title && <Heading title={title} subtitle={subtitle} titleTo={titleTo} actions={Boolean(actions)} />}
-    {actions && <div style={{ float: 'right' }}>
-      <IconMenu iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}>
-        {actions.map((action) => {
-          if (action.link) {
+    <div style={{ display: 'inline-block', width: '100%' }}>
+      {title && <Heading title={title} subtitle={subtitle} titleTo={titleTo} actions={Boolean(actions)} />}
+      {actions && <div style={{ float: 'right' }}>
+        <IconMenu iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}>
+          {actions.map((action) => {
+            if (action.link) {
+              return (<MenuItem
+                containerElement={<Link to={action.link} />}
+                key={action.key}
+                primaryText={action.title}
+                leftIcon={action.icon && action.icon}
+              />);
+            }
             return (<MenuItem
-              containerElement={<Link to={action.link} />}
               key={action.key}
               primaryText={action.title}
               leftIcon={action.icon && action.icon}
+              onClick={action.onClick}
             />);
-          }
-          return (<MenuItem
-            key={action.key}
-            primaryText={action.title}
-            leftIcon={action.icon && action.icon}
-            onClick={action.onClick}
-          />);
-        })}
-      </IconMenu>
-    </div>}
+          })}
+        </IconMenu>
+      </div>}
+    </div>
     <AsyncContainer error={error} loading={loading}>
       {children}
     </AsyncContainer>

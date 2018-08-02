@@ -21,6 +21,21 @@ import {
 import { TextValidator } from 'react-material-ui-form-validator';
 
 class CreateUserForm extends React.Component {
+  static initialState = {
+    formData: {
+      username: {},
+      fullname: {},
+      password: {},
+      repeat_password: {},
+      email: {},
+      phone: {},
+    },
+    payload: {},
+    submitResults: {
+      data: [],
+      show: false,
+    },
+  };
   static propTypes = {
     mode: PropTypes.string,
     display: PropTypes.bool,
@@ -37,21 +52,6 @@ class CreateUserForm extends React.Component {
     toggle: false,
     popup: false,
     loading: false,
-  };
-  static initialState = {
-    formData: {
-      username: {},
-      fullname: {},
-      password: {},
-      repeat_password: {},
-      email: {},
-      phone: {},
-    },
-    payload: {},
-    submitResults: {
-      data: [],
-      show: false,
-    },
   };
 
   constructor() {

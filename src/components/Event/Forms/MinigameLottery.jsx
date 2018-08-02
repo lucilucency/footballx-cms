@@ -273,7 +273,7 @@ class GenerateQR extends React.Component {
 
         <div>
           {nextWinner && <H2 show={!this.state.isFlipping}>
-            {!nextWinner.is_guest && <a href={`https://www.facebook.com/${nextWinner.facebook_id}`} target="_blank">{nextWinner.nickname}</a>}
+            {!nextWinner.is_guest && <a href={`https://www.facebook.com/${nextWinner.facebook_id}`} rel="noopener noreferrer" target="_blank">{nextWinner.nickname}</a>}
           </H2>}
         </div>
 

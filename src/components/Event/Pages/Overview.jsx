@@ -28,7 +28,7 @@ const eventXUsersColumns = (user, event) => [{
   displayName: '',
   field: 'facebook_id',
   displayFn: (row, col, field) => (<div>
-    <a href={`https://www.facebook.com/${field}`} target="_blank"><IconFacebook width={24} height={24} /></a>
+    <a href={`https://www.facebook.com/${field}`} rel="noopener noreferrer" target="_blank"><IconFacebook width={24} height={24} /></a>
   </div>),
 }, {
   displayName: strings.th_status,

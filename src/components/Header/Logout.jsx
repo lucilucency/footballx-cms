@@ -1,17 +1,14 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import LogOutButton from 'material-ui/svg-icons/action/power-settings-new';
+import { logout } from 'actions';
 import strings from '../../lang';
-import { eraseCookie } from '../../utils';
 import { LinkStyled } from './Styled';
 
 class Logout extends React.Component {
   handleClickLogout = (event) => {
     event.preventDefault();
-    eraseCookie('access_token');
-    eraseCookie('user_id');
-    eraseCookie('user_data');
-    console.warn('Cleared cookie');
+    logout();
     setTimeout(() => {
       window.location.reload();
     }, 1000);

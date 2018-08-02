@@ -50,7 +50,7 @@ const H2 = styled.h2`
     transition: all 0.3s ease-in-out 0.2s;
 `)}
   
-  @media only screen and (max-width: 660px) {
+  @media screen and (max-width: 660px;) {
     font-size: 24px;
   }
 `;
@@ -195,7 +195,7 @@ class CheckinQR extends React.Component {
               <div>
                 {newXUser.avatar && <img src={newXUser.avatar} alt="" width={largeSize} height={largeSize} />}
                 {<H2 show>
-                  <a href={`https://www.facebook.com/${newXUser.facebook_id}`} target="_blank">{newXUser.nickname}</a>
+                  <a href={`https://www.facebook.com/${newXUser.facebook_id}`} rel="noopener noreferrer" target="_blank">{newXUser.nickname}</a>
                 </H2>}
                 {newXUser.group_id && <h2>{`Member of ${Groups[newXUser.group_id].short_name}`}</h2>}
                 {newXUser.group_id && <h2>{newXUser.code}</h2>}

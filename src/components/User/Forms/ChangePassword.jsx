@@ -20,6 +20,18 @@ import {
 import { TextValidator } from 'react-material-ui-form-validator';
 
 class ChangePassword extends React.Component {
+  static initialState = {
+    formData: {
+      password: {},
+      new_password: {},
+      retype_password: {},
+    },
+    payload: {},
+    submitResults: {
+      data: [],
+      show: false,
+    },
+  };
   static propTypes = {
     display: PropTypes.bool,
     toggle: PropTypes.bool,
@@ -32,18 +44,6 @@ class ChangePassword extends React.Component {
     toggle: false,
     popup: false,
     loading: false,
-  };
-  static initialState = {
-    formData: {
-      password: {},
-      new_password: {},
-      retype_password: {},
-    },
-    payload: {},
-    submitResults: {
-      data: [],
-      show: false,
-    },
   };
 
   constructor() {

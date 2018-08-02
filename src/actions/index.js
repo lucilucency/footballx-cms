@@ -5,7 +5,7 @@ import {
   dispatchPost, dispatchGet, dispatchPut,
 } from 'actions/dispatchAction';
 import leagues from 'fxconstants/leaguesObj.json';
-import { setCookie, getCookie } from '../utils';
+import { setCookie, getCookie, eraseCookie } from '../utils';
 
 const __blankTransforms = () => ([]);
 
@@ -73,9 +73,9 @@ export const auth = (username, password) => dispatchPost({
   },
 });
 /* user */
-export const getHUserHotspot = accountId => fxActionGet('hotspot', `huser/${accountId}/hotspot`);
+export const getHUserHotspot = accountId => dispatchGet({ reducer: 'hotspot', path: `huser/${accountId}/hotspot` });
 export const createUser = (params, payload) => fxActionPost('ADD/users', 'user', params, null, payload);
-export const getUser = userID => fxActionGet('user', `user/${userID}`);
+export const getUser = userID => dispatchGet({ reducer: 'user', path: `user/${userID}` });
 export const editUser = (userID, params) => fxActionPut('EDIT/user', `user/${userID}`, params);
 export const changePassword = (userID, params) => fxActionPut('user/change_password', `user/${userID}/change_password`, params);
 export const resetPassword = (userID, params) => fxActionPut('user/reset_password', `user/${userID}/reset_password`, params);
@@ -83,11 +83,11 @@ export const editHUserProfile = (huserID, params) => fxActionPut('EDIT/user', `h
 export const editCUserProfile = (cuserID, params) => fxActionPut('EDIT/user', `cuser/${cuserID}`, params);
 export const editGUserProfile = (guserID, params) => fxActionPut('EDIT/user', `guser/${guserID}`, params);
 /* club & league */
-export const getLeagueClubs = leagueID => fxActionGet(`league[${leagues[leagueID] && leagues[leagueID].name}]`, `league/${leagueID}/clubs`);
+export const getLeagueClubs = leagueID => dispatchGet({ reducer: `league[${leagues[leagueID] && leagues[leagueID].name}]`, path: `league/${leagueID}/clubs` });
 export const editLeagueClub = (leagueID, clubID, params) => fxActionPut(`EDIT_ARR/league[${leagues[leagueID] && leagues[leagueID].name}]`, `club/${clubID}`, params);
 /* matches */
-export const getMatches = params => fxActionGet('matches', 'matches/calendar', params, transform.transformsMatchEvent);
-export const getMatchesCompact = params => fxActionGet('matchesCompact', 'matches', params, transform.transformsMatch);
+export const getMatches = params => dispatchGet({ reducer: 'matches', path: 'matches/calendar', params, transform: transform.transformsMatchEvent });
+export const getMatchesCompact = params => dispatchGet({ reducer: 'matchesCompact', path: 'matches', params, transform: transform.transformsMatch });
 /* hotspot */
 export const getHotspots = () => dispatchGet({
   reducer: 'hotspots',
@@ -96,9 +96,9 @@ export const getHotspots = () => dispatchGet({
 });
 export const createHotspot = params => fxActionPost('ADD/hotspots', 'hotspot', params);
 export const deleteHotspot = hotspotID => fxActionDelete('DELETE/hotspot', `hotspot/${hotspotID}`);
-export const getHotspot = hotspotId => fxActionGet('hotspot', `hotspot/${hotspotId}`);
+export const getHotspot = hotspotId => dispatchGet({ reducer: 'hotspot', path: `hotspot/${hotspotId}` });
 export const editHotspot = (hotspotId, params) => fxActionPut('EDIT/hotspot', `hotspot/${hotspotId}`, params, transform.transformEditEvent);
-export const getHotspotEvents = (hotspotId, params = {}) => fxActionGet('hotspotEvents', `hotspot/${hotspotId}/events`, params, transform.transformEvents);
+export const getHotspotEvents = (hotspotId, params = {}) => dispatchGet({ reducer: 'hotspotEvents', path: `hotspot/${hotspotId}/events`, params, transform: transform.transformEvents });
 export const getHotspotUpcomingEvents = (hotspotId, params = {}) => fxActionGet('hotspotUpcomingEvents', `hotspot/${hotspotId}/events`, params, transform.transformEvents);
 export const createHotspotEvent = (params, payload) => dispatchPost({
   version: 'v2',
@@ -109,17 +109,13 @@ export const createHotspotEvent = (params, payload) => dispatchPost({
   transform: transform.transformCreateEvent,
 });
 export const createHotspotHUser = (params, payload) => fxActionPost('ADD/hotspotHUsers', 'huser', params, transform.transformHUser, payload);
-export const getHotspotHUsers = hotspotId => fxActionGet('hotspotHUsers', `hotspot/${hotspotId}/husers`);
+export const getHotspotHUsers = hotspotId => dispatchGet({ reducer: 'hotspotHUsers', path: `hotspot/${hotspotId}/husers` });
 /** group */
-export const getGroups = () => fxActionGet('groups', 'groups');
+export const getGroups = () => dispatchGet({ reducer: 'groups', path: 'groups' });
 export const createGroup = params => fxActionPost('ADD/groups', 'group', params);
-export const getGroup = groupId => fxActionGet('group', `group/${groupId}`);
+export const getGroup = groupId => dispatchGet({ reducer: 'group', path: `group/${groupId}`, transform: el => el.data });
 export const editGroup = (groupId, params) => fxActionPut('EDIT/group', `group/${groupId}`, params);
-export const getGroupEvents = groupId => dispatchGet({
-  reducer: 'groupEvents',
-  path: `group/${groupId}/events`,
-  transform: transform.transformEvents,
-});
+export const getGroupEvents = groupId => dispatchGet({ reducer: 'groupEvents', path: `group/${groupId}/events`, transform: resp => resp.data.map(el => transform.transformEvent(el)) });
 export const createGroupEvent = (params, payload) => fxActionPost('ADD/groupEvents', 'event', params, transform.transformCreateEvent, payload);
 export const getGroupHUsers = groupId => fxActionGet('groupHUsers', `group/${groupId}/husers`);
 export const importGroupMembers = (groupId, params, payload) => fxActionPost('ADD/groupMembers', `group/${groupId}/membership`, params, __blankTransforms, payload);
@@ -224,6 +220,14 @@ export const getGithubPulls = merged => action('ghPulls', 'https://api.github.co
   page: 1,
   per_page: 1,
 });
+
+export const logout = () => {
+  console.warn('Logging out...');
+  eraseCookie('access_token');
+  eraseCookie('user_id');
+  eraseCookie('user_data');
+  console.warn('Cleared cookie');
+};
 
 export * from './dispatchForm';
 export * from './request';
