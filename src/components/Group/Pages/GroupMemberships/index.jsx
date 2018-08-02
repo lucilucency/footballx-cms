@@ -62,24 +62,32 @@ const fileHeader = {
   phone: strings.th_phone,
   dob: strings.th_dob,
   city: strings.th_city,
-  district: strings.th_city,
+  district: strings.th_district,
   address: strings.th_address,
   gender: strings.th_gender,
   size: strings.th_membership_t_shirt_size,
   is_purchase: strings.th_membership_is_purchase,
   membership_code: strings.th_membership_code,
+  membership_pack: strings.th_membership_pack,
+  status: strings.th_status,
 };
 
-const downloadMembers = (dsMember) => {
+const downloadMembers = (dsMember, packs) => {
   const data = [
-    [fileHeader.name, fileHeader.nickname, fileHeader.phone, fileHeader.email, fileHeader.city, fileHeader.district, fileHeader.address, fileHeader.membership_code],
+    [
+      fileHeader.name, fileHeader.nickname, fileHeader.phone,
+      fileHeader.email, fileHeader.city, fileHeader.district,
+      fileHeader.address, fileHeader.membership_code, fileHeader.membership_pack, fileHeader.status,
+    ],
   ];
 
   dsMember.forEach((o) => {
     const province = dsProvince[o.province_id] && dsProvince[o.province_id].name;
     const district = dsDistrict[o.district_id] && dsDistrict[o.district_id].name;
+    const pack = packs && packs.find(p => Number(p.id) === Number(o.group_membership_pack_id));
+    const status = o.is_complete ? 'Đã thanh toán' : '';
 
-    data.push([o.fullname, o.nickname, o.phone, o.email, province, district, o.address, o.code]);
+    data.push([o.fullname, o.nickname, o.phone, o.email, province, district, o.address, o.code, pack && pack.name, status]);
   });
 
   const ws = XLSX.utils.aoa_to_sheet(data);
@@ -125,8 +133,8 @@ class GroupMemberships extends React.Component {
     }
     if (processes && this.state.is_complete) {
       processes = processes.filter((el) => {
-        if (this.state.is_complete === -1) return el.is_complete === false || el.is_complete === 'false';
-        else if (this.state.is_complete === 1) return el.is_complete === true || el.is_complete === 'true';
+        if (this.state.is_complete === -1) return !el.is_complete || el.is_complete === false || el.is_complete === 'false';
+        else if (this.state.is_complete === 1) return el.is_complete || el.is_complete === 'true';
         return true;
       });
     }
@@ -139,7 +147,7 @@ class GroupMemberships extends React.Component {
         actions={[{
           title: 'Export',
           icon: <IconDownload />,
-          onClick: () => downloadMembers(processes),
+          onClick: () => downloadMembers(processes, group.packs),
         }]}
       >
         <div>
