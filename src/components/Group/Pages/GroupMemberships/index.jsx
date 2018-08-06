@@ -35,8 +35,12 @@ const columns = packs => [{
     return (<span>{pack && pack.name}</span>);
   },
 }, {
-  displayName: strings.th_created_at,
+  displayName: strings.th_registered_at,
   field: 'created_at',
+  displayFn: (row, col, field) => toDateTimeString(field),
+}, {
+  displayName: strings.th_purchased_at,
+  field: 'purchased_at',
   displayFn: (row, col, field) => toDateTimeString(field),
 }, {
   displayName: strings.th_membership_code,
@@ -78,6 +82,7 @@ const downloadMembers = (dsMember, packs) => {
       fileHeader.name, fileHeader.nickname, fileHeader.phone,
       fileHeader.email, fileHeader.city, fileHeader.district,
       fileHeader.address, fileHeader.membership_code, fileHeader.membership_pack, fileHeader.status,
+      'Thanh toán qua',
     ],
   ];
 
@@ -86,8 +91,9 @@ const downloadMembers = (dsMember, packs) => {
     const district = dsDistrict[o.district_id] && dsDistrict[o.district_id].name;
     const pack = packs && packs.find(p => Number(p.id) === Number(o.group_membership_pack_id));
     const status = o.is_complete ? 'Đã thanh toán' : '';
+    const via = o.purchased_at ? 'FootballX' : '';
 
-    data.push([o.fullname, o.nickname, o.phone, o.email, province, district, o.address, o.code, pack && pack.name, status]);
+    data.push([o.fullname, o.nickname, o.phone, o.email, province, district, o.address, o.code, pack && pack.name, status, via]);
   });
 
   const ws = XLSX.utils.aoa_to_sheet(data);
