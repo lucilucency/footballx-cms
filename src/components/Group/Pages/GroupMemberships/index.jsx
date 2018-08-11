@@ -146,6 +146,19 @@ class GroupMemberships extends React.Component {
     }
 
     const purchasedProcesses = processes && processes.length && processes.filter(el => el.is_complete === 'true' || el.is_complete === true);
+    const fxPurchasedProcesses = purchasedProcesses && purchasedProcesses.length && purchasedProcesses.filter(el => el.purchased_at);
+    const fxPurchased =
+      group.packs &&
+      group.packs.length &&
+      fxPurchasedProcesses &&
+      fxPurchasedProcesses.length &&
+      group.packs.map(pack => fxPurchasedProcesses.filter(el => Number(el.group_membership_pack_id) === pack.id).length);
+    let total = 0;
+    if (processes) {
+      group.packs.forEach((pack, index) => {
+        total += (Number(pack.price) * fxPurchased[index]);
+      });
+    }
 
     return (<div>
       <Container
@@ -172,6 +185,15 @@ class GroupMemberships extends React.Component {
                     {group.packs.map(pack => (
                       <li>Gói {pack.name}: {purchasedProcesses.filter(el => Number(el.group_membership_pack_id) === pack.id).length}</li>
                     ))}
+                  </ul>
+                )}
+                <li>Tổng thanh toán qua FootballX: {fxPurchasedProcesses.length}</li>
+                {fxPurchasedProcesses && fxPurchasedProcesses.length && (
+                  <ul>
+                    {group.packs.map((pack, index) => (
+                      <li>Gói {pack.name}: {fxPurchased[index]}</li>
+                    ))}
+                    <li>Tổng tiền: {total.toLocaleString()}VND</li>
                   </ul>
                 )}
               </ul>
