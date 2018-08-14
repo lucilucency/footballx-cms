@@ -201,7 +201,7 @@ class RequestLayer extends React.Component {
     const ws = XLSX.utils.aoa_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'SheetJS');
-    XLSX.writeFile(wb, `${groupName}-xusers.xlsx`);
+    XLSX.writeFile(wb, `Members of ${groupName}-(${this.state.from} - ${this.state.to}).xlsx`);
   }
 
   render() {
