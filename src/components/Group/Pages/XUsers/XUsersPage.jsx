@@ -1,5 +1,7 @@
-/* eslint-disable no-restricted-syntax,guard-for-in */
+/* eslint-disable no-restricted-syntax,guard-for-in,react/no-did-mount-set-state */
 import React from 'react';
+import { withRouter } from 'react-router-dom';
+import queryString from 'querystring';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import XLSX from 'xlsx';
@@ -15,6 +17,7 @@ import Container from 'components/Container/index';
 import styled from 'styled-components';
 import constants from 'components/constants';
 import MrSuicideGoatQRCode from 'components/Visualizations/QRCode';
+import { FlatButton, TextField } from 'material-ui';
 
 const groupXUsers = {};
 const fileHeader = {
@@ -38,6 +41,9 @@ const Status = styled.div`
 `;
 
 const MembersTableCols = browser => ([{
+  displayName: 'STT',
+  displayFn: (row, col, field, index) => index + 1,
+}, {
   displayName: strings.th_xuser,
   tooltip: strings.tooltip_hero_id,
   field: 'nickname',
@@ -93,6 +99,14 @@ const getData = (props) => {
   props.getGroupMembers(props.groupId);
 };
 
+function wait(ms) {
+  const start = new Date().getTime();
+  let end = start;
+  while (end < start + ms) {
+    end = new Date().getTime();
+  }
+}
+
 const downloadMembers = () => {
   const data = [
     [fileHeader.name, fileHeader.nickname, fileHeader.phone, fileHeader.email, fileHeader.membership_code, ''],
@@ -106,6 +120,7 @@ const downloadMembers = () => {
       a.download = fileName;
       a.href = groupXUsers[id].canvas.toDataURL('image/png').replace(/^data:image\/[^;]/, 'data:application/octet-stream');
       document.body.appendChild(a);
+      wait(1000);
       a.click();
       // setTimeout(document.body.removeChild(a), 500);
       // document.body.removeChild(a);
@@ -149,12 +164,19 @@ class RequestLayer extends React.Component {
 
   componentDidMount() {
     getData(this.props);
+
+    const printing = this.props.routeParams.subInfo === 'printing';
+    if (printing) {
+      const params = queryString.parse(this.props.location.search.replace('?', ''));
+      this.setState({
+        from: params.from,
+        to: params.to,
+      });
+    }
   }
 
   componentWillReceiveProps(newProps) {
-    const { routeParams } = this.props;
-    const printing = routeParams.subInfo === 'printing';
-    const dataSource = printing ? newProps.groupXUsersData.filter(o => !o.is_activated) : newProps.groupXUsersData;
+    const dataSource = newProps.groupXUsersData;
     dataSource.forEach((o) => {
       groupXUsers[o.id] = o;
     });
@@ -184,8 +206,14 @@ class RequestLayer extends React.Component {
 
   render() {
     const props = this.props;
-    const { routeParams, groupXUsersData, loading, error } = this.props;
+    const { routeParams, loading, error, group } = this.props;
+    let { groupXUsersData } = this.props;
     const printing = routeParams.subInfo === 'printing';
+    let params = {};
+    if (printing) {
+      params = queryString.parse(this.props.location.search.replace('?', ''));
+      groupXUsersData = groupXUsersData.slice(params.from - 1, params.to);
+    }
 
     return (<div>
       <Container
@@ -206,14 +234,41 @@ class RequestLayer extends React.Component {
           onClick: downloadMembers,
         }]}
       >
-        <Table
-          paginated={!printing}
-          hidePaginatedTop
-          columns={MembersTableCols(props.browser)}
-          data={printing ? groupXUsersData.filter(o => !o.is_activated) : groupXUsersData}
-          error={false}
-          loading={loading}
-        />
+        <div>
+          <TextField
+            floatingLabelText="From"
+            hintText="From"
+            type="number"
+            onChange={e => this.setState({ from: e.target.value })}
+            value={this.state.from}
+          />
+          <TextField
+            floatingLabelText="To"
+            hintText="To"
+            type="number"
+            onChange={e => this.setState({ to: e.target.value })}
+            value={this.state.to}
+          />
+          <FlatButton
+            label="Download QR Code"
+            onClick={(e) => {
+              e.preventDefault();
+              if (this.state.from && this.state.to) {
+                this.props.history.push(`/group/${group.id}/xusers/printing?from=${this.state.from}&to=${this.state.to}`);
+              } else {
+                this.props.history.push(`/group/${group.id}/xusers`);
+              }
+            }}
+          />
+          <Table
+            paginated={!printing}
+            hidePaginatedTop
+            columns={MembersTableCols(props.browser)}
+            data={groupXUsersData}
+            error={false}
+            loading={loading}
+          />
+        </div>
       </Container>
     </div>);
   }
@@ -221,6 +276,7 @@ class RequestLayer extends React.Component {
 
 const mapStateToProps = state => ({
   user: state.app.metadata.data.user,
+  group: state.app.group.data || {},
   groupXUsersData: state.app.groupXUsers.data,
   loading: state.app.groupXUsers.loading,
   error: state.app.groupXUsers.error,
@@ -231,4 +287,4 @@ const mapDispatchToProps = dispatch => ({
   getGroupMembers: groupId => dispatch(getGroupXUsers(groupId)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(RequestLayer);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RequestLayer));
