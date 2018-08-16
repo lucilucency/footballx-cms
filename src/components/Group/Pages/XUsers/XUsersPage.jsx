@@ -9,6 +9,8 @@ import { getGroupXUsers, getGroupMemberships, getGroupMembershipPacks } from 'ac
 import { subTextStyle, transformations, toDateString, bindAll } from 'utils';
 import strings from 'lang';
 import groups from 'fxconstants/groupsObj.json';
+import dsProvince from 'fxconstants/provincesObj.json';
+import dsDistrict from 'fxconstants/districtsObj.json';
 import IconDownload from 'material-ui/svg-icons/file/file-download';
 import Table from 'components/Table/index';
 import Container from 'components/Container/index';
@@ -31,12 +33,15 @@ const fileHeader = {
   phone: strings.th_phone,
   dob: strings.th_dob,
   city: strings.th_city,
+  district: strings.th_district,
   address: strings.th_address,
   gender: strings.th_gender,
   size: strings.th_membership_t_shirt_size,
   joined_year: strings.th_membership_joined_year,
   is_purchase: strings.th_membership_is_purchase,
   membership_code: strings.th_membership_code,
+  membership_pack: strings.th_membership_pack,
+  status: strings.th_status,
 };
 
 const Status = styled.div`
@@ -53,6 +58,22 @@ const MembersTableCols = browser => ([{
   field: 'username',
   displayFn: transformations.th_xuser_image,
   sortFn: true,
+}, {
+  displayName: strings.th_address,
+  field: 'address',
+  displayFn: (row, col, field) => {
+    const province = dsProvince[row.province_id] && dsProvince[row.province_id].name;
+    const district = dsDistrict[row.district_id] && dsDistrict[row.district_id].name;
+    return (
+      <div>
+        <b>{field}</b>
+        {browser.greaterThan.small &&
+        <span style={{ ...subTextStyle, maxWidth: browser.greaterThan.medium ? 300 : 150 }} title={row.hotspot_address}>
+          {district} - {province}
+        </span>}
+      </div>
+    );
+  },
 },
 /* {
   displayName: '',
@@ -127,14 +148,23 @@ function wait(ms) {
   }
 }
 
-const downloadMembers = (from, to) => {
+const downloadMembers = (from, to, packs) => {
   const data = [
-    ['STT', fileHeader.name, fileHeader.fullname, fileHeader.phone, fileHeader.email, fileHeader.membership_code, ''],
+    [
+      'STT', fileHeader.name, fileHeader.fullname, fileHeader.phone, fileHeader.email,
+      fileHeader.city, fileHeader.district, fileHeader.address,
+      fileHeader.membership_code, fileHeader.membership_pack, fileHeader.status,
+      'File',
+    ],
   ];
 
   const ids = Object.keys(groupXUsers);
   ids.forEach((id, index) => {
     const o = groupXUsers[id];
+    const province = dsProvince[o.province_id] && dsProvince[o.province_id].name;
+    const district = dsDistrict[o.district_id] && dsDistrict[o.district_id].name;
+    const pack = packs && packs.find(p => Number(p.id) === Number(o.group_membership_pack_id));
+    const status = o.is_complete ? 'Đã thanh toán' : '';
     if (o && o.canvas) {
       const fileName = `${Number(index) + 1}_${o.username}_${o.phone}.png`;
       const a = document.createElement('a');
@@ -146,7 +176,12 @@ const downloadMembers = (from, to) => {
       wait(200);
       document.body.removeChild(a);
 
-      data.push([index + 1, o.username, o.fullname, o.phone, o.email, o.code, fileName]);
+      data.push([
+        index + 1, o.username, o.fullname, o.phone, o.email,
+        province, district, o.address,
+        o.code, pack && pack.name, status,
+        fileName,
+      ]);
     } else {
       // console.log(id);
     }
@@ -366,7 +401,7 @@ class RequestLayer extends React.Component {
             <div>
               <FlatButton
                 label="Export data with QR Code"
-                onClick={() => downloadMembers(params.from, params.to)}
+                onClick={() => downloadMembers(params.from, params.to, group.packs)}
               />
               <FlatButton
                 label="Reset"

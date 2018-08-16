@@ -81,9 +81,9 @@ const downloadMembers = (dsMember, packs) => {
   const data = [
     [
       'CODE',
-      fileHeader.name, fileHeader.nickname, fileHeader.phone,
-      fileHeader.email, fileHeader.city, fileHeader.district,
-      fileHeader.address, fileHeader.membership_code, fileHeader.membership_pack, fileHeader.status,
+      fileHeader.name, fileHeader.nickname, fileHeader.phone, fileHeader.email,
+      fileHeader.city, fileHeader.district, fileHeader.address,
+      fileHeader.membership_code, fileHeader.membership_pack, fileHeader.status,
       'Thanh toán qua',
     ],
   ];
