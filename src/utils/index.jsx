@@ -187,12 +187,12 @@ export const transformations = {
       image={row.avatar}
       checkedIn={row.status === 'checkin'}
       title={<TableLink to={`/user/${row.id}`}>{field}</TableLink>}
-      subtitle={row.favorite_club && <img
+      subtitle={row.favorite_club ? <img
         alt=""
         src={Clubs[row.favorite_club] && Clubs[row.favorite_club].icon}
         title={Clubs[row.favorite_club] && Clubs[row.favorite_club].name}
         height={14}
-      />}
+      /> : row.phone && row.phone}
     />
   ),
   th_user_link: (row, col, field) => (<Link to={`/user/${row.id}`}>{field}</Link>),

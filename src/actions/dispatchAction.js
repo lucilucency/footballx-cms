@@ -393,7 +393,7 @@ export function dispatchGet({
           console.error(err);
           if (err.message === 'Unauthorized') {
             logout();
-            return null;
+            window.location.href = '/';
           }
 
           return dispatchAction(dispatchFail(err.response ? err.response.body.message : err));

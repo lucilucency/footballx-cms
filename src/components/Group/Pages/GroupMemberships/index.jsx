@@ -1,12 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import queryString from 'querystring';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import XLSX from 'xlsx';
 import { TextField, SelectField, MenuItem } from 'material-ui';
 import IconDownload from 'material-ui/svg-icons/file/file-download';
 import dsProvince from 'fxconstants/provincesObj.json';
 import dsDistrict from 'fxconstants/districtsObj.json';
-// import dsWard from 'fxconstants/wardsObj.json';
 import Table from 'components/Table/index';
 import Container from 'components/Container/index';
 import { getGroupMemberships, getGroupMembershipPacks, getGroupMembershipProcesses } from 'actions/index';
@@ -120,9 +121,18 @@ class GroupMemberships extends React.Component {
   }
 
   render() {
-    const { group, error } = this.props;
+    const { group, error, routeParams } = this.props;
 
     let { processes } = group;
+
+    const printing = routeParams.subInfo === 'printing';
+    let params = {};
+    if (printing) {
+      params = queryString.parse(this.props.location.search.replace('?', ''));
+      processes = processes.slice(params.from - 1, params.to);
+    }
+
+    // for filter
     if (processes && this.state.code) {
       processes = processes.filter(el => Number(el.id) === Number(this.state.code));
     }
@@ -138,6 +148,7 @@ class GroupMemberships extends React.Component {
     if (processes && this.state.pack) {
       processes = processes.filter(el => Number(el.group_membership_pack_id) === Number(this.state.pack));
     }
+
     if (processes && this.state.is_complete) {
       processes = processes.filter((el) => {
         if (this.state.is_complete === -1) return !el.is_complete || el.is_complete === false || el.is_complete === 'false';
@@ -171,83 +182,7 @@ class GroupMemberships extends React.Component {
         }]}
       >
         <div>
-          <div>
-            {processes && (
-              <ul>
-                <li>Tổng đăng kí: {processes.length}</li>
-                <ul>
-                  {group.packs.map(pack => (
-                    <li>Gói {pack.name}: {processes.filter(el => Number(el.group_membership_pack_id) === pack.id).length}</li>
-                  ))}
-                </ul>
-                <li>Tổng thanh toán: {purchasedProcesses.length}</li>
-                {purchasedProcesses && purchasedProcesses.length && (
-                  <ul>
-                    {group.packs.map(pack => (
-                      <li>Gói {pack.name}: {purchasedProcesses.filter(el => Number(el.group_membership_pack_id) === pack.id).length}</li>
-                    ))}
-                  </ul>
-                )}
-                <li>Tổng thanh toán qua FootballX: {fxPurchasedProcesses.length}</li>
-                {fxPurchasedProcesses && fxPurchasedProcesses.length && (
-                  <ul>
-                    {group.packs.map((pack, index) => (
-                      <li>Gói {pack.name}: {fxPurchased[index]}</li>
-                    ))}
-                    <li>Tổng tiền: {total.toLocaleString()}VND</li>
-                  </ul>
-                )}
-              </ul>
-            )}
-            <div>
-              <TextField
-                floatingLabelText="Code"
-                hintText="Find code"
-                type="number"
-                onChange={e => this.setState({ code: e.target.value })}
-              />
-              <TextField
-                floatingLabelText="Mã thành viên"
-                hintText="Mã thành viên"
-                onChange={e => this.setState({ membership_code: e.target.value })}
-              />
-              <TextField
-                floatingLabelText={strings.th_phone}
-                hintText={strings.th_phone}
-                onChange={e => this.setState({ phone: e.target.value })}
-              />
-              <TextField
-                floatingLabelText={strings.th_email}
-                hintText={strings.th_email}
-                onChange={e => this.setState({ email: e.target.value })}
-              />
-              <br />
-              {group.packs && (
-                <SelectField
-                  floatingLabelText="Gói thành viên"
-                  value={this.state.pack || 0}
-                  onChange={(event, index, value) => this.setState({ pack: value })}
-                >
-                  <MenuItem value={0} primaryText="All" />
-                  {group.packs.map(el => (
-                    <MenuItem key={el.id} value={el.id} primaryText={el.name} />
-                  ))}
-                </SelectField>
-              )}
-              {group.processes && (
-                <SelectField
-                  floatingLabelText="Trạng thái"
-                  value={this.state.is_complete || 0}
-                  onChange={(event, index, value) => this.setState({ is_complete: value })}
-                >
-                  <MenuItem value={0} primaryText="All" />
-                  <MenuItem value={-1} primaryText="Chưa thanh toán" />
-                  <MenuItem value={1} primaryText="Đã thanh toán" />
-                </SelectField>
-              )}
-            </div>
-          </div>
-          {group.processes && (
+          {processes && (
             <Table
               paginated
               hidePaginatedTop
@@ -255,6 +190,88 @@ class GroupMemberships extends React.Component {
               data={processes}
               error={error}
             />
+          )}
+        </div>
+      </Container>
+      <Container
+        title="Summary"
+      >
+        <div>
+          {processes && (
+            <ul>
+              <li>Tổng đăng kí: {processes.length}</li>
+              <ul>
+                {group.packs.map(pack => (
+                  <li>Gói {pack.name}: {processes.filter(el => Number(el.group_membership_pack_id) === pack.id).length}</li>
+                ))}
+              </ul>
+              <li>Tổng thanh toán: {purchasedProcesses.length}</li>
+              {purchasedProcesses && purchasedProcesses.length && (
+                <ul>
+                  {group.packs.map(pack => (
+                    <li>Gói {pack.name}: {purchasedProcesses.filter(el => Number(el.group_membership_pack_id) === pack.id).length}</li>
+                  ))}
+                </ul>
+              )}
+              <li>Tổng thanh toán qua FootballX: {fxPurchasedProcesses.length}</li>
+              {fxPurchasedProcesses && fxPurchasedProcesses.length && (
+                <ul>
+                  {group.packs.map((pack, index) => (
+                    <li>Gói {pack.name}: {fxPurchased[index]}</li>
+                  ))}
+                  <li>Tổng tiền: {total.toLocaleString()}VND</li>
+                </ul>
+              )}
+            </ul>
+          )}
+        </div>
+      </Container>
+      <Container title="Filter">
+        <div>
+          <TextField
+            floatingLabelText="Code"
+            hintText="Find code"
+            type="number"
+            onChange={e => this.setState({ code: e.target.value })}
+          />
+          <TextField
+            floatingLabelText="Mã thành viên"
+            hintText="Mã thành viên"
+            onChange={e => this.setState({ membership_code: e.target.value })}
+          />
+          <TextField
+            floatingLabelText={strings.th_phone}
+            hintText={strings.th_phone}
+            onChange={e => this.setState({ phone: e.target.value })}
+          />
+          <TextField
+            floatingLabelText={strings.th_email}
+            hintText={strings.th_email}
+            onChange={e => this.setState({ email: e.target.value })}
+          />
+          <br />
+          {group.packs && (
+            <SelectField
+              floatingLabelText="Gói thành viên"
+              value={this.state.pack || 0}
+              onChange={(event, index, value) => this.setState({ pack: value })}
+            >
+              <MenuItem value={0} primaryText="All" />
+              {group.packs.map(el => (
+                <MenuItem key={el.id} value={el.id} primaryText={el.name} />
+              ))}
+            </SelectField>
+          )}
+          {group.processes && (
+            <SelectField
+              floatingLabelText="Trạng thái"
+              value={this.state.is_complete || 0}
+              onChange={(event, index, value) => this.setState({ is_complete: value })}
+            >
+              <MenuItem value={0} primaryText="All" />
+              <MenuItem value={-1} primaryText="Chưa thanh toán" />
+              <MenuItem value={1} primaryText="Đã thanh toán" />
+            </SelectField>
           )}
         </div>
       </Container>
@@ -278,4 +295,4 @@ const mapDispatchToProps = dispatch => ({
   getGroupMembershipProcesses: groupId => dispatch(getGroupMembershipProcesses(groupId)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(GroupMemberships);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(GroupMemberships));

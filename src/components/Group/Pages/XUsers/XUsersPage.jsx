@@ -5,24 +5,28 @@ import queryString from 'querystring';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import XLSX from 'xlsx';
-import { getGroupXUsers } from 'actions';
+import { getGroupXUsers, getGroupMemberships, getGroupMembershipPacks } from 'actions';
 import { subTextStyle, transformations, toDateString, bindAll } from 'utils';
 import strings from 'lang';
 import groups from 'fxconstants/groupsObj.json';
-import { IconFacebook } from 'components/Icons';
-import IconPrint from 'material-ui/svg-icons/action/print';
 import IconDownload from 'material-ui/svg-icons/file/file-download';
 import Table from 'components/Table/index';
 import Container from 'components/Container/index';
 import styled from 'styled-components';
 import constants from 'components/constants';
 import MrSuicideGoatQRCode from 'components/Visualizations/QRCode';
-import { FlatButton, TextField } from 'material-ui';
+import { FlatButton, TextField, SelectField, MenuItem } from 'material-ui';
 
-const groupXUsers = {};
+let groupXUsers = {};
+const updateGroupXusers = (data) => {
+  groupXUsers = {};
+  data.forEach((o) => {
+    groupXUsers[o.id] = o;
+  });
+};
 const fileHeader = {
   name: strings.th_name,
-  nickname: strings.th_nickname,
+  fullname: strings.th_name,
   email: strings.th_email,
   phone: strings.th_phone,
   dob: strings.th_dob,
@@ -46,32 +50,44 @@ const MembersTableCols = browser => ([{
 }, {
   displayName: strings.th_xuser,
   tooltip: strings.tooltip_hero_id,
-  field: 'nickname',
+  field: 'username',
   displayFn: transformations.th_xuser_image,
   sortFn: true,
-}, {
+},
+/* {
   displayName: '',
   field: 'facebook_id',
   displayFn: (row, col, field) => (<div>
     <a href={`https://www.facebook.com/${field}`} rel="noopener noreferrer" target="_blank"><IconFacebook width={24} height={24} /></a>
   </div>),
-}, {
-  displayName: strings.th_address,
+}, */
+{
+  displayName: strings.th_membership_code,
   field: 'code',
   displayFn: (row, col, field) => (<div>
     <b>{field}</b>
     {browser.greaterThan.small &&
     <span style={{ ...subTextStyle, maxWidth: browser.greaterThan.medium ? 300 : 150 }} title={row.hotspot_address}>
-      {toDateString(row.expire_date * 1000)}
+      {row.is_activated && <Status>{'Activated'}</Status>}
     </span>}
   </div>),
 }, {
-  displayName: strings.th_xuser_is_activated,
-  field: 'is_activated',
+  displayName: 'Ngày hết hạn',
+  field: 'expire_date',
   displayFn: (row, col, field) => (<div>
-    {field && <Status>{'Activated'}</Status>}
+    {toDateString(field * 1000)}
   </div>),
   sortFn: true,
+}, {
+  displayName: 'Mã giao dịch',
+  field: 'process_id',
+  displayFn: (row, col, field) => (<div>
+    <b>{field}</b>
+    {browser.greaterThan.small &&
+    <span style={{ ...subTextStyle, maxWidth: browser.greaterThan.medium ? 300 : 150 }} title={row.hotspot_address}>
+      {row.is_complete && <Status>{'Đã thanh toán'}</Status>}
+    </span>}
+  </div>),
 }, {
   displayName: '',
   field: 'membership_code',
@@ -97,6 +113,10 @@ const MembersTableCols = browser => ([{
 
 const getData = (props) => {
   props.getGroupMembers(props.groupId);
+
+  Promise.all([props.getGroupMemberships(props.groupId)]).then((res) => {
+    props.getGroupMembershipPacks(res[0].payload.membership.id);
+  });
 };
 
 function wait(ms) {
@@ -107,34 +127,35 @@ function wait(ms) {
   }
 }
 
-const downloadMembers = () => {
+const downloadMembers = (from, to) => {
   const data = [
-    [fileHeader.name, fileHeader.nickname, fileHeader.phone, fileHeader.email, fileHeader.membership_code, ''],
+    ['STT', fileHeader.name, fileHeader.fullname, fileHeader.phone, fileHeader.email, fileHeader.membership_code, ''],
   ];
 
-  for (const id in groupXUsers) {
+  const ids = Object.keys(groupXUsers);
+  ids.forEach((id, index) => {
     const o = groupXUsers[id];
     if (o && o.canvas) {
-      const fileName = `${o.fullname}_${o.phone}.png`;
+      const fileName = `${Number(index) + 1}_${o.username}_${o.phone}.png`;
       const a = document.createElement('a');
       a.download = fileName;
       a.href = groupXUsers[id].canvas.toDataURL('image/png').replace(/^data:image\/[^;]/, 'data:application/octet-stream');
       document.body.appendChild(a);
-      wait(1000);
+      wait(200);
       a.click();
-      // setTimeout(document.body.removeChild(a), 500);
-      // document.body.removeChild(a);
+      wait(200);
+      document.body.removeChild(a);
 
-      data.push([o.fullname, o.nickname, o.phone, o.email, o.code, fileName]);
+      data.push([index + 1, o.username, o.fullname, o.phone, o.email, o.code, fileName]);
     } else {
       // console.log(id);
     }
-  }
+  });
 
   const ws = XLSX.utils.aoa_to_sheet(data);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'SheetJS');
-  XLSX.writeFile(wb, 'Group Membership QR.xlsx');
+  XLSX.writeFile(wb, `Members of MUSVN (${from} - ${to}).xlsx`);
 };
 
 class RequestLayer extends React.Component {
@@ -158,7 +179,7 @@ class RequestLayer extends React.Component {
     };
 
     bindAll([
-      'export2xlsx',
+      'export2xlsxAll',
     ], this);
   }
 
@@ -176,26 +197,25 @@ class RequestLayer extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    const dataSource = newProps.groupXUsersData;
-    dataSource.forEach((o) => {
-      groupXUsers[o.id] = o;
-    });
-  }
-
-  componentWillUpdate(nextProps) {
-    if (this.props.groupId !== nextProps.groupId || this.props.location.key !== nextProps.location.key) {
-      getData(nextProps);
+    let dataSource = newProps.groupXUsersData;
+    const { routeParams } = this.props;
+    const printing = routeParams.subInfo === 'printing';
+    let params = {};
+    if (printing) {
+      params = queryString.parse(this.props.location.search.replace('?', ''));
+      dataSource = dataSource.slice(params.from - 1, params.to);
     }
+    updateGroupXusers(dataSource);
   }
 
-  export2xlsx() {
+  export2xlsxAll() {
     const groupName = groups[this.props.groupId] && groups[this.props.groupId].short_name;
     const data = [
-      [fileHeader.name, fileHeader.nickname, fileHeader.phone, fileHeader.email, fileHeader.membership_code, fileHeader.is_activated],
+      [fileHeader.name, fileHeader.fullname, fileHeader.phone, fileHeader.email, fileHeader.membership_code, fileHeader.is_activated],
     ];
 
     this.props.groupXUsersData.length && this.props.groupXUsersData.forEach((member) => {
-      data.push([member.fullname, member.nickname, member.phone, member.email, member.membership_code, member.is_activated ? 'true' : 'false']);
+      data.push([member.username, member.fullname, member.phone, member.email, member.membership_code, member.is_activated ? 'true' : 'false']);
     });
 
     const ws = XLSX.utils.aoa_to_sheet(data);
@@ -208,6 +228,39 @@ class RequestLayer extends React.Component {
     const props = this.props;
     const { routeParams, loading, error, group } = this.props;
     let { groupXUsersData } = this.props;
+
+    // filter
+    if (groupXUsersData && this.state.code) {
+      groupXUsersData = groupXUsersData.filter(el => Number(el.process_id) === Number(this.state.code));
+    }
+    if (groupXUsersData && this.state.membership_code) {
+      groupXUsersData = groupXUsersData.filter(el => el.code === this.state.membership_code);
+    }
+    if (groupXUsersData && this.state.phone) {
+      groupXUsersData = groupXUsersData.filter(el => el.phone === this.state.phone);
+    }
+    if (groupXUsersData && this.state.email) {
+      groupXUsersData = groupXUsersData.filter(el => el.email === this.state.email);
+    }
+    if (groupXUsersData && this.state.pack) {
+      groupXUsersData = groupXUsersData.filter(el => Number(el.group_membership_pack_id) === Number(this.state.pack));
+    }
+    if (groupXUsersData && this.state.is_complete) {
+      groupXUsersData = groupXUsersData.filter((el) => {
+        if (this.state.is_complete === -1) return !el.is_complete || el.is_complete === false || el.is_complete === 'false';
+        else if (this.state.is_complete === 1) return el.is_complete || el.is_complete === 'true';
+        return true;
+      });
+    }
+    if (groupXUsersData && this.state.is_activated) {
+      groupXUsersData = groupXUsersData.filter((el) => {
+        if (this.state.is_activated === -1) return !el.is_activated || el.is_activated === false || el.is_activated === 'false';
+        else if (this.state.is_activated === 1) return el.is_activated || el.is_activated === 'true';
+        return true;
+      });
+    }
+
+    // slice to export
     const printing = routeParams.subInfo === 'printing';
     let params = {};
     if (printing) {
@@ -215,51 +268,128 @@ class RequestLayer extends React.Component {
       groupXUsersData = groupXUsersData.slice(params.from - 1, params.to);
     }
 
+    updateGroupXusers(groupXUsersData);
+
     return (<div>
+      {!printing && (
+        <Container title="Filter">
+          <div>
+            <TextField
+              floatingLabelText="Code"
+              hintText="Find code"
+              type="number"
+              onChange={e => this.setState({ code: e.target.value })}
+            />
+            <TextField
+              floatingLabelText="Mã thành viên"
+              hintText="Mã thành viên"
+              onChange={e => this.setState({ membership_code: e.target.value })}
+            />
+            <TextField
+              floatingLabelText={strings.th_phone}
+              hintText={strings.th_phone}
+              onChange={e => this.setState({ phone: e.target.value })}
+            />
+            <TextField
+              floatingLabelText={strings.th_email}
+              hintText={strings.th_email}
+              onChange={e => this.setState({ email: e.target.value })}
+            />
+            <br />
+            {group.packs && (
+              <SelectField
+                floatingLabelText="Gói thành viên"
+                value={this.state.pack || 0}
+                onChange={(event, index, value) => this.setState({ pack: value })}
+              >
+                <MenuItem value={0} primaryText="All" />
+                {group.packs.map(el => (
+                  <MenuItem key={el.id} value={el.id} primaryText={el.name} />
+                ))}
+              </SelectField>
+            )}
+            <SelectField
+              floatingLabelText="Trạng thái giao dịch"
+              value={this.state.is_complete || 0}
+              onChange={(event, index, value) => this.setState({ is_complete: value })}
+            >
+              <MenuItem value={0} primaryText="All" />
+              <MenuItem value={-1} primaryText="Chưa thanh toán" />
+              <MenuItem value={1} primaryText="Đã thanh toán" />
+            </SelectField>
+            <SelectField
+              floatingLabelText="Trạng thái kích hoạt"
+              value={this.state.is_activated || 0}
+              onChange={(event, index, value) => this.setState({ is_activated: value })}
+            >
+              <MenuItem value={0} primaryText="All" />
+              <MenuItem value={-1} primaryText="Chưa kích hoạt" />
+              <MenuItem value={1} primaryText="Đã kích hoạt" />
+            </SelectField>
+          </div>
+        </Container>
+      )}
+      <Container title="Export data">
+        <div>
+          {!printing && (
+            <div>
+              <div>
+                <TextField
+                  floatingLabelText="From"
+                  hintText="From"
+                  type="number"
+                  onChange={e => this.setState({ from: e.target.value })}
+                  value={this.state.from}
+                />
+                <TextField
+                  floatingLabelText="To"
+                  hintText="To"
+                  type="number"
+                  onChange={e => this.setState({ to: e.target.value })}
+                  value={this.state.to}
+                />
+                <FlatButton
+                  label="Generate QR Code"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (this.state.from && this.state.to) {
+                      this.props.history.push(`/group/${group.id}/xusers/printing?from=${this.state.from}&to=${this.state.to}`);
+                    } else {
+                      this.props.history.push(`/group/${group.id}/xusers`);
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          )}
+          {printing && (
+            <div>
+              <FlatButton
+                label="Export data with QR Code"
+                onClick={() => downloadMembers(params.from, params.to)}
+              />
+              <FlatButton
+                label="Reset"
+                onClick={(e) => {
+                  e.preventDefault();
+                  this.props.history.push(`/group/${group.id}/xusers`);
+                }}
+              />
+            </div>
+          )}
+        </div>
+      </Container>
       <Container
         title={strings.title_group_memberships}
         error={error}
         loading={loading}
         actions={!printing ? [{
-          title: 'View & Download QRCode of NOT activated members',
-          icon: <IconPrint />,
-          link: `${props.location.pathname}/printing`,
-        }, {
-          title: 'Export to XLSX',
+          title: 'Export all',
           icon: <IconDownload />,
-          onClick: this.export2xlsx,
-        }] : [{
-          title: 'Download',
-          icon: <IconPrint />,
-          onClick: downloadMembers,
-        }]}
+          onClick: this.export2xlsxAll,
+        }] : null}
       >
         <div>
-          <TextField
-            floatingLabelText="From"
-            hintText="From"
-            type="number"
-            onChange={e => this.setState({ from: e.target.value })}
-            value={this.state.from}
-          />
-          <TextField
-            floatingLabelText="To"
-            hintText="To"
-            type="number"
-            onChange={e => this.setState({ to: e.target.value })}
-            value={this.state.to}
-          />
-          <FlatButton
-            label="Download QR Code"
-            onClick={(e) => {
-              e.preventDefault();
-              if (this.state.from && this.state.to) {
-                this.props.history.push(`/group/${group.id}/xusers/printing?from=${this.state.from}&to=${this.state.to}`);
-              } else {
-                this.props.history.push(`/group/${group.id}/xusers`);
-              }
-            }}
-          />
           <Table
             paginated={!printing}
             hidePaginatedTop
@@ -267,6 +397,7 @@ class RequestLayer extends React.Component {
             data={groupXUsersData}
             error={false}
             loading={loading}
+            pageLength={50}
           />
         </div>
       </Container>
@@ -285,6 +416,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   getGroupMembers: groupId => dispatch(getGroupXUsers(groupId)),
+  getGroupMemberships: groupId => dispatch(getGroupMemberships(groupId)),
+  getGroupMembershipPacks: groupId => dispatch(getGroupMembershipPacks(groupId)),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RequestLayer));

@@ -26,7 +26,7 @@ class GroupHomePage extends React.Component {
   }
 
   componentWillUpdate(nextProps) {
-    if (this.props.groupId !== nextProps.groupId || this.props.location.key !== nextProps.location.key) {
+    if (this.props.groupId !== nextProps.groupId) {
       getEvents(nextProps);
     }
   }
@@ -74,7 +74,7 @@ class GroupHomePage extends React.Component {
             dispatch={this.props.createGroupEvent}
             groupId={Number(groupId)}
           />
-          <EditGroupForm group={group} />
+          {false && <EditGroupForm group={group} />}
           <TabBar info={info} tabs={pages(Number(groupId))} />
         </div>
         <div style={{ marginTop: -15 }}>
